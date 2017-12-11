@@ -9,16 +9,16 @@
 
 #pragma once
 
-#include "../Defs.hpp"
-#include "../ExamHeader.hpp"
-#include "../SignalHeader.hpp"
+#include "../../Defs.hpp"
+#include "../../header/HeaderExam.hpp"
+#include "../../header/HeaderSignal.hpp"
 
 #include <vector>
 
 namespace edfio
 {
 
-	FileErrc ExamHeaderReader::operator ()(ExamHeader &hdr)
+	FileErrc ReaderHeaderExam::operator ()(HeaderExamFields &hdr)
 	{
 		if (!m_is || !m_is.is_open())
 			return FileErrc::FileDoesNotOpen;
@@ -42,10 +42,10 @@ namespace edfio
 		{
 			return FileErrc::FileReadError;
 		}
-		return edfio::FileErrc::NoError;
+		return FileErrc::NoError;
 	}
 
-	FileErrc SignalHeaderReader::operator ()(std::vector<SignalHeader> &signals)
+	FileErrc ReaderHeaderSignal::operator ()(std::vector<HeaderSignalFields> &signals)
 	{
 		if (!m_is || !m_is.is_open())
 			return FileErrc::FileDoesNotOpen;

@@ -9,17 +9,18 @@
 
 #pragma once
 
-#include "Defs.hpp"
-
-#include <fstream>
+#include "ProcessorBase.hpp"
+#include "../Defs.hpp"
+#include "../header/HeaderExam.hpp"
 
 namespace edfio
 {
 
-	struct Reader
+	struct ProcessorHeaderExam : ProcessorBase<HeaderExamFields, HeaderExam>
 	{
-		std::ifstream &m_is;
-		Reader(std::ifstream &is) : m_is(is) {}
+		FileErrc operator ()(const HeaderExamFields &in, HeaderExam &ou);
 	};
 
 }
+
+#include "impl/ProcessorHeaderExam.ipp"

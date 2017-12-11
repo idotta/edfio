@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "Defs.hpp"
+#include "../Defs.hpp"
+#include "../Field.hpp"
 
 #include <string>
 #include <tuple>
@@ -17,9 +18,23 @@
 namespace edfio
 {
 
+	struct HeaderExamFields
+	{
+		Field<8> m_version;
+		Field<80> m_patient;
+		Field<80> m_recording;
+		Field<8> m_startDate;
+		Field<8> m_startTime;
+		Field<8> m_headerSize;
+		Field<44> m_reserved;
+		Field<8> m_datarecordsFile;
+		Field<8> m_datarecordDuration;
+		Field<4> m_totalSignals;
+	};
+
 	namespace detail
 	{
-		struct ExamHeaderDetail
+		struct HeaderExamDetail
 		{
 			unsigned int m_recordSize = 0;
 			double m_datarecordDuration = 0;
@@ -39,19 +54,21 @@ namespace edfio
 		};
 	}
 
-	struct ExamHeader
+	struct HeaderExam
 	{
-		Field<DataFormat, 8> m_version;
-		Field<std::string, 80> m_patient;
-		Field<std::string, 80> m_recording;
-		Field<std::tuple<int, int, int>, 8> m_startDate;
-		Field<std::tuple<int, int, int>, 8> m_startTime;
-		Field<int, 8> m_headerSize;
-		Field<std::string, 44> m_reserved;
-		Field<long long, 8> m_datarecordsFile;
-		Field<long long, 8> m_datarecordDuration;
-		Field<int, 4> m_totalSignals;
-		detail::ExamHeaderDetail m_detail;
+		// Field values
+		DataFormat m_version = DataFormat::Invalid;
+		std::string m_patient;
+		std::string m_recording;
+		std::tuple<int, int, int> m_startDate;
+		std::tuple<int, int, int> m_startTime;
+		int m_headerSize = 0;
+		std::string m_reserved;
+		long long m_datarecordsFile = 0;
+		long long m_datarecordDuration = 0;
+		int m_totalSignals = 0;
+		// Extra values
+		detail::HeaderExamDetail m_detail;
 	};
 
 }

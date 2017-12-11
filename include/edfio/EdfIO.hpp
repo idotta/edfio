@@ -9,20 +9,3 @@
 
 #pragma once
 
-#include "File.hpp"
-
-#include <fstream>
-#include <vector>
-
-namespace edfio
-{
-
-	class Writer : public File<std::ofstream>
-	{
-	public:
-
-		FileErrc Open(const std::string &path) override;
-		FileErrc Close() override;
-	};
-
-}

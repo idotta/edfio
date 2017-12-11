@@ -9,4 +9,18 @@
 
 #pragma once
 
-#include "edfio\File.hpp"
+#include "../Defs.hpp"
+
+#include <iostream>
+
+namespace edfio
+{
+
+	// Pass Reader/Writer op as template parameter
+	template <class RW>
+	struct HeaderBase
+	{
+		virtual FileErrc operator() (const RW &rw) = 0;
+	};
+
+}

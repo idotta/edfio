@@ -15,18 +15,28 @@
 namespace edfio
 {
 
-	template <class Type, size_t Sz>
+	template <size_t Sz>
 	struct Field
 	{
-		std::string m_valueStr;
-		Type m_value;
-		constexpr size_t Size() { return Sz; }
+		std::string m_value;
+		constexpr size_t Size() const
+		{ 
+			return Sz; 
+		}
+		const std::string& operator()() const
+		{
+			return m_value;
+		}
+		std::string& operator()()
+		{
+			return m_value;
+		}
 	};
 
-	template <class Type, size_t Sz>
-	std::ostream& operator << (std::ostream &os, Field<Type, Sz> &f)
+	template <size_t Sz>
+	std::ostream& operator << (std::ostream &os, Field<Sz> &f)
 	{
-		auto &value = f.m_valueStr;
+		auto &value = f.m_value;
 
 		if (Sz < value.size())
 		{
@@ -42,12 +52,13 @@ namespace edfio
 		return os;
 	}
 
-	template <class Type, size_t Sz>
-	std::istream& operator >> (std::istream &is, Field<Type, Sz> &f)
+	template <size_t Sz>
+	std::istream& operator >> (std::istream &is, Field<Sz> &f)
 	{
-		auto &value = f.m_valueStr;
+		auto &value = f.m_value;
 		value.resize(Sz);
-		is.read(value.data(), Sz);
+		std::string str;
+		is.read(&value[0], Sz);
 
 		return is;
 	}

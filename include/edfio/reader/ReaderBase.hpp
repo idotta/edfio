@@ -9,18 +9,17 @@
 
 #pragma once
 
-#include "Defs.hpp"
+#include "../Defs.hpp"
 
-#include <iostream>
+#include <fstream>
 
 namespace edfio
 {
 
-	// Pass Reader/Writer op as template parameter
-	template <class RW>
-	struct Header
+	struct ReaderBase
 	{
-		virtual FileErrc operator() (const RW &rw) = 0;
+		std::ifstream &m_is;
+		ReaderBase(std::ifstream &is) : m_is(is) {}
 	};
 
 }
