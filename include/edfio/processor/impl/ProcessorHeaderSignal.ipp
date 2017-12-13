@@ -70,6 +70,7 @@ namespace edfio
 					signal.m_detail.m_isAnnotation = false;
 				}
 				signal.m_label = label;
+				signal.m_detail.m_signalIndex = idx;
 			}
 			if (IsPlus(header.m_version) && totalAnnotationChannels == 0)
 			{
@@ -340,6 +341,16 @@ namespace edfio
 				signal.m_detail.m_bitValue = (signal.m_physicalMax - signal.m_physicalMin) / (signal.m_digitalMax - signal.m_digitalMin);
 				signal.m_detail.m_offset = signal.m_physicalMax / signal.m_detail.m_bitValue - signal.m_digitalMax;
 			}
+		}
+
+
+		for (auto &signal : signals)
+		{
+			signal.m_label = ReduceString(signal.m_label);
+			signal.m_transducer = ReduceString(signal.m_transducer);
+			signal.m_physDimension = ReduceString(signal.m_physDimension);
+			signal.m_prefilter = ReduceString(signal.m_prefilter);
+			signal.m_reserved = ReduceString(signal.m_reserved);
 		}
 
 		return FileErrc::NoError;

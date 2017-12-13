@@ -36,30 +36,18 @@ namespace edfio
 	template <size_t Sz>
 	std::ostream& operator << (std::ostream &os, Field<Sz> &f)
 	{
-		auto &value = f.m_value;
-
-		if (Sz < value.size())
-		{
-			os.write(value.data(), Sz);
-		}
-		else
-		{
-			auto value = f.m_value;
-			value.resize(Sz, ' ');
-			os.write(value.data(), Sz);
-		}
-
+		auto &value = f();
+		value.resize(Sz);
+		os.write(value.data(), Sz);
 		return os;
 	}
 
 	template <size_t Sz>
 	std::istream& operator >> (std::istream &is, Field<Sz> &f)
 	{
-		auto &value = f.m_value;
+		auto &value = f();
 		value.resize(Sz);
-		std::string str;
 		is.read(&value[0], Sz);
-
 		return is;
 	}
 

@@ -10,7 +10,7 @@
 #pragma once
 
 #include "../Defs.hpp"
-#include "../Field.hpp"
+#include "../core/Field.hpp"
 
 #include <string>
 #include <tuple>
@@ -40,7 +40,7 @@ namespace edfio
 			double m_datarecordDuration = 0;
 			long long m_fileDuration = 0;
 			long long m_startSubsecond = 0;
-			long long m_annotationsInFile = 0;
+			long long m_totalAnnotations = 0;
 
 			std::string m_patientCode;
 			std::string m_gender;

@@ -88,14 +88,8 @@ namespace edfio
 				{
 					return FileErrc::FileContainsFormatErrors;
 				}
-				if (year > 84)
-				{
-					year += 1900;
-				}
-				else
-				{
-					year += 2000;
-				}
+				year += year > 84 ? 1900 : 2000;
+
 				ou.m_startDate = std::make_tuple(day, month, year);
 			}
 			catch (std::exception& e)
@@ -170,7 +164,7 @@ namespace edfio
 				}
 			}
 		}
-		// Datarecord in File
+		// Datarecords in File
 		{
 			try
 			{
@@ -364,6 +358,19 @@ namespace edfio
 		//		FileErrc::FileContainsFormatErrors;
 		//	}
 		//}
+
+		ou.m_patient = ReduceString(ou.m_patient);
+		ou.m_recording = ReduceString(ou.m_recording);
+		ou.m_reserved = ReduceString(ou.m_reserved);
+		ou.m_detail.m_patientCode = ReduceString(ou.m_detail.m_patientCode);
+		ou.m_detail.m_gender = ReduceString(ou.m_detail.m_gender);
+		ou.m_detail.m_birthdate = ReduceString(ou.m_detail.m_birthdate);
+		ou.m_detail.m_patientName = ReduceString(ou.m_detail.m_patientName);
+		ou.m_detail.m_patientAdditional = ReduceString(ou.m_detail.m_patientAdditional);
+		ou.m_detail.m_admincode = ReduceString(ou.m_detail.m_admincode);
+		ou.m_detail.m_technician = ReduceString(ou.m_detail.m_technician);
+		ou.m_detail.m_equipment = ReduceString(ou.m_detail.m_equipment);
+		ou.m_detail.m_recordingAdditional = ReduceString(ou.m_detail.m_recordingAdditional);
 
 		return FileErrc::NoError;
 	}

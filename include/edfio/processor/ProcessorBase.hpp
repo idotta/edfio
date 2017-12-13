@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <cctype>
+#include <regex>
 
 namespace edfio
 {
@@ -55,6 +56,11 @@ namespace edfio
 			}
 		}
 		return 0;
+	}
+
+	static std::string ReduceString(const std::string &value)
+	{
+		return std::regex_replace(value, std::regex("^ +| +$|( ) +"), "$1");
 	}
 
 	template <class In, class Ou>
