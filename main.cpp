@@ -15,35 +15,37 @@
 
 #include <fstream>
 
-
 int main()
 {
-	std::ifstream is("test_generator_2.edf", std::ios::binary);
+	std::ifstream is("E:/Projetos/edfio/Calib5.edf", std::ios::binary);
 
 	if (!is)
 		return -1;
 
 	edfio::HeaderExam header;
 
-	edfio::HeaderGeneralFields examFields;
+	edfio::HeaderGeneralFields generalFields;
 	std::vector<edfio::HeaderSignalFields> signalFields;
 
 	edfio::ReaderHeaderGeneral readerExam(is);
 	edfio::ReaderHeaderSignal readerSignals(is);
 
 	edfio::ProcessorHeaderGeneral processorGeneral;
-	edfio::ProcessorHeaderSignal processorSignals;
+	edfio::ProcessorHeaderSignal processorSignals(header.m_general);
 	edfio::ProcessorHeaderExam processorExam(is);
 
-	readerExam(examFields);
-	processorGeneral(examFields, header.m_general);
+	// Read general fields
+	generalFields = readerExam();
+	// Process general fields
+	header.m_general = processorGeneral(std::move(generalFields));
 	
-	signalFields.resize(header.m_general.m_totalSignals);
-	readerSignals(signalFields);	
-
-	processorSignals(signalFields, header);
-	processorExam(header, header);
+	// Read signal fields
+	signalFields = readerSignals(header.m_general.m_totalSignals);
+	// Process signal fields
+	header.m_signals = processorSignals(std::move(signalFields));
+	
+	// Process exam header
+	header = processorExam(std::move(header));
 
 	return 0;
 }
-
