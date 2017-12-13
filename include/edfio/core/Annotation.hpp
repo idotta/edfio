@@ -22,7 +22,7 @@ namespace edfio
 
 	struct Annotation
 	{
-		long long m_onset; // expressed in units of 100 nanoSeconds
+		long long m_start; // expressed in units of 100 nanoSeconds
 		long long m_duration; // expressed in units of 100 nanoSeconds
 		std::string m_annotation;
 	};

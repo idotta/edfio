@@ -9,10 +9,12 @@
 
 #include <edfio/header/HeaderExam.hpp>
 #include <edfio/reader/ReaderHeader.hpp>
-#include <edfio/processor/ProcessorHeaderExam.hpp>
+#include <edfio/processor/ProcessorHeaderGeneral.hpp>
 #include <edfio/processor/ProcessorHeaderSignal.hpp>
+#include <edfio/processor/ProcessorHeaderExam.hpp>
 
 #include <fstream>
+
 
 int main()
 {
@@ -21,24 +23,26 @@ int main()
 	if (!is)
 		return -1;
 
-	std::pair<edfio::HeaderExam, std::vector<edfio::HeaderSignal>> header;
+	edfio::HeaderExam header;
 
-	edfio::HeaderExamFields examFields;
+	edfio::HeaderGeneralFields examFields;
 	std::vector<edfio::HeaderSignalFields> signalFields;
 
-	edfio::ReaderHeaderExam readerExam(is);
+	edfio::ReaderHeaderGeneral readerExam(is);
 	edfio::ReaderHeaderSignal readerSignals(is);
 
-	edfio::ProcessorHeaderExam processorExam;
+	edfio::ProcessorHeaderGeneral processorGeneral;
 	edfio::ProcessorHeaderSignal processorSignals;
+	edfio::ProcessorHeaderExam processorExam(is);
 
 	readerExam(examFields);
-	processorExam(examFields, header.first);
+	processorGeneral(examFields, header.m_general);
 	
-	signalFields.resize(header.first.m_totalSignals);
+	signalFields.resize(header.m_general.m_totalSignals);
 	readerSignals(signalFields);	
 
 	processorSignals(signalFields, header);
+	processorExam(header, header);
 
 	return 0;
 }
