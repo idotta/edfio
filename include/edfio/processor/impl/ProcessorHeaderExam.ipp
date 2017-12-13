@@ -14,21 +14,22 @@
 namespace edfio
 {
 
-	FileErrc ProcessorHeaderExam::operator()(const TypeIn &in, TypeOu &ou)
+	ProcessorHeaderExam::TypeOu ProcessorHeaderExam::operator()(TypeIn in)
 	{
+		TypeOu ou = std::move(in);
 		// File size
 		{
 			// get length of file:
 			m_is.seekg(0, m_is.end);
-			size_t length = m_is.tellg();
+			long long length = m_is.tellg();
 			m_is.seekg(0, m_is.beg);
 
 			if (length != (in.m_general.m_detail.m_recordSize * in.m_general.m_datarecordsFile + in.m_general.m_headerSize))
 			{
-				FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
-		return FileErrc::NoError;
+		return std::move(ou);
 	}
 
 }

@@ -19,10 +19,10 @@
 namespace edfio
 {
 
-	FileErrc ProcessorHeaderSignal::operator()(const TypeIn &in, TypeOu &ou)
+	ProcessorHeaderSignal::TypeOu ProcessorHeaderSignal::operator()(TypeIn in)
 	{
-		auto& header = ou.m_general;
-		auto& signals = ou.m_signals;
+		TypeOu signals;
+		auto& header = m_general;
 
 		signals.resize(in.size());
 
@@ -39,7 +39,7 @@ namespace edfio
 				|| CheckFormatErrors(sigFields.m_samplesInDataRecord())
 				|| CheckFormatErrors(sigFields.m_reserved()))
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 
 		}
@@ -72,13 +72,13 @@ namespace edfio
 			}
 			if (IsPlus(header.m_version) && totalAnnotationChannels == 0)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (signals.size() != totalAnnotationChannels || !IsPlus(header.m_version))
 			{
 				if (header.m_datarecordDuration < 1)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -95,7 +95,7 @@ namespace edfio
 				{
 					if (transducer.find_first_not_of(' ') != std::string::npos)
 					{
-						return FileErrc::FileContainsFormatErrors;
+						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 			}
@@ -121,9 +121,9 @@ namespace edfio
 				{
 					signal.m_physicalMin = std::stod(physMin);
 				}
-				catch (std::exception& e)
+				catch (...)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -138,9 +138,9 @@ namespace edfio
 				{
 					signal.m_physicalMax = std::stod(physMax);
 				}
-				catch (std::exception& e)
+				catch (...)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -156,9 +156,9 @@ namespace edfio
 				{
 					n = std::stoi(digMin);
 				}
-				catch (std::exception& e)
+				catch (...)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				if (signal.m_detail.m_isAnnotation)
@@ -167,14 +167,14 @@ namespace edfio
 					{
 						if (n != -32768)
 						{
-							return FileErrc::FileContainsFormatErrors;
+							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 					else if (IsBdf(header.m_version) && IsPlus(header.m_version))
 					{
 						if (n != -8388608)
 						{
-							return FileErrc::FileContainsFormatErrors;
+							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 				}
@@ -182,14 +182,14 @@ namespace edfio
 				{
 					if ((n > 32767) || (n < -32768))
 					{
-						return FileErrc::FileContainsFormatErrors;
+						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				else if (IsBdf(header.m_version))
 				{
 					if ((n > 8388607) || (n < -8388608))
 					{
-						return FileErrc::FileContainsFormatErrors;
+						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				signal.m_digitalMin = n;
@@ -207,9 +207,9 @@ namespace edfio
 				{
 					n = std::stoi(digMax);
 				}
-				catch (std::exception& e)
+				catch (...)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				if (signal.m_detail.m_isAnnotation)
@@ -218,14 +218,14 @@ namespace edfio
 					{
 						if (n != 32767)
 						{
-							return FileErrc::FileContainsFormatErrors;
+							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 					else if (IsBdf(header.m_version) && IsPlus(header.m_version))
 					{
 						if (n != 8388607)
 						{
-							return FileErrc::FileContainsFormatErrors;
+							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 				}
@@ -233,20 +233,20 @@ namespace edfio
 				{
 					if ((n > 32767) || (n < -32768))
 					{
-						return FileErrc::FileContainsFormatErrors;
+						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				else if (IsBdf(header.m_version))
 				{
 					if ((n > 8388607) || (n < -8388608))
 					{
-						return FileErrc::FileContainsFormatErrors;
+						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				signal.m_digitalMax = n;
 				if (signal.m_digitalMax < (signal.m_digitalMin + 1))
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -263,7 +263,7 @@ namespace edfio
 				{
 					if (prefilter.find_first_not_of(' ') != std::string::npos)
 					{
-						return FileErrc::FileContainsFormatErrors;
+						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 			}
@@ -282,14 +282,14 @@ namespace edfio
 				{
 					n = std::stoi(nrSamples);
 				}
-				catch (std::exception& e)
+				catch (...)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				if (n < 1)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 				signal.m_samplesInDataRecord = n;
 				signal.m_detail.m_samplesInFile = n * header.m_datarecordsFile;
@@ -301,7 +301,7 @@ namespace edfio
 				recordsize *= 3;
 				if (recordsize > 0xF00000)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 			else
@@ -309,7 +309,7 @@ namespace edfio
 				recordsize *= 2;
 				if (recordsize > 0xA00000)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 			header.m_detail.m_recordSize = recordsize;
@@ -351,7 +351,7 @@ namespace edfio
 			signal.m_reserved = ReduceString(signal.m_reserved);
 		}
 
-		return FileErrc::NoError;
+		return std::move(signals);
 	}
 
 }

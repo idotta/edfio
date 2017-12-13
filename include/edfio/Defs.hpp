@@ -50,11 +50,32 @@ namespace edfio
 
 	enum class FileErrc 
 	{
-		NoError,
 		FileDoesNotOpen,
+		FileNotOpened,
 		FileReadError,
 		FileContainsFormatErrors
 	};
+
+	static const char* GetError(FileErrc err)
+	{
+		if (err == FileErrc::FileDoesNotOpen) 
+		{
+			return "Error: file does not open";
+		}
+		else if (err == FileErrc::FileNotOpened)
+		{
+			return "Error: file not opened";
+		}
+		else if (err == FileErrc::FileReadError)
+		{
+			return "Error: can't read file";
+		}
+		else if (err == FileErrc::FileContainsFormatErrors)
+		{
+			return "Error: file contains format errors";
+		}
+		return "Unspecified error";
+	}
 
 	enum class SeekType 
 	{

@@ -69,7 +69,7 @@ namespace edfio
 		using TypeIn = In;
 		using TypeOu = Ou;
 
-		virtual FileErrc operator ()(const TypeIn &in, TypeOu &ou) = 0;
+		virtual TypeOu operator ()(TypeIn in) = 0;
 	};
 
 }

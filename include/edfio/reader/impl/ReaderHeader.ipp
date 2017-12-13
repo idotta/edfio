@@ -14,14 +14,17 @@
 #include "../../header/HeaderSignal.hpp"
 
 #include <vector>
+#include <stdexcept>
 
 namespace edfio
 {
 
-	FileErrc ReaderHeaderGeneral::operator ()(HeaderGeneralFields &hdr)
+	HeaderGeneralFields ReaderHeaderGeneral::operator ()()
 	{
+		HeaderGeneralFields hdr;
 		if (!m_stream || !m_stream.is_open())
-			return FileErrc::FileDoesNotOpen;
+			throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
+		
 		m_stream.clear();
 		m_stream.seekg(0, std::ios::beg);
 
@@ -40,15 +43,17 @@ namespace edfio
 		}
 		catch (std::exception e)
 		{
-			return FileErrc::FileReadError;
+			throw std::invalid_argument(GetError(FileErrc::FileReadError));
 		}
-		return FileErrc::NoError;
+		return std::move(hdr);
 	}
 
-	FileErrc ReaderHeaderSignal::operator ()(std::vector<HeaderSignalFields> &signals)
+	std::vector<HeaderSignalFields> ReaderHeaderSignal::operator ()(size_t totalSignals)
 	{
+		std::vector<HeaderSignalFields> signals(totalSignals);
 		if (!m_stream || !m_stream.is_open())
-			return FileErrc::FileDoesNotOpen;
+			throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
+
 		m_stream.clear();
 		m_stream.seekg(256, std::ios::beg);
 
@@ -77,9 +82,9 @@ namespace edfio
 		}
 		catch (std::exception e)
 		{
-			return FileErrc::FileReadError;
+			throw std::invalid_argument(GetError(FileErrc::FileReadError));
 		}
-		return edfio::FileErrc::NoError;
+		return std::move(signals);
 	}
 
 }

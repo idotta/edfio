@@ -11,14 +11,18 @@
 
 #include "ProcessorBase.hpp"
 #include "../Defs.hpp"
-#include "../header/HeaderExam.hpp"
+#include "../header/HeaderGeneral.hpp"
+#include "../header/HeaderSignal.hpp"
 
 namespace edfio
 {
 
-	struct ProcessorHeaderSignal : ProcessorBase<std::vector<HeaderSignalFields>, HeaderExam>
+	struct ProcessorHeaderSignal : ProcessorBase<std::vector<HeaderSignalFields>, std::vector<HeaderSignal>>
 	{
-		FileErrc operator ()(const TypeIn &in, TypeOu &ou);
+		ProcessorHeaderSignal(HeaderGeneral &general) : m_general(general) {}
+		TypeOu operator ()(TypeIn in);
+	private:
+		HeaderGeneral &m_general;
 	};
 
 }

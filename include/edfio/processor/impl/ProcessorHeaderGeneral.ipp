@@ -19,8 +19,10 @@
 namespace edfio
 {
 
-	FileErrc ProcessorHeaderGeneral::operator()(const TypeIn &in, TypeOu &ou)
+	ProcessorHeaderGeneral::TypeOu ProcessorHeaderGeneral::operator()(TypeIn in)
 	{
+		TypeOu ou;
+
 		if (CheckFormatErrors(in.m_version())
 			|| CheckFormatErrors(in.m_patient())
 			|| CheckFormatErrors(in.m_recording())
@@ -32,7 +34,7 @@ namespace edfio
 			|| CheckFormatErrors(in.m_datarecordDuration())
 			|| CheckFormatErrors(in.m_totalSignals()))
 		{
-			return FileErrc::FileContainsFormatErrors;
+			throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 		}
 
 
@@ -43,7 +45,7 @@ namespace edfio
 			{
 				if (version.substr(1) != "BIOSEMI")
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 				ou.m_version = DataFormat::Bdf;
 			}
@@ -51,7 +53,7 @@ namespace edfio
 			{
 				if (version != "0       ")
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 				ou.m_version = DataFormat::Edf;
 			}
@@ -75,7 +77,7 @@ namespace edfio
 				|| !std::isdigit(startdate[6])
 				|| !std::isdigit(startdate[7]))
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			try
 			{
@@ -85,15 +87,15 @@ namespace edfio
 
 				if (day < 1 || day > 31 || month < 1 || month > 12)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 				year += year > 84 ? 1900 : 2000;
 
 				ou.m_startDate = std::make_tuple(day, month, year);
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Start Time
@@ -107,7 +109,7 @@ namespace edfio
 				|| !std::isdigit(starttime[6])
 				|| !std::isdigit(starttime[7]))
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			try
 			{
@@ -117,13 +119,13 @@ namespace edfio
 
 				if (hour > 23 || minute > 59 || second > 59)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 				ou.m_startTime = std::make_tuple(hour, minute, second);
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Header Size
@@ -132,9 +134,9 @@ namespace edfio
 			{
 				ou.m_headerSize = std::stoi(in.m_headerSize());
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Reserved
@@ -169,13 +171,13 @@ namespace edfio
 			{
 				ou.m_datarecordsFile = std::stoll(in.m_datarecordsFile());
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (ou.m_datarecordsFile < 1)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Datarecord Duration
@@ -187,13 +189,13 @@ namespace edfio
 				ou.m_datarecordDuration = static_cast<long long>(std::fabs(duration) * static_cast<double>(TIME_DIMENSION));
 				ou.m_detail.m_datarecordDuration = duration;
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (duration < -0.000001)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			ou.m_detail.m_fileDuration = ou.m_datarecordDuration * ou.m_datarecordsFile;
 		}
@@ -204,14 +206,14 @@ namespace edfio
 			{
 				signals = std::stoi(in.m_totalSignals());
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (signals < 1 || signals > MAX_SIGNALS
 				|| (signals * 256 + 256) != ou.m_headerSize)
 			{
-				return FileErrc::FileContainsFormatErrors;
+				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 			}
 			ou.m_totalSignals = signals;
 		}
@@ -229,7 +231,7 @@ namespace edfio
 				}
 				if (fields.size() < 4)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				ou.m_detail.m_patientAdditional.clear();
@@ -250,7 +252,7 @@ namespace edfio
 						}
 						else
 						{
-							return FileErrc::FileContainsFormatErrors;
+							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 						}
 						break;
 					case 2: // Birthdate in dd-MMM-yyyy format using the English 3-character abbreviations of the month in capitals. 02-AUG-1951 is OK, while 2-AUG-1951 is not.
@@ -281,7 +283,7 @@ namespace edfio
 
 				if (fields.size() < 5)
 				{
-					return FileErrc::FileContainsFormatErrors;
+					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				ou.m_detail.m_recordingAdditional.clear();
@@ -297,7 +299,7 @@ namespace edfio
 						case 0: // The text 'Startdate'.
 							if (str != "Startdate")
 							{
-								return FileErrc::FileContainsFormatErrors;
+								throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 							}
 							break;
 						case 1: // The startdate itself in dd-MMM-yyyy format using the English 3-character abbreviations of the month in capitals: dd-MMM-yyyy (MMM = 'JAN' | 'FEV' | ...)
@@ -314,14 +316,14 @@ namespace edfio
 									}
 									ou.m_startDate = std::make_tuple(day, month, year);
 								}
-								catch (std::exception& e)
+								catch (...)
 								{
-									return FileErrc::FileContainsFormatErrors;
+									throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 								}
 							}
 							else
 							{
-								return FileErrc::FileContainsFormatErrors;
+								throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
 							}
 							break;
 						case 2: // The hospital administration code of the investigation, i.e. EEG number or PSG number.
@@ -359,7 +361,7 @@ namespace edfio
 		ou.m_detail.m_equipment = ReduceString(ou.m_detail.m_equipment);
 		ou.m_detail.m_recordingAdditional = ReduceString(ou.m_detail.m_recordingAdditional);
 
-		return FileErrc::NoError;
+		return std::move(ou);
 	}
 
 }

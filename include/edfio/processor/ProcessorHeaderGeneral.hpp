@@ -18,7 +18,7 @@ namespace edfio
 
 	struct ProcessorHeaderGeneral : ProcessorBase<HeaderGeneralFields, HeaderGeneral>
 	{
-		FileErrc operator ()(const TypeIn &in, TypeOu &ou);
+		TypeOu operator ()(TypeIn in);
 	};
 
 }

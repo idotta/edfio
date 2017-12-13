@@ -22,13 +22,13 @@ namespace edfio
 	struct ReaderHeaderGeneral : Streamer<std::ifstream>
 	{
 		using Streamer::Streamer;
-		FileErrc operator ()(HeaderGeneralFields &hdr);
+		HeaderGeneralFields operator ()();
 	};
 
 	struct ReaderHeaderSignal : Streamer<std::ifstream>
 	{
 		using Streamer::Streamer;
-		FileErrc operator ()(std::vector<HeaderSignalFields> &signals);
+		std::vector<HeaderSignalFields> operator ()(size_t totalSignals);
 	};
 
 }
