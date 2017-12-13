@@ -10,8 +10,6 @@
 #pragma once
 
 #include "../../Defs.hpp"
-#include "../../header/HeaderExam.hpp"
-#include "../../header/HeaderSignal.hpp"
 
 #include <vector>
 #include <sstream>
@@ -21,10 +19,10 @@
 namespace edfio
 {
 
-	FileErrc ProcessorHeaderSignal::operator()(const std::vector<HeaderSignalFields> & in, std::pair<HeaderExam, std::vector<HeaderSignal>>& ou)
+	FileErrc ProcessorHeaderSignal::operator()(const TypeIn &in, TypeOu &ou)
 	{
-		auto& header = ou.first;
-		auto& signals = ou.second;
+		auto& header = ou.m_general;
+		auto& signals = ou.m_signals;
 
 		signals.resize(in.size());
 

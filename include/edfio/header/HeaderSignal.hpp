@@ -11,6 +11,8 @@
 
 #include "../core/Field.hpp"
 
+#include <string>
+
 namespace edfio
 {
 

@@ -66,7 +66,10 @@ namespace edfio
 	template <class In, class Ou>
 	struct ProcessorBase
 	{
-		virtual FileErrc operator ()(const In &in, Ou &ou) = 0;
+		using TypeIn = In;
+		using TypeOu = Ou;
+
+		virtual FileErrc operator ()(const TypeIn &in, TypeOu &ou) = 0;
 	};
 
 }

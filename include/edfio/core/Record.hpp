@@ -9,20 +9,17 @@
 
 #pragma once
 
-//#include "File.hpp"
-//
-//#include <fstream>
-//#include <vector>
-//
-//namespace edfio
-//{
-//
-//	class Writer : public File<std::ofstream>
-//	{
-//	public:
-//
-//		FileErrc Open(const std::string &path) override;
-//		FileErrc Close() override;
-//	};
-//
-//}
+#include "../header/HeaderSignal.hpp"
+
+namespace edfio
+{
+
+	struct Record
+	{
+		HeaderSignal &m_signal;
+		long long m_curSample = 0;
+
+		Record(HeaderSignal &signal) : m_signal(signal) {}
+	};
+
+}

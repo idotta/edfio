@@ -13,12 +13,19 @@
 #include "../Defs.hpp"
 #include "../header/HeaderExam.hpp"
 
+#include <fstream>
+
 namespace edfio
 {
 
-	struct ProcessorHeaderExam : ProcessorBase<HeaderExamFields, HeaderExam>
+	struct ProcessorHeaderExam: ProcessorBase<HeaderExam, HeaderExam>
 	{
-		FileErrc operator ()(const HeaderExamFields &in, HeaderExam &ou);
+		ProcessorHeaderExam(std::ifstream &is) : m_is(is) {}
+
+		FileErrc operator ()(const TypeIn &in, TypeOu &ou);
+
+	private:
+		std::ifstream &m_is;
 	};
 
 }

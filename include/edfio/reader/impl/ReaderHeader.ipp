@@ -10,7 +10,7 @@
 #pragma once
 
 #include "../../Defs.hpp"
-#include "../../header/HeaderExam.hpp"
+#include "../../header/HeaderGeneral.hpp"
 #include "../../header/HeaderSignal.hpp"
 
 #include <vector>
@@ -18,25 +18,25 @@
 namespace edfio
 {
 
-	FileErrc ReaderHeaderExam::operator ()(HeaderExamFields &hdr)
+	FileErrc ReaderHeaderGeneral::operator ()(HeaderGeneralFields &hdr)
 	{
-		if (!m_is || !m_is.is_open())
+		if (!m_stream || !m_stream.is_open())
 			return FileErrc::FileDoesNotOpen;
-		m_is.clear();
-		m_is.seekg(0, std::ios::beg);
+		m_stream.clear();
+		m_stream.seekg(0, std::ios::beg);
 
 		try
 		{
-			m_is >> hdr.m_version;
-			m_is >> hdr.m_patient;
-			m_is >> hdr.m_recording;
-			m_is >> hdr.m_startDate;
-			m_is >> hdr.m_startTime;
-			m_is >> hdr.m_headerSize;
-			m_is >> hdr.m_reserved;
-			m_is >> hdr.m_datarecordsFile;
-			m_is >> hdr.m_datarecordDuration;
-			m_is >> hdr.m_totalSignals;
+			m_stream >> hdr.m_version;
+			m_stream >> hdr.m_patient;
+			m_stream >> hdr.m_recording;
+			m_stream >> hdr.m_startDate;
+			m_stream >> hdr.m_startTime;
+			m_stream >> hdr.m_headerSize;
+			m_stream >> hdr.m_reserved;
+			m_stream >> hdr.m_datarecordsFile;
+			m_stream >> hdr.m_datarecordDuration;
+			m_stream >> hdr.m_totalSignals;
 		}
 		catch (std::exception e)
 		{
@@ -47,33 +47,33 @@ namespace edfio
 
 	FileErrc ReaderHeaderSignal::operator ()(std::vector<HeaderSignalFields> &signals)
 	{
-		if (!m_is || !m_is.is_open())
+		if (!m_stream || !m_stream.is_open())
 			return FileErrc::FileDoesNotOpen;
-		m_is.clear();
-		m_is.seekg(256, std::ios::beg);
+		m_stream.clear();
+		m_stream.seekg(256, std::ios::beg);
 
 		try
 		{
 			for (auto &s : signals)
-				m_is >> s.m_label;
+				m_stream >> s.m_label;
 			for (auto &s : signals)
-				m_is >> s.m_transducer;
+				m_stream >> s.m_transducer;
 			for (auto &s : signals)
-				m_is >> s.m_physDimension;
+				m_stream >> s.m_physDimension;
 			for (auto &s : signals)
-				m_is >> s.m_physicalMin;
+				m_stream >> s.m_physicalMin;
 			for (auto &s : signals)
-				m_is >> s.m_physicalMax;
+				m_stream >> s.m_physicalMax;
 			for (auto &s : signals)
-				m_is >> s.m_digitalMin;
+				m_stream >> s.m_digitalMin;
 			for (auto &s : signals)
-				m_is >> s.m_digitalMax;
+				m_stream >> s.m_digitalMax;
 			for (auto &s : signals)
-				m_is >> s.m_prefilter;
+				m_stream >> s.m_prefilter;
 			for (auto &s : signals)
-				m_is >> s.m_samplesInDataRecord;
+				m_stream >> s.m_samplesInDataRecord;
 			for (auto &s : signals)
-				m_is >> s.m_reserved;
+				m_stream >> s.m_reserved;
 		}
 		catch (std::exception e)
 		{

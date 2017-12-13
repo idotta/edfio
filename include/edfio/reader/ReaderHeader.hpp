@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "ReaderBase.hpp"
 #include "../Defs.hpp"
-#include "../header/HeaderExam.hpp"
+#include "../core/Streamer.hpp"
+#include "../header/HeaderGeneral.hpp"
 #include "../header/HeaderSignal.hpp"
 
 #include <vector>
@@ -19,15 +19,15 @@
 namespace edfio
 {
 
-	struct ReaderHeaderExam : ReaderBase
+	struct ReaderHeaderGeneral : Streamer<std::ifstream>
 	{
-		using ReaderBase::ReaderBase;
-		FileErrc operator ()(HeaderExamFields &hdr);
+		using Streamer::Streamer;
+		FileErrc operator ()(HeaderGeneralFields &hdr);
 	};
 
-	struct ReaderHeaderSignal : ReaderBase
+	struct ReaderHeaderSignal : Streamer<std::ifstream>
 	{
-		using ReaderBase::ReaderBase;
+		using Streamer::Streamer;
 		FileErrc operator ()(std::vector<HeaderSignalFields> &signals);
 	};
 

@@ -9,17 +9,16 @@
 
 #pragma once
 
-#include "../Defs.hpp"
-
 #include <fstream>
 
 namespace edfio
 {
 
-	struct ReaderBase
+	template <class Stream>
+	struct Streamer
 	{
-		std::ifstream &m_is;
-		ReaderBase(std::ifstream &is) : m_is(is) {}
+		Stream &m_stream;
+		Streamer(Stream &s) : m_stream(s) {}
 	};
 
 }

@@ -12,14 +12,13 @@
 #include "ProcessorBase.hpp"
 #include "../Defs.hpp"
 #include "../header/HeaderExam.hpp"
-#include "../header/HeaderSignal.hpp"
 
 namespace edfio
 {
 
-	struct ProcessorHeaderSignal : ProcessorBase<std::vector<HeaderSignalFields>, std::pair<HeaderExam, std::vector<HeaderSignal>>>
+	struct ProcessorHeaderSignal : ProcessorBase<std::vector<HeaderSignalFields>, HeaderExam>
 	{
-		FileErrc operator ()(const std::vector<HeaderSignalFields> &in, std::pair<HeaderExam, std::vector<HeaderSignal>> &ou);
+		FileErrc operator ()(const TypeIn &in, TypeOu &ou);
 	};
 
 }

@@ -9,18 +9,18 @@
 
 #pragma once
 
+#include "ProcessorBase.hpp"
 #include "../Defs.hpp"
-
-#include <iostream>
+#include "../header/HeaderGeneral.hpp"
 
 namespace edfio
 {
 
-	// Pass Reader/Writer op as template parameter
-	template <class RW>
-	struct HeaderBase
+	struct ProcessorHeaderGeneral : ProcessorBase<HeaderGeneralFields, HeaderGeneral>
 	{
-		virtual FileErrc operator() (const RW &rw) = 0;
+		FileErrc operator ()(const TypeIn &in, TypeOu &ou);
 	};
 
 }
+
+#include "impl/ProcessorHeaderGeneral.ipp"
