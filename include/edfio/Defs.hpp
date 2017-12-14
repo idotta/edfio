@@ -42,11 +42,14 @@ namespace edfio
 		return format == DataFormat::Bdf || format == DataFormat::BdfPlusC || format == DataFormat::BdfPlusD;
 	}
 
-	enum SampleSize
+	int GetSampleSize(DataFormat format)
 	{
-		EdfSize = 2, // 16 bits
-		BdfSize = 3	 // 24 bits
-	};
+		if (IsEdf(format))
+			return 2;
+		else if (IsBdf(format))
+			return 3;
+		return -1;
+	}
 
 	enum class FileErrc 
 	{

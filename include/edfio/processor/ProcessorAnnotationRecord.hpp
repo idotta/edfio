@@ -9,17 +9,10 @@
 
 #pragma once
 
+#include "../Defs.hpp"
 #include "ProcessorBase.hpp"
-#include "../header/HeaderGeneral.hpp"
+#include "../core/Record.hpp"
 
 namespace edfio
 {
-
-	struct ProcessorHeaderGeneral : ProcessorBase<HeaderGeneralFields, HeaderGeneral>
-	{
-		TypeOu operator ()(TypeIn in);
-	};
-
 }
-
-#include "impl/ProcessorHeaderGeneral.ipp"

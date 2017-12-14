@@ -22,6 +22,7 @@ namespace edfio
 			// get length of file:
 			m_is.seekg(0, m_is.end);
 			long long length = m_is.tellg();
+			// send back to beginning of file
 			m_is.seekg(0, m_is.beg);
 
 			if (length != (in.m_general.m_detail.m_recordSize * in.m_general.m_datarecordsFile + in.m_general.m_headerSize))

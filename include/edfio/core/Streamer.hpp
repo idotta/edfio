@@ -14,11 +14,19 @@
 namespace edfio
 {
 
-	template <class Stream>
+	template <class Stream, class Result>
 	struct Streamer
 	{
-		Stream &m_stream;
-		Streamer(Stream &s) : m_stream(s) {}
+		using StreamT = Stream;
+		using ResultT = Result;
+
+		virtual ResultT operator ()(StreamT &stream) = 0;
 	};
+
+	template <class Result>
+	using Reader = Streamer<std::ifstream, Result>;
+
+	template <class Result>
+	using Writer = Streamer<std::ofstream, Result>;
 
 }

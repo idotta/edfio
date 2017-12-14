@@ -10,30 +10,23 @@
 #pragma once
 
 #include "../Defs.hpp"
-#include "../header/HeaderGeneral.hpp"
-#include "../header/HeaderSignal.hpp"
 #include "../core/Streamer.hpp"
+#include "../core/Record.hpp"
 
 #include <vector>
-#include <fstream>
 
 namespace edfio
 {
 
-	struct ReaderHeaderGeneral : Reader<HeaderGeneralFields>
+	struct ReaderRecord : Reader<RecordField>
 	{
-		ResultT operator ()(StreamT &stream);
-	};
-
-	struct ReaderHeaderSignal : Reader<std::vector<HeaderSignalFields>>
-	{
-		ReaderHeaderSignal(size_t totalSignals) : m_totalSignals(totalSignals) {}
+		ReaderRecord(size_t recordSize) : m_recordSize(recordSize) {}
 
 		ResultT operator ()(StreamT &stream);
 	private:
-		size_t m_totalSignals = 0;
+		size_t m_recordSize = 0;
 	};
 
 }
 
-#include "impl/ReaderHeader.ipp"
+#include "impl/ReaderRecord.ipp"

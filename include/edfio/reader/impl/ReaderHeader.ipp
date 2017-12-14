@@ -15,31 +15,32 @@
 
 #include <vector>
 #include <stdexcept>
+#include <fstream>
 
 namespace edfio
 {
 
-	HeaderGeneralFields ReaderHeaderGeneral::operator ()()
+	ReaderHeaderGeneral::ResultT ReaderHeaderGeneral::operator ()(StreamT &stream)
 	{
-		HeaderGeneralFields hdr;
-		if (!m_stream || !m_stream.is_open())
+		ResultT hdr;
+		if (!stream || !stream.is_open())
 			throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
 		
-		m_stream.clear();
-		m_stream.seekg(0, std::ios::beg);
+		stream.clear();
+		stream.seekg(0, std::ios::beg);
 
 		try
 		{
-			m_stream >> hdr.m_version;
-			m_stream >> hdr.m_patient;
-			m_stream >> hdr.m_recording;
-			m_stream >> hdr.m_startDate;
-			m_stream >> hdr.m_startTime;
-			m_stream >> hdr.m_headerSize;
-			m_stream >> hdr.m_reserved;
-			m_stream >> hdr.m_datarecordsFile;
-			m_stream >> hdr.m_datarecordDuration;
-			m_stream >> hdr.m_totalSignals;
+			stream >> hdr.m_version;
+			stream >> hdr.m_patient;
+			stream >> hdr.m_recording;
+			stream >> hdr.m_startDate;
+			stream >> hdr.m_startTime;
+			stream >> hdr.m_headerSize;
+			stream >> hdr.m_reserved;
+			stream >> hdr.m_datarecordsFile;
+			stream >> hdr.m_datarecordDuration;
+			stream >> hdr.m_totalSignals;
 		}
 		catch (std::exception e)
 		{
@@ -48,37 +49,37 @@ namespace edfio
 		return std::move(hdr);
 	}
 
-	std::vector<HeaderSignalFields> ReaderHeaderSignal::operator ()(size_t totalSignals)
+	ReaderHeaderSignal::ResultT ReaderHeaderSignal::operator ()(StreamT &stream)
 	{
-		std::vector<HeaderSignalFields> signals(totalSignals);
-		if (!m_stream || !m_stream.is_open())
+		ResultT signals(m_totalSignals);
+		if (!stream || !stream.is_open())
 			throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
 
-		m_stream.clear();
-		m_stream.seekg(256, std::ios::beg);
+		stream.clear();
+		stream.seekg(256, std::ios::beg);
 
 		try
 		{
 			for (auto &s : signals)
-				m_stream >> s.m_label;
+				stream >> s.m_label;
 			for (auto &s : signals)
-				m_stream >> s.m_transducer;
+				stream >> s.m_transducer;
 			for (auto &s : signals)
-				m_stream >> s.m_physDimension;
+				stream >> s.m_physDimension;
 			for (auto &s : signals)
-				m_stream >> s.m_physicalMin;
+				stream >> s.m_physicalMin;
 			for (auto &s : signals)
-				m_stream >> s.m_physicalMax;
+				stream >> s.m_physicalMax;
 			for (auto &s : signals)
-				m_stream >> s.m_digitalMin;
+				stream >> s.m_digitalMin;
 			for (auto &s : signals)
-				m_stream >> s.m_digitalMax;
+				stream >> s.m_digitalMax;
 			for (auto &s : signals)
-				m_stream >> s.m_prefilter;
+				stream >> s.m_prefilter;
 			for (auto &s : signals)
-				m_stream >> s.m_samplesInDataRecord;
+				stream >> s.m_samplesInDataRecord;
 			for (auto &s : signals)
-				m_stream >> s.m_reserved;
+				stream >> s.m_reserved;
 		}
 		catch (std::exception e)
 		{

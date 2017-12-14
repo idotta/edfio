@@ -9,17 +9,16 @@
 
 #pragma once
 
-#include "ProcessorBase.hpp"
-#include "../header/HeaderGeneral.hpp"
+//#include "../ProcessorSignalRecord.hpp"
 
 namespace edfio
 {
 
-	struct ProcessorHeaderGeneral : ProcessorBase<HeaderGeneralFields, HeaderGeneral>
+	template<SampleType SampleT>
+	ProcessorSignalRecord<SampleT>::TypeOu ProcessorSignalRecord<SampleT>::operator()(TypeIn in)
 	{
-		TypeOu operator ()(TypeIn in);
-	};
+		return TypeOu();
+	}
 
 }
 
-#include "impl/ProcessorHeaderGeneral.ipp"
