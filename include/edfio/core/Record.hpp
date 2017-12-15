@@ -14,6 +14,7 @@
 
 namespace edfio
 {
+
 	// This structure can be used for either single signal record or data record IO
 	// It is important that a data record always has constant size
 	struct RecordField

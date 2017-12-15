@@ -27,7 +27,7 @@ namespace edfio
 
 			if (length != (in.m_general.m_detail.m_recordSize * in.m_general.m_datarecordsFile + in.m_general.m_headerSize))
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		return std::move(ou);

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ProcessorBase.hpp"
+#include "../core/DataFormat.hpp"
 #include "../core/Record.hpp"
 #include "../header/HeaderSignal.hpp"
 
@@ -20,9 +21,9 @@ namespace edfio
 
 	struct ProcessorDataRecord : ProcessorBase<RecordField, std::vector<RecordField>>
 	{
-		ProcessorDataRecord(const std::vector<HeaderSignal> &signals, int sampleSize)
+		ProcessorDataRecord(const std::vector<HeaderSignal> &signals, DataFormat format)
 			: m_signals(signals)
-			, m_sampleSize(sampleSize) {}
+			, m_sampleSize(edfio::GetSampleBytes(format)) {}
 
 		TypeOu operator ()(TypeIn in);
 

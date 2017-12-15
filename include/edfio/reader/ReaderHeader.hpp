@@ -9,13 +9,11 @@
 
 #pragma once
 
-#include "../Defs.hpp"
 #include "../header/HeaderGeneral.hpp"
 #include "../header/HeaderSignal.hpp"
 #include "../core/Streamer.hpp"
 
 #include <vector>
-#include <fstream>
 
 namespace edfio
 {

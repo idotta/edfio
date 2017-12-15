@@ -21,7 +21,7 @@ namespace edfio
 		ResultT rf(m_recordSize);
 
 		if (!stream || !stream.is_open())
-			throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
+			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 
 		try
 		{
@@ -29,7 +29,7 @@ namespace edfio
 		}
 		catch (std::exception e)
 		{
-			throw std::invalid_argument(GetError(FileErrc::FileReadError));
+			throw std::invalid_argument(detail::GetError(FileErrc::FileReadError));
 		}
 		return std::move(rf);
 	}

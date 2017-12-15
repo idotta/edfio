@@ -10,11 +10,10 @@
 #pragma once
 
 #include "../../Defs.hpp"
+#include "../../core/DataFormat.hpp"
+#include "../detail/ProcessorUtils.hpp"
 
-#include <vector>
 #include <sstream>
-#include <cctype>
-#include <algorithm>
 
 namespace edfio
 {
@@ -23,18 +22,18 @@ namespace edfio
 	{
 		TypeOu ou;
 
-		if (CheckFormatErrors(in.m_version())
-			|| CheckFormatErrors(in.m_patient())
-			|| CheckFormatErrors(in.m_recording())
-			|| CheckFormatErrors(in.m_startDate())
-			|| CheckFormatErrors(in.m_startTime())
-			|| CheckFormatErrors(in.m_headerSize())
-			|| CheckFormatErrors(in.m_reserved())
-			|| CheckFormatErrors(in.m_datarecordsFile())
-			|| CheckFormatErrors(in.m_datarecordDuration())
-			|| CheckFormatErrors(in.m_totalSignals()))
+		if (detail::CheckFormatErrors(in.m_version())
+			|| detail::CheckFormatErrors(in.m_patient())
+			|| detail::CheckFormatErrors(in.m_recording())
+			|| detail::CheckFormatErrors(in.m_startDate())
+			|| detail::CheckFormatErrors(in.m_startTime())
+			|| detail::CheckFormatErrors(in.m_headerSize())
+			|| detail::CheckFormatErrors(in.m_reserved())
+			|| detail::CheckFormatErrors(in.m_datarecordsFile())
+			|| detail::CheckFormatErrors(in.m_datarecordDuration())
+			|| detail::CheckFormatErrors(in.m_totalSignals()))
 		{
-			throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+			throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 		}
 
 
@@ -45,7 +44,7 @@ namespace edfio
 			{
 				if (version.substr(1) != "BIOSEMI")
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 				ou.m_version = DataFormat::Bdf;
 			}
@@ -53,7 +52,7 @@ namespace edfio
 			{
 				if (version != "0       ")
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 				ou.m_version = DataFormat::Edf;
 			}
@@ -77,7 +76,7 @@ namespace edfio
 				|| !std::isdigit(startdate[6])
 				|| !std::isdigit(startdate[7]))
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			try
 			{
@@ -87,7 +86,7 @@ namespace edfio
 
 				if (day < 1 || day > 31 || month < 1 || month > 12)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 				year += year > 84 ? 1900 : 2000;
 
@@ -95,7 +94,7 @@ namespace edfio
 			}
 			catch (...)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Start Time
@@ -109,7 +108,7 @@ namespace edfio
 				|| !std::isdigit(starttime[6])
 				|| !std::isdigit(starttime[7]))
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			try
 			{
@@ -119,13 +118,13 @@ namespace edfio
 
 				if (hour > 23 || minute > 59 || second > 59)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 				ou.m_startTime = std::make_tuple(hour, minute, second);
 			}
 			catch (...)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Header Size
@@ -136,7 +135,7 @@ namespace edfio
 			}
 			catch (...)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Reserved
@@ -173,11 +172,11 @@ namespace edfio
 			}
 			catch (...)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (ou.m_datarecordsFile < 1)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Datarecord Duration
@@ -191,11 +190,11 @@ namespace edfio
 			}
 			catch (...)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (duration < -0.000001)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			ou.m_detail.m_fileDuration = ou.m_datarecordDuration * ou.m_datarecordsFile;
 		}
@@ -208,12 +207,12 @@ namespace edfio
 			}
 			catch (...)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (signals < 1 || signals > MAX_SIGNALS
 				|| (signals * 256 + 256) != ou.m_headerSize)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			ou.m_totalSignals = signals;
 		}
@@ -231,7 +230,7 @@ namespace edfio
 				}
 				if (fields.size() < 4)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				ou.m_detail.m_patientAdditional.clear();
@@ -252,7 +251,7 @@ namespace edfio
 						}
 						else
 						{
-							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 						}
 						break;
 					case 2: // Birthdate in dd-MMM-yyyy format using the English 3-character abbreviations of the month in capitals. 02-AUG-1951 is OK, while 2-AUG-1951 is not.
@@ -264,7 +263,7 @@ namespace edfio
 					default: // Additional information.
 						if (!ou.m_detail.m_patientAdditional.empty())
 						{
-							ou.m_detail.m_patientAdditional += ADDITIONAL_SEPARATOR;
+							ou.m_detail.m_patientAdditional += detail::ADDITIONAL_SEPARATOR;
 						}
 						ou.m_detail.m_patientAdditional.append(str);
 						break;
@@ -283,7 +282,7 @@ namespace edfio
 
 				if (fields.size() < 5)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				ou.m_detail.m_recordingAdditional.clear();
@@ -299,7 +298,7 @@ namespace edfio
 						case 0: // The text 'Startdate'.
 							if (str != "Startdate")
 							{
-								throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+								throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 							}
 							break;
 						case 1: // The startdate itself in dd-MMM-yyyy format using the English 3-character abbreviations of the month in capitals: dd-MMM-yyyy (MMM = 'JAN' | 'FEV' | ...)
@@ -309,7 +308,7 @@ namespace edfio
 								{
 									int day = std::stoi(str.substr(0, 2));
 									int year = std::stoi(str.substr(7, 4));
-									int month = GetMonthFromString(str.substr(3, 3));
+									int month = detail::GetMonthFromString(str.substr(3, 3));
 									if (month == 0)
 									{
 										throw std::exception("Invalid Month");
@@ -318,12 +317,12 @@ namespace edfio
 								}
 								catch (...)
 								{
-									throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+									throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 								}
 							}
 							else
 							{
-								throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+								throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 							}
 							break;
 						case 2: // The hospital administration code of the investigation, i.e. EEG number or PSG number.
@@ -338,7 +337,7 @@ namespace edfio
 						default: // Additional information.
 							if (!ou.m_detail.m_recordingAdditional.empty())
 							{
-								ou.m_detail.m_recordingAdditional += ADDITIONAL_SEPARATOR;
+								ou.m_detail.m_recordingAdditional += detail::ADDITIONAL_SEPARATOR;
 							}
 							ou.m_detail.m_recordingAdditional.append(str);
 							break;
@@ -348,18 +347,18 @@ namespace edfio
 			}
 		}
 
-		ou.m_patient = ReduceString(ou.m_patient);
-		ou.m_recording = ReduceString(ou.m_recording);
-		ou.m_reserved = ReduceString(ou.m_reserved);
-		ou.m_detail.m_patientCode = ReduceString(ou.m_detail.m_patientCode);
-		ou.m_detail.m_gender = ReduceString(ou.m_detail.m_gender);
-		ou.m_detail.m_birthdate = ReduceString(ou.m_detail.m_birthdate);
-		ou.m_detail.m_patientName = ReduceString(ou.m_detail.m_patientName);
-		ou.m_detail.m_patientAdditional = ReduceString(ou.m_detail.m_patientAdditional);
-		ou.m_detail.m_admincode = ReduceString(ou.m_detail.m_admincode);
-		ou.m_detail.m_technician = ReduceString(ou.m_detail.m_technician);
-		ou.m_detail.m_equipment = ReduceString(ou.m_detail.m_equipment);
-		ou.m_detail.m_recordingAdditional = ReduceString(ou.m_detail.m_recordingAdditional);
+		ou.m_patient = detail::ReduceString(ou.m_patient);
+		ou.m_recording = detail::ReduceString(ou.m_recording);
+		ou.m_reserved = detail::ReduceString(ou.m_reserved);
+		ou.m_detail.m_patientCode = detail::ReduceString(ou.m_detail.m_patientCode);
+		ou.m_detail.m_gender = detail::ReduceString(ou.m_detail.m_gender);
+		ou.m_detail.m_birthdate = detail::ReduceString(ou.m_detail.m_birthdate);
+		ou.m_detail.m_patientName = detail::ReduceString(ou.m_detail.m_patientName);
+		ou.m_detail.m_patientAdditional = detail::ReduceString(ou.m_detail.m_patientAdditional);
+		ou.m_detail.m_admincode = detail::ReduceString(ou.m_detail.m_admincode);
+		ou.m_detail.m_technician = detail::ReduceString(ou.m_detail.m_technician);
+		ou.m_detail.m_equipment = detail::ReduceString(ou.m_detail.m_equipment);
+		ou.m_detail.m_recordingAdditional = detail::ReduceString(ou.m_detail.m_recordingAdditional);
 
 		return std::move(ou);
 	}

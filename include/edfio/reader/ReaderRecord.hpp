@@ -9,11 +9,8 @@
 
 #pragma once
 
-#include "../Defs.hpp"
 #include "../core/Streamer.hpp"
 #include "../core/Record.hpp"
-
-#include <vector>
 
 namespace edfio
 {

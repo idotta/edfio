@@ -11,6 +11,7 @@
 
 #include "../Defs.hpp"
 #include "ProcessorBase.hpp"
+#include "../core/DataFormat.hpp"
 #include "../core/Record.hpp"
 #include "../header/HeaderSignal.hpp"
 
@@ -19,36 +20,42 @@
 
 namespace edfio
 {
+
 	enum class SampleType
 	{
 		Physical,
 		Digital
 	};
 
+	namespace impl
+	{
+
+		template <SampleType SampleT, typename T = int>
+		struct SampleVec
+		{
+			using type = std::vector<T>;
+		};
+
+		template <>
+		struct SampleVec<SampleType::Physical>
+		{
+			using type = std::vector<double>;
+		};
+
+		template <>
+		struct SampleVec<SampleType::Digital>
+		{
+			using type = std::vector<int>;
+		};
+
+	}
+
 	template <SampleType SampleT>
-	struct SampleVec
+	struct ProcessorSignalRecord : ProcessorBase<RecordField, typename impl::SampleVec<SampleT>::type>
 	{
-		typedef void type;
-	};
-
-	template <>
-	struct SampleVec<SampleType::Physical>
-	{
-		typedef std::vector<double> type;
-	};
-
-	template <>
-	struct SampleVec<SampleType::Digital>
-	{
-		typedef std::vector<int> type;
-	};
-
-	template <SampleType SampleT>
-	struct ProcessorSignalRecord : ProcessorBase<RecordField, SampleVec<SampleT>::type>
-	{
-		ProcessorSignalRecord(const HeaderSignal &signal, int sampleSize)
+		ProcessorSignalRecord(const HeaderSignal &signal, DataFormat format)
 			: m_signal(signal)
-			, m_sampleSize(sampleSize) {}
+			, m_sampleSize(edfio::GetSampleBytes(format)) {}
 
 		TypeOu operator ()(TypeIn in);
 

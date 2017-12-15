@@ -24,7 +24,7 @@ namespace edfio
 	{
 		ResultT hdr;
 		if (!stream || !stream.is_open())
-			throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
+			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 		
 		stream.clear();
 		stream.seekg(0, std::ios::beg);
@@ -44,7 +44,7 @@ namespace edfio
 		}
 		catch (std::exception e)
 		{
-			throw std::invalid_argument(GetError(FileErrc::FileReadError));
+			throw std::invalid_argument(detail::GetError(FileErrc::FileReadError));
 		}
 		return std::move(hdr);
 	}
@@ -53,7 +53,7 @@ namespace edfio
 	{
 		ResultT signals(m_totalSignals);
 		if (!stream || !stream.is_open())
-			throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
+			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 
 		stream.clear();
 		stream.seekg(256, std::ios::beg);
@@ -83,7 +83,7 @@ namespace edfio
 		}
 		catch (std::exception e)
 		{
-			throw std::invalid_argument(GetError(FileErrc::FileReadError));
+			throw std::invalid_argument(detail::GetError(FileErrc::FileReadError));
 		}
 		return std::move(signals);
 	}

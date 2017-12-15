@@ -15,43 +15,7 @@ namespace edfio
 	static const double TIME_DIMENSION = 1e7;
 	static const size_t MAX_SIGNALS = 512;
 
-	enum class DataFormat
-	{
-		Edf,
-		EdfPlusC,
-		EdfPlusD,
-		Bdf,
-		BdfPlusC,
-		BdfPlusD,
-		Invalid
-	};
-
-	static const bool IsPlus(DataFormat format)
-	{
-		return format == DataFormat::EdfPlusC || format == DataFormat::EdfPlusD
-			|| format == DataFormat::BdfPlusC || format == DataFormat::BdfPlusD;
-	}
-
-	static const bool IsEdf(DataFormat format)
-	{
-		return format == DataFormat::Edf || format == DataFormat::EdfPlusC || format == DataFormat::EdfPlusD;
-	}
-
-	static const bool IsBdf(DataFormat format)
-	{
-		return format == DataFormat::Bdf || format == DataFormat::BdfPlusC || format == DataFormat::BdfPlusD;
-	}
-
-	int GetSampleSize(DataFormat format)
-	{
-		if (IsEdf(format))
-			return 2;
-		else if (IsBdf(format))
-			return 3;
-		return -1;
-	}
-
-	enum class FileErrc 
+	enum class FileErrc
 	{
 		FileDoesNotOpen,
 		FileNotOpened,
@@ -59,32 +23,29 @@ namespace edfio
 		FileContainsFormatErrors
 	};
 
-	static const char* GetError(FileErrc err)
+	namespace detail
 	{
-		if (err == FileErrc::FileDoesNotOpen) 
+		static const char* GetError(FileErrc err)
 		{
-			return "Error: file does not open";
+			if (err == FileErrc::FileDoesNotOpen)
+			{
+				return "Error: file does not open";
+			}
+			else if (err == FileErrc::FileNotOpened)
+			{
+				return "Error: file not opened";
+			}
+			else if (err == FileErrc::FileReadError)
+			{
+				return "Error: can't read file";
+			}
+			else if (err == FileErrc::FileContainsFormatErrors)
+			{
+				return "Error: file contains format errors";
+			}
+			return "Unspecified error";
 		}
-		else if (err == FileErrc::FileNotOpened)
-		{
-			return "Error: file not opened";
-		}
-		else if (err == FileErrc::FileReadError)
-		{
-			return "Error: can't read file";
-		}
-		else if (err == FileErrc::FileContainsFormatErrors)
-		{
-			return "Error: file contains format errors";
-		}
-		return "Unspecified error";
-	}
 
-	enum class SeekType 
-	{
-		Set,
-		Cur,
-		End
-	};
+	}
 
 }

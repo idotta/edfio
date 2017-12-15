@@ -10,6 +10,7 @@
 #pragma once
 
 #include "../Defs.hpp"
+#include "../core/DataFormat.hpp"
 #include "../core/Field.hpp"
 
 #include <string>

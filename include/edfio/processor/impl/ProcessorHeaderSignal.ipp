@@ -10,11 +10,8 @@
 #pragma once
 
 #include "../../Defs.hpp"
-
-#include <vector>
-#include <sstream>
-#include <cctype>
-#include <algorithm>
+#include "../../core/DataFormat.hpp"
+#include "../detail/ProcessorUtils.hpp"
 
 namespace edfio
 {
@@ -28,18 +25,18 @@ namespace edfio
 
 		for (auto& sigFields : in)
 		{
-			if (CheckFormatErrors(sigFields.m_label())
-				|| CheckFormatErrors(sigFields.m_transducer())
-				|| CheckFormatErrors(sigFields.m_physDimension())
-				|| CheckFormatErrors(sigFields.m_physicalMin())
-				|| CheckFormatErrors(sigFields.m_physicalMax())
-				|| CheckFormatErrors(sigFields.m_digitalMin())
-				|| CheckFormatErrors(sigFields.m_digitalMax())
-				|| CheckFormatErrors(sigFields.m_prefilter())
-				|| CheckFormatErrors(sigFields.m_samplesInDataRecord())
-				|| CheckFormatErrors(sigFields.m_reserved()))
+			if (detail::CheckFormatErrors(sigFields.m_label())
+				|| detail::CheckFormatErrors(sigFields.m_transducer())
+				|| detail::CheckFormatErrors(sigFields.m_physDimension())
+				|| detail::CheckFormatErrors(sigFields.m_physicalMin())
+				|| detail::CheckFormatErrors(sigFields.m_physicalMax())
+				|| detail::CheckFormatErrors(sigFields.m_digitalMin())
+				|| detail::CheckFormatErrors(sigFields.m_digitalMax())
+				|| detail::CheckFormatErrors(sigFields.m_prefilter())
+				|| detail::CheckFormatErrors(sigFields.m_samplesInDataRecord())
+				|| detail::CheckFormatErrors(sigFields.m_reserved()))
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 
 		}
@@ -72,13 +69,13 @@ namespace edfio
 			}
 			if (IsPlus(header.m_version) && totalAnnotationChannels == 0)
 			{
-				throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 			if (signals.size() != totalAnnotationChannels || !IsPlus(header.m_version))
 			{
 				if (header.m_datarecordDuration < 1)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -95,7 +92,7 @@ namespace edfio
 				{
 					if (transducer.find_first_not_of(' ') != std::string::npos)
 					{
-						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 			}
@@ -123,7 +120,7 @@ namespace edfio
 				}
 				catch (...)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -140,7 +137,7 @@ namespace edfio
 				}
 				catch (...)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -158,7 +155,7 @@ namespace edfio
 				}
 				catch (...)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				if (signal.m_detail.m_isAnnotation)
@@ -167,14 +164,14 @@ namespace edfio
 					{
 						if (n != -32768)
 						{
-							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 					else if (IsBdf(header.m_version) && IsPlus(header.m_version))
 					{
 						if (n != -8388608)
 						{
-							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 				}
@@ -182,14 +179,14 @@ namespace edfio
 				{
 					if ((n > 32767) || (n < -32768))
 					{
-						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				else if (IsBdf(header.m_version))
 				{
 					if ((n > 8388607) || (n < -8388608))
 					{
-						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				signal.m_digitalMin = n;
@@ -209,7 +206,7 @@ namespace edfio
 				}
 				catch (...)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				if (signal.m_detail.m_isAnnotation)
@@ -218,14 +215,14 @@ namespace edfio
 					{
 						if (n != 32767)
 						{
-							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 					else if (IsBdf(header.m_version) && IsPlus(header.m_version))
 					{
 						if (n != 8388607)
 						{
-							throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 						}
 					}
 				}
@@ -233,20 +230,20 @@ namespace edfio
 				{
 					if ((n > 32767) || (n < -32768))
 					{
-						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				else if (IsBdf(header.m_version))
 				{
 					if ((n > 8388607) || (n < -8388608))
 					{
-						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 				signal.m_digitalMax = n;
 				if (signal.m_digitalMax < (signal.m_digitalMin + 1))
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 		}
@@ -263,7 +260,7 @@ namespace edfio
 				{
 					if (prefilter.find_first_not_of(' ') != std::string::npos)
 					{
-						throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 					}
 				}
 			}
@@ -284,12 +281,12 @@ namespace edfio
 				}
 				catch (...)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 
 				if (n < 1)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 				signal.m_samplesInDataRecord = n;
 				signal.m_detail.m_samplesInFile = n * header.m_datarecordsFile;
@@ -301,7 +298,7 @@ namespace edfio
 				recordsize *= 3;
 				if (recordsize > 0xF00000)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 			else
@@ -309,7 +306,7 @@ namespace edfio
 				recordsize *= 2;
 				if (recordsize > 0xA00000)
 				{
-					throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 			}
 			header.m_detail.m_recordSize = recordsize;
@@ -344,11 +341,11 @@ namespace edfio
 
 		for (auto &signal : signals)
 		{
-			signal.m_label = ReduceString(signal.m_label);
-			signal.m_transducer = ReduceString(signal.m_transducer);
-			signal.m_physDimension = ReduceString(signal.m_physDimension);
-			signal.m_prefilter = ReduceString(signal.m_prefilter);
-			signal.m_reserved = ReduceString(signal.m_reserved);
+			signal.m_label = detail::ReduceString(signal.m_label);
+			signal.m_transducer = detail::ReduceString(signal.m_transducer);
+			signal.m_physDimension = detail::ReduceString(signal.m_physDimension);
+			signal.m_prefilter = detail::ReduceString(signal.m_prefilter);
+			signal.m_reserved = detail::ReduceString(signal.m_reserved);
 		}
 
 		return std::move(signals);

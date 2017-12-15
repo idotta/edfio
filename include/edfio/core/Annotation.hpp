@@ -10,15 +10,17 @@
 #pragma once
 
 #include <string>
-#include "Field.hpp"
 
 namespace edfio
 {
-	//    Each TAL starts with a time stamp Onset21Duration20
+	namespace detail
+	{
+		//    Each TAL starts with a time stamp Onset21Duration20
 
-	static const char DURATION_DIV = 21;
-	static const char ANNOTATION_DIV = 20;
-	static const char ANNOTATION_END = 0;
+		static const char DURATION_DIV = 21;
+		static const char ANNOTATION_DIV = 20;
+		static const char ANNOTATION_END = 0;
+	}
 
 	struct Annotation
 	{
