@@ -11,18 +11,8 @@
 
 #include "../../header/HeaderSignal.hpp"
 
-#include <bitset>
-
 namespace edfio
 {
-
-	namespace impl
-	{
-		double ConvertToPhysicalValue(const HeaderSignal& signal, long value)
-		{
-			return signal.m_detail.m_bitValue * (signal.m_detail.m_offset + static_cast<double>(value));
-		}
-	}
 
 	template<SampleType SampleT>
 	typename ProcessorSignalRecord<SampleT>::TypeOu ProcessorSignalRecord<SampleT>::operator()(TypeIn in)
@@ -34,23 +24,26 @@ namespace edfio
 
 		for (auto it = signalRecord.begin(); it != signalRecord.end();)
 		{
-			std::bitset<32> value;
+			int digVal = 0;
 			int count = 0;
 			while (count < m_sampleSize)
 			{
-				std::bitset<32> tmp(*it++);
-				value <<= 8;
-				value |= tmp;
+				if (count == 0 && *it < 0)
+					digVal = -1;
+				unsigned char tmp = *it++;
+				digVal <<= 8;
+				digVal |= tmp;
 				count++;
 			}
 
 			if (SampleT == SampleType::Physical)
 			{
-				signalData.emplace_back(impl::ConvertToPhysicalValue(m_signal, value.to_ullong()));
+				double physVal = m_signal.m_detail.m_scaling * static_cast<double>(digVal) + m_signal.m_detail.m_offset;
+				signalData.emplace_back(physVal);
 			}
 			else
 			{
-				signalData.emplace_back(static_cast<int>(value.to_ullong()));
+				signalData.emplace_back(digVal);
 			}
 		}
 

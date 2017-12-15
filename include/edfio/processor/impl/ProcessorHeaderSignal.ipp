@@ -333,8 +333,8 @@ namespace edfio
 				else  if (IsEdf(header.m_version))
 					n += signal.m_samplesInDataRecord * 2;
 
-				signal.m_detail.m_bitValue = (signal.m_physicalMax - signal.m_physicalMin) / (signal.m_digitalMax - signal.m_digitalMin);
-				signal.m_detail.m_offset = signal.m_physicalMax / signal.m_detail.m_bitValue - signal.m_digitalMax;
+				signal.m_detail.m_scaling = (signal.m_physicalMax - signal.m_physicalMin) / (signal.m_digitalMax - signal.m_digitalMin);
+				signal.m_detail.m_offset = signal.m_physicalMin - signal.m_detail.m_scaling * signal.m_digitalMin;
 			}
 		}
 
