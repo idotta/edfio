@@ -57,7 +57,7 @@ namespace edfio
 			: m_signal(signal)
 			, m_sampleSize(edfio::GetSampleBytes(format)) {}
 
-		TypeOu operator ()(TypeIn in);
+		TypeO operator ()(TypeI in);
 
 	private:
 		const HeaderSignal &m_signal;

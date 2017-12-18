@@ -15,10 +15,10 @@ namespace edfio
 	template <class In, class Ou>
 	struct ProcessorBase
 	{
-		using TypeIn = In;
-		using TypeOu = Ou;
+		using TypeI = In;
+		using TypeO = Ou;
 
-		virtual TypeOu operator ()(TypeIn in) = 0;
+		virtual TypeO operator ()(TypeI in) = 0;
 	};
 
 }

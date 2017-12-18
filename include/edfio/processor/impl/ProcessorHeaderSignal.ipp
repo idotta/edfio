@@ -16,9 +16,9 @@
 namespace edfio
 {
 
-	ProcessorHeaderSignal::TypeOu ProcessorHeaderSignal::operator()(TypeIn in)
+	ProcessorHeaderSignal::TypeO ProcessorHeaderSignal::operator()(TypeI in)
 	{
-		TypeOu signals;
+		TypeO signals;
 		auto& header = m_general;
 
 		signals.resize(in.size());

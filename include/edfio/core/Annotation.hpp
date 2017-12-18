@@ -13,19 +13,11 @@
 
 namespace edfio
 {
-	namespace detail
-	{
-		//    Each TAL starts with a time stamp Onset21Duration20
-
-		static const char DURATION_DIV = 21;
-		static const char ANNOTATION_DIV = 20;
-		static const char ANNOTATION_END = 0;
-	}
 
 	struct Annotation
 	{
-		long long m_start; // expressed in units of 100 nanoSeconds
-		long long m_duration; // expressed in units of 100 nanoSeconds
+		long long m_start = 0; // expressed in units of 100 nanoSeconds
+		long long m_duration = 0; // expressed in units of 100 nanoSeconds
 		std::string m_annotation;
 	};
 

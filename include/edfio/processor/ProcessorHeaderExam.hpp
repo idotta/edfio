@@ -22,7 +22,7 @@ namespace edfio
 	{
 		ProcessorHeaderExam(std::ifstream &is) : m_is(is) {}
 
-		TypeOu operator ()(TypeIn in);
+		TypeO operator ()(TypeI in);
 
 	private:
 		std::ifstream &m_is;

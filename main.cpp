@@ -8,51 +8,75 @@
 //
 
 #include <edfio/header/HeaderExam.hpp>
+#include <edfio/core/Record.hpp>
 #include <edfio/reader/ReaderHeader.hpp>
+#include <edfio/reader/ReaderRecord.hpp>
 #include <edfio/processor/ProcessorHeaderGeneral.hpp>
 #include <edfio/processor/ProcessorHeaderSignal.hpp>
 #include <edfio/processor/ProcessorHeaderExam.hpp>
-#include <edfio/reader/ReaderRecord.hpp>
-#include <edfio/core/Record.hpp>
 #include <edfio/processor/ProcessorDataRecord.hpp>
+#include <edfio/processor/ProcessorSignalRecord.hpp>
+#include <edfio/processor/ProcessorAnnotationRecord.hpp>
 
 #include <fstream>
 
 int main()
 {
+	using namespace edfio;
+
 	std::ifstream is("E:/Projetos/edfio/Calib5.edf", std::ios::binary);
 
 	if (!is)
 		return -1;
 
-	edfio::HeaderExam header;
+	HeaderExam header;
 
 	// Read general fields
-	edfio::ReaderHeaderGeneral readerGeneral;
+	ReaderHeaderGeneral readerGeneral;
 	auto generalFields = readerGeneral(is);
 	// Process general fields
-	edfio::ProcessorHeaderGeneral processorGeneral;
+	ProcessorHeaderGeneral processorGeneral;
 	header.m_general = processorGeneral(std::move(generalFields));
 
 	// Read signal fields
-	edfio::ReaderHeaderSignal readerSignals(header.m_general.m_totalSignals);
+	ReaderHeaderSignal readerSignals(header.m_general.m_totalSignals);
 	auto signalFields = readerSignals(is);
 	// Process signal fields
-	edfio::ProcessorHeaderSignal processorSignals(header.m_general);
+	ProcessorHeaderSignal processorSignals(header.m_general);
 	header.m_signals = processorSignals(std::move(signalFields));
 
 	// Process exam header
-	edfio::ProcessorHeaderExam processorExam(is);
+	ProcessorHeaderExam processorExam(is);
 	header = processorExam(std::move(header));
 
 	is.seekg(header.m_general.m_headerSize, is.beg);
 
 	// Read one data record
 	size_t sz = header.m_general.m_detail.m_recordSize;
-	edfio::ReaderRecord readerDataRecord(sz);
+	ReaderRecord readerDataRecord(sz);
 	auto recordField = readerDataRecord(is);
-	edfio::ProcessorDataRecord procDataRecord(header.m_signals, edfio::GetSampleSize(header.m_general.m_version));
+	// Process data record
+	ProcessorDataRecord procDataRecord(header.m_signals, header.m_general.m_version);
 	auto signalRecordFields = procDataRecord(recordField);
+
+	// Process signal records
+	for (size_t idx = 0; idx < signalRecordFields.size(); idx++)
+	{
+		if (!header.m_signals[idx].m_detail.m_isAnnotation)
+		{
+			ProcessorSignalRecord<SampleType::Digital> procDigital(header.m_signals[idx], header.m_general.m_version);
+			auto digitalData = procDigital(signalRecordFields[idx]);
+
+			ProcessorSignalRecord<SampleType::Physical> procPhysical(header.m_signals[idx], header.m_general.m_version);
+			auto physical = procPhysical(signalRecordFields[idx]);
+		}
+		else
+		{
+			ProcessorAnnotationRecord procAnnot;
+			auto annotations = procAnnot(signalRecordFields[idx]);
+		}
+
+	}
 
 	return 0;
 }

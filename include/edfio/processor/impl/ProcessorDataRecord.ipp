@@ -12,11 +12,11 @@
 namespace edfio
 {
 
-	ProcessorDataRecord::TypeOu ProcessorDataRecord::operator()(TypeIn in)
+	ProcessorDataRecord::TypeO ProcessorDataRecord::operator()(TypeI in)
 	{
 		auto datarecord = std::move(in());
 
-		TypeOu fields;
+		TypeO fields;
 		fields.reserve(m_signals.size());
 
 		auto it = datarecord.begin();

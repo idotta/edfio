@@ -20,7 +20,8 @@ namespace edfio
 		FileDoesNotOpen,
 		FileNotOpened,
 		FileReadError,
-		FileContainsFormatErrors
+		FileContainsFormatErrors,
+		FileContainsInvalidAnnotations
 	};
 
 	namespace detail
@@ -42,6 +43,10 @@ namespace edfio
 			else if (err == FileErrc::FileContainsFormatErrors)
 			{
 				return "Error: file contains format errors";
+			}
+			else if (err == FileErrc::FileContainsInvalidAnnotations)
+			{
+				return "Error: file contains invalid annotations";
 			}
 			return "Unspecified error";
 		}

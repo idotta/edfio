@@ -18,9 +18,9 @@
 namespace edfio
 {
 
-	ProcessorHeaderGeneral::TypeOu ProcessorHeaderGeneral::operator()(TypeIn in)
+	ProcessorHeaderGeneral::TypeO ProcessorHeaderGeneral::operator()(TypeI in)
 	{
-		TypeOu ou;
+		TypeO ou;
 
 		if (detail::CheckFormatErrors(in.m_version())
 			|| detail::CheckFormatErrors(in.m_patient())

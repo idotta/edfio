@@ -15,11 +15,11 @@ namespace edfio
 {
 
 	template<SampleType SampleT>
-	typename ProcessorSignalRecord<SampleT>::TypeOu ProcessorSignalRecord<SampleT>::operator()(TypeIn in)
+	typename ProcessorSignalRecord<SampleT>::TypeO ProcessorSignalRecord<SampleT>::operator()(TypeI in)
 	{
 		auto signalRecord = std::move(in());
 		
-		TypeOu signalData;
+		TypeO signalData;
 		signalData.reserve(signalRecord.size() / m_sampleSize);
 
 		for (auto it = signalRecord.begin(); it != signalRecord.end();)
