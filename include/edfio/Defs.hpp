@@ -21,7 +21,8 @@ namespace edfio
 		FileNotOpened,
 		FileReadError,
 		FileContainsFormatErrors,
-		FileContainsInvalidAnnotations
+		FileContainsInvalidAnnotations,
+		FileWriteError
 	};
 
 	namespace detail
@@ -47,6 +48,10 @@ namespace edfio
 			else if (err == FileErrc::FileContainsInvalidAnnotations)
 			{
 				return "Error: file contains invalid annotations";
+			}
+			else if (err == FileErrc::FileWriteError)
+			{
+				return "Error: can't write on file";
 			}
 			return "Unspecified error";
 		}
