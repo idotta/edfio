@@ -17,7 +17,8 @@ namespace edfio
 
 	struct ProcessorHeaderGeneral : ProcessorBase<HeaderGeneralFields, HeaderGeneral>
 	{
-		TypeO operator ()(TypeI in);
+		TypeO operator << (TypeI in);
+		TypeI operator >> (TypeO in);
 	};
 
 }

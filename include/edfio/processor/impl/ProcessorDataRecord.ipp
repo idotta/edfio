@@ -12,7 +12,7 @@
 namespace edfio
 {
 
-	ProcessorDataRecord::TypeO ProcessorDataRecord::operator()(TypeI in)
+	ProcessorDataRecord::TypeO ProcessorDataRecord::operator << (TypeI in)
 	{
 		auto datarecord = std::move(in());
 

@@ -16,7 +16,7 @@
 namespace edfio
 {
 
-	ProcessorHeaderSignal::TypeO ProcessorHeaderSignal::operator()(TypeI in)
+	ProcessorHeaderSignal::TypeO ProcessorHeaderSignal::operator << (TypeI in)
 	{
 		TypeO signals;
 		auto& header = m_general;
@@ -349,6 +349,89 @@ namespace edfio
 		}
 
 		return std::move(signals);
+	}
+
+	ProcessorHeaderSignal::TypeI ProcessorHeaderSignal::operator >> (TypeO in)
+	{
+		TypeI ou;
+
+		auto &header = m_general;
+		auto &signals = in;
+
+		ou.resize(in.size());
+
+		// Labels
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_label() = signals[idx].m_label;
+			}
+		}
+		// Transducers Types
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_transducer() = signals[idx].m_transducer;
+			}
+		}
+		// Physical Dimensions
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_physDimension() = signals[idx].m_physDimension;
+			}
+		}
+		// Physical Minima
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_physicalMin() = std::to_string(signals[idx].m_physicalMin);
+			}
+		}
+		// Physical Maxima
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_physicalMax() = std::to_string(signals[idx].m_physicalMax);
+			}
+		}
+		// Digital Minima
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_digitalMin() = std::to_string(signals[idx].m_digitalMin);
+			}
+		}
+		// Digital Maxima
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_digitalMax() = std::to_string(signals[idx].m_digitalMax);
+			}
+		}
+		// Prefilter
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_prefilter() = signals[idx].m_prefilter;
+			}
+		}
+		// Samples in each datarecord
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_samplesInDataRecord() = std::to_string(signals[idx].m_samplesInDataRecord);
+			}
+		}
+		// Reserved
+		{
+			for (size_t idx = 0; idx < signals.size(); idx++)
+			{
+				ou[idx].m_reserved() = signals[idx].m_reserved;
+			}
+		}
+
+		return std::move(ou);
 	}
 
 }

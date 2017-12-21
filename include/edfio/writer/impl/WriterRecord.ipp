@@ -17,9 +17,9 @@
 namespace edfio
 {
 
-	WriterRecord::ResultT WriterRecord::operator()(StreamT & stream)
+	void WriterRecord::operator()(StreamT & stream, InputT & input)
 	{
-		ResultT rf(m_recordSize);
+		auto &rf = input;
 
 		if (!stream || !stream.is_open())
 			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
@@ -32,7 +32,6 @@ namespace edfio
 		{
 			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteError));
 		}
-		return std::move(rf);
 	}
 
 }

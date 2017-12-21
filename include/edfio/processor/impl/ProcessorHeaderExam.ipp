@@ -14,7 +14,7 @@
 namespace edfio
 {
 
-	ProcessorHeaderExam::TypeO ProcessorHeaderExam::operator()(TypeI in)
+	ProcessorHeaderExam::TypeO ProcessorHeaderExam::operator << (TypeI in)
 	{
 		TypeO ou = std::move(in);
 		// File size

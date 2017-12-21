@@ -30,36 +30,45 @@ namespace edfio
 	namespace impl
 	{
 
-		template <SampleType SampleT, typename T = int>
+		template <SampleType SampleT>
 		struct SampleVec
 		{
-			using type = std::vector<T>;
 		};
 
 		template <>
 		struct SampleVec<SampleType::Physical>
 		{
-			using type = std::vector<double>;
+			using type = double;
+			using vec = std::vector<double>;
 		};
 
 		template <>
 		struct SampleVec<SampleType::Digital>
 		{
-			using type = std::vector<int>;
+			using type = int;
+			using vec = std::vector<int>;
 		};
 
 	}
 
 	template <SampleType SampleT>
-	struct ProcessorSignalRecord : ProcessorBase<RecordField, typename impl::SampleVec<SampleT>::type>
+	struct ProcessorSignalRecord : ProcessorBase<RecordField, typename impl::SampleVec<SampleT>::vec>
 	{
 		ProcessorSignalRecord(const HeaderSignal &signal, DataFormat format)
 			: m_signal(signal)
 			, m_sampleSize(edfio::GetSampleBytes(format)) {}
 
-		TypeO operator ()(TypeI in);
+		TypeO operator << (TypeI in);
+		TypeI operator >> (TypeO in);
 
 	private:
+		using DigiType = impl::SampleVec<SampleType::Digital>::type;
+		using PhysType = impl::SampleVec<SampleType::Physical>::type;
+		using ThisType = typename impl::SampleVec<SampleT>::type;
+
+		ThisType CalcSample(DigiType sample);
+		ThisType CalcSample(PhysType sample);
+
 		const HeaderSignal &m_signal;
 		const int m_sampleSize;
 	};

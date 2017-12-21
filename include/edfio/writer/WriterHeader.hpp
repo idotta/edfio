@@ -20,16 +20,12 @@ namespace edfio
 
 	struct WriterHeaderGeneral : Writer<HeaderGeneralFields>
 	{
-		ResultT operator ()(StreamT &stream);
+		void operator ()(StreamT &stream, InputT &input);
 	};
 
 	struct WriterHeaderSignal : Writer<std::vector<HeaderSignalFields>>
 	{
-		WriterHeaderSignal(size_t totalSignals) : m_totalSignals(totalSignals) {}
-
-		ResultT operator ()(StreamT &stream);
-	private:
-		size_t m_totalSignals = 0;
+		void operator ()(StreamT &stream, InputT &input);
 	};
 
 }

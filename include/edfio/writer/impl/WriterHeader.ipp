@@ -20,9 +20,9 @@
 namespace edfio
 {
 
-	WriterHeaderGeneral::ResultT WriterHeaderGeneral::operator ()(StreamT &stream)
+	void WriterHeaderGeneral::operator ()(StreamT &stream, InputT &input)
 	{
-		ResultT hdr;
+		auto &hdr = input;
 		if (!stream || !stream.is_open())
 			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 
@@ -46,12 +46,11 @@ namespace edfio
 		{
 			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteError));
 		}
-		return std::move(hdr);
 	}
 
-	WriterHeaderSignal::ResultT WriterHeaderSignal::operator ()(StreamT &stream)
+	void WriterHeaderSignal::operator ()(StreamT &stream, InputT &input)
 	{
-		ResultT signals(m_totalSignals);
+		auto &signals = input;
 		if (!stream || !stream.is_open())
 			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 
@@ -85,7 +84,6 @@ namespace edfio
 		{
 			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteError));
 		}
-		return std::move(signals);
 	}
 
 }

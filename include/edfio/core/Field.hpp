@@ -37,7 +37,7 @@ namespace edfio
 	std::ostream& operator << (std::ostream &os, Field<Sz> &f)
 	{
 		auto &value = f();
-		value.resize(Sz);
+		value.resize(Sz, ' ');
 		os.write(value.data(), Sz);
 		return os;
 	}
@@ -46,7 +46,7 @@ namespace edfio
 	std::istream& operator >> (std::istream &is, Field<Sz> &f)
 	{
 		auto &value = f();
-		value.resize(Sz);
+		value.resize(Sz, ' ');
 		is.read(&value[0], Sz);
 		return is;
 	}

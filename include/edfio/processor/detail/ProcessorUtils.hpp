@@ -59,9 +59,35 @@ namespace edfio
 			return 0;
 		}
 
+		static std::string GetStringFromMonth(size_t idx)
+		{
+			idx--;
+			static const std::vector<std::string> months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+			if (idx >= 0 && idx < months.size())
+				return months[idx];
+			return "JAN";
+		}
+
 		static std::string ReduceString(const std::string &value)
 		{
 			return std::regex_replace(value, std::regex("^ +| +$|( ) +"), "$1");
+		}
+
+		static std::string GetFormatName(DataFormat format)
+		{
+			if (format == DataFormat::Edf)
+				return "EDF";
+			if (format == DataFormat::EdfPlusC)
+				return "EDF+C";
+			if (format == DataFormat::EdfPlusD)
+				return "EDF+D";
+			if (format == DataFormat::Bdf)
+				return "BDF";
+			if (format == DataFormat::BdfPlusC)
+				return "BDF+C";
+			if (format == DataFormat::BdfPlusD)
+				return "BDF+D";
+			return "";
 		}
 
 	}

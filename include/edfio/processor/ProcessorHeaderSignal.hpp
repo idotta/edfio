@@ -20,7 +20,8 @@ namespace edfio
 	struct ProcessorHeaderSignal : ProcessorBase<std::vector<HeaderSignalFields>, std::vector<HeaderSignal>>
 	{
 		ProcessorHeaderSignal(HeaderGeneral &general) : m_general(general) {}
-		TypeO operator ()(TypeI in);
+		TypeO operator << (TypeI in);
+		TypeI operator >> (TypeO in);
 	private:
 		HeaderGeneral &m_general;
 	};

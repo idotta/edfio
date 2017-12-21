@@ -25,7 +25,7 @@ namespace edfio
 			: m_signals(signals)
 			, m_sampleSize(edfio::GetSampleBytes(format)) {}
 
-		TypeO operator ()(TypeI in);
+		TypeO operator << (TypeI in);
 
 	private:
 		const std::vector<HeaderSignal> &m_signals;

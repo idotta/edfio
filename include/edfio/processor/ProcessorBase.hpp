@@ -18,7 +18,8 @@ namespace edfio
 		using TypeI = In;
 		using TypeO = Ou;
 
-		virtual TypeO operator ()(TypeI in) = 0;
+		virtual TypeO operator << (TypeI in) { return TypeO(); }
+		virtual TypeI operator >> (TypeO in) { return TypeI(); }
 	};
 
 }

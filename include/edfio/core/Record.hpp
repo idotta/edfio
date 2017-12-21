@@ -19,7 +19,7 @@ namespace edfio
 	// It is important that a data record always has constant size
 	struct RecordField
 	{
-		RecordField() = delete;
+		RecordField() = default;
 
 		RecordField(size_t recordSize)
 			: m_recordSize(recordSize)

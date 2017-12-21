@@ -24,9 +24,21 @@ namespace edfio
 	};
 
 	template <class Result>
-	using Reader = Streamer<std::ifstream, Result>;
+	struct Reader
+	{
+		using StreamT = std::ifstream;
+		using ResultT = Result;
 
-	template <class Result>
-	using Writer = Streamer<std::ofstream, Result>;
+		virtual ResultT operator ()(StreamT &stream) = 0;
+	};
+
+	template <class Input>
+	struct Writer
+	{
+		using StreamT = std::ofstream;
+		using InputT = Input;
+
+		virtual void operator ()(StreamT &stream, InputT &input) = 0;
+	};
 
 }

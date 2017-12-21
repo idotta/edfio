@@ -19,7 +19,7 @@ namespace edfio
 	{
 		WriterRecord(size_t recordSize) : m_recordSize(recordSize) {}
 
-		ResultT operator ()(StreamT &stream);
+		void operator ()(StreamT &stream, InputT &input);
 	private:
 		size_t m_recordSize = 0;
 	};
