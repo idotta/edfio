@@ -385,14 +385,14 @@ namespace edfio
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_physicalMin() = std::to_string(signals[idx].m_physicalMin);
+				ou[idx].m_physicalMin() = detail::to_string_decimal(signals[idx].m_physicalMin);
 			}
 		}
 		// Physical Maxima
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_physicalMax() = std::to_string(signals[idx].m_physicalMax);
+				ou[idx].m_physicalMax() = detail::to_string_decimal(signals[idx].m_physicalMax);
 			}
 		}
 		// Digital Minima

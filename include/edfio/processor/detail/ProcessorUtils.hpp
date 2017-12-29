@@ -90,6 +90,20 @@ namespace edfio
 			return "";
 		}
 
+		template <typename T>
+		std::string to_string_decimal(const T& t)
+		{
+			std::string str{ std::to_string(t) };
+			std::replace(str.begin(), str.end(), ',', '.');
+			int offset{ 1 };
+			if (str.find_last_not_of('0') == str.find('.'))
+			{
+				offset = 0;
+			}
+			str.erase(str.find_last_not_of('0') + offset, std::string::npos);
+			return str;
+		}
+
 	}
 
 }

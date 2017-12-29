@@ -55,7 +55,6 @@ namespace edfio
 			}
 			return "Unspecified error";
 		}
-
 	}
 
 }

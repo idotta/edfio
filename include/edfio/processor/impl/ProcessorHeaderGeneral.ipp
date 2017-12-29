@@ -432,7 +432,7 @@ namespace edfio
 		}
 		// Datarecord Duration
 		{
-			ou.m_datarecordDuration() = std::to_string(in.m_detail.m_datarecordDuration);
+			ou.m_datarecordDuration() = detail::to_string_decimal(in.m_detail.m_datarecordDuration);
 		}
 		// Number of signals
 		{
