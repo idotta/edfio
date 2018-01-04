@@ -18,7 +18,7 @@
 namespace edfio
 {
 
-	class SignalrecordStore : public RecordStore
+	class SignalRecordStore : public RecordStore
 	{
 	public:
 
@@ -27,9 +27,9 @@ namespace edfio
 		typedef std::reverse_iterator<iterator> reverse_iterator; //optional
 		typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
 
-		SignalrecordStore() = delete;
+		SignalRecordStore() = delete;
 
-		SignalrecordStore(stream_type &stream, size_type recordSize, size_type storeSize,
+		SignalRecordStore(stream_type &stream, size_type recordSize, size_type storeSize,
 			std::streamoff headerOffset, size_type datarecordSize, std::streamoff signalOffset)
 			: RecordStore(stream, recordSize, storeSize, headerOffset)
 			, m_datarecordSize(datarecordSize)
