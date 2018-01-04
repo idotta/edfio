@@ -9,17 +9,18 @@
 
 #pragma once
 
+#include "../header/HeaderExam.hpp"
+
 namespace edfio
 {
 
-	enum class FileErrc
+	struct ProcessorHeaderExamIn
 	{
-		FileDoesNotOpen,
-		FileNotOpened,
-		FileReadError,
-		FileContainsFormatErrors,
-		FileContainsInvalidAnnotations,
-		FileWriteError
+		using In = std::pair<HeaderGeneral, std::vector<HeaderSignal>>;
+		using Out = HeaderExam;
+		Out operator ()(In in);
 	};
 
 }
+
+#include "impl/ProcessorHeaderExamIn.ipp"

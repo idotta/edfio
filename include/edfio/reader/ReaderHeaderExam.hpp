@@ -9,25 +9,17 @@
 
 #pragma once
 
-#include "ProcessorBase.hpp"
-#include "../Defs.hpp"
+#include "../core/StreamIO.hpp"
 #include "../header/HeaderExam.hpp"
-
-#include <fstream>
 
 namespace edfio
 {
 
-	struct ProcessorHeaderExam: ProcessorBase<HeaderExam, HeaderExam>
+	struct ReaderHeaderExam : Reader<char>
 	{
-		ProcessorHeaderExam(std::ifstream &is) : m_is(is) {}
-
-		TypeO operator << (TypeI in);
-
-	private:
-		std::ifstream &m_is;
+		HeaderExam operator ()(Stream &stream);
 	};
 
 }
 
-#include "impl/ProcessorHeaderExam.ipp"
+#include "impl/ReaderHeaderExam.ipp"

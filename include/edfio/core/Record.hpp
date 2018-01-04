@@ -15,50 +15,56 @@
 namespace edfio
 {
 
-	// This structure can be used for either single signal record or data record IO
-	// It is important that a data record always has constant size
-	struct RecordField
+	// Records have fixed sizes that can vary according to the signal
+	// They can be used for either single signal record or data record IO
+	// It is important that data records always have one size in the same file
+	template <typename CharT = char>
+	struct Record
 	{
-		RecordField() = default;
+		using ValueType = CharT;
 
-		RecordField(size_t recordSize)
-			: m_recordSize(recordSize)
-			, m_record(recordSize) {}
+		Record() = delete;
 
-		RecordField(std::vector<char>::const_iterator first, std::vector<char>::const_iterator last)
-			: m_recordSize(std::distance(first, last))
-			, m_record(first, last) {}
+		Record(size_t recordSize)
+			: m_size(recordSize)
+			, m_value(recordSize) {}
+
+		Record(typename std::vector<ValueType>::const_iterator first, typename std::vector<ValueType>::const_iterator last)
+			: m_size(std::distance(first, last))
+			, m_value(first, last) {}
 
 		const size_t Size() const
 		{
-			return m_recordSize;
+			return m_size;
 		}
-		const std::vector<char>& operator()() const
+		const std::vector<ValueType>& operator()() const
 		{
-			return m_record;
+			return m_value;
 		}
-		std::vector<char>& operator()()
+		std::vector<ValueType>& operator()()
 		{
-			return m_record;
+			return m_value;
 		}
-	private:
-		std::vector<char> m_record;
-		size_t m_recordSize;
+
+		std::vector<ValueType> m_value;
+		const size_t m_size;
 	};
 
-	std::ostream& operator << (std::ostream &os, RecordField &rf)
+	template <typename CharT = char>
+	std::ostream& operator << (std::ostream &os, Record<CharT> &r)
 	{
-		auto &record = rf();
-		record.resize(rf.Size());
-		os.write(record.data(), rf.Size());
+		auto &record = r();
+		record.resize(r.Size());
+		os.write(record.data(), r.Size());
 		return os;
 	}
 
-	std::istream& operator >> (std::istream &is, RecordField &rf)
+	template <typename CharT = char>
+	std::istream& operator >> (std::istream &is, Record<CharT> &r)
 	{
-		auto &record = rf();
-		record.resize(rf.Size());
-		is.read(&record[0], rf.Size());
+		auto &record = r();
+		record.resize(r.Size());
+		is.read(&record[0], r.Size());
 		return is;
 	}
 

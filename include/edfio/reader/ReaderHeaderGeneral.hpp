@@ -9,21 +9,17 @@
 
 #pragma once
 
-#include "../core/Streamer.hpp"
-#include "../core/Record.hpp"
+#include "../core/StreamIO.hpp"
+#include "../header/HeaderGeneral.hpp"
 
 namespace edfio
 {
 
-	struct ReaderRecord : Reader<RecordField>
+	struct ReaderHeaderGeneral : Reader<char>
 	{
-		ReaderRecord(size_t recordSize) : m_recordSize(recordSize) {}
-
-		ResultT operator ()(StreamT &stream);
-	private:
-		size_t m_recordSize = 0;
+		HeaderGeneralFields operator ()(Stream &stream);
 	};
 
 }
 
-#include "impl/ReaderRecord.ipp"
+#include "impl/ReaderHeaderGeneral.ipp"

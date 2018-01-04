@@ -22,7 +22,8 @@ namespace edfio
 
 		static const char ADDITIONAL_SEPARATOR = '|';
 
-		static bool CheckFormatErrors(const std::string &str)
+		template <typename CharT>
+		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
 		{
 			for (auto& c : str)
 			{
@@ -34,7 +35,8 @@ namespace edfio
 			return false;
 		}
 
-		static bool CheckFormatErrors(const std::vector<char> &str)
+		template <typename CharT>
+		static bool CheckFormatErrors(const std::vector<CharT> &str)
 		{
 			for (auto& c : str)
 			{

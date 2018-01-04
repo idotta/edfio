@@ -25,8 +25,9 @@ namespace edfio
 
 	static const bool IsPlus(DataFormat format)
 	{
-		return format == DataFormat::EdfPlusC || format == DataFormat::EdfPlusD
-			|| format == DataFormat::BdfPlusC || format == DataFormat::BdfPlusD;
+		return false;
+		/*return format == DataFormat::EdfPlusC || format == DataFormat::EdfPlusD
+			|| format == DataFormat::BdfPlusC || format == DataFormat::BdfPlusD;*/
 	}
 
 	static const bool IsEdf(DataFormat format)

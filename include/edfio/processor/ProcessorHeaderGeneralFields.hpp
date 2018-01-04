@@ -9,17 +9,18 @@
 
 #pragma once
 
+#include "../header/HeaderGeneral.hpp"
+
 namespace edfio
 {
 
-	enum class FileErrc
+	struct ProcessorHeaderGeneralFields
 	{
-		FileDoesNotOpen,
-		FileNotOpened,
-		FileReadError,
-		FileContainsFormatErrors,
-		FileContainsInvalidAnnotations,
-		FileWriteError
+		using In = HeaderGeneralFields;
+		using Out = HeaderGeneral;
+		Out operator ()(In in);
 	};
 
 }
+
+#include "impl/ProcessorHeaderGeneralFields.ipp"
