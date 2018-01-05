@@ -47,8 +47,6 @@ namespace edfio
 		{
 		}
 
-		virtual size_type size() const = 0;
-
 	protected:
 		virtual reference getR(size_type off) = 0;
 		virtual pointer getP(size_type off) = 0;

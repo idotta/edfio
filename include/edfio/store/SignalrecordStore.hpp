@@ -11,10 +11,6 @@
 
 #include "RecordStore.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <iterator>
-
 namespace edfio
 {
 

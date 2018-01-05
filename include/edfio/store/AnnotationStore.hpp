@@ -19,20 +19,22 @@
 namespace edfio
 {
 
-	class RecordStore : public Store<Record<char>, std::ifstream, std::random_access_iterator_tag>
+	// USE std::get_line()
+	// SET NEWLINE TO 0
+	class AnnotationStore : public Store<Record<char>, std::ifstream, std::bidirectional_iterator_tag>
 	{
 	public:
 
 		class iterator : public store_type::iterator
 		{
 			size_type m_offset = 0; // Relative to total of Stores
-			RecordStore *m_context = nullptr;
+			AnnotationStore *m_context = nullptr;
 		public:
 
 			// Construction
 			iterator() = default;
 
-			iterator(RecordStore *context, size_type offset = 0)
+			iterator(AnnotationStore *context, size_type offset = 0)
 				: m_offset(offset)
 				, m_context(context)
 			{
@@ -60,32 +62,6 @@ namespace edfio
 			bool operator!=(const iterator &it) const
 			{
 				return !(*this == it);
-			}
-
-			// Relation
-			bool operator<(const iterator &it) const
-			{
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset < it.m_offset);
-			}
-			bool operator>(const iterator &it) const
-			{
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset > it.m_offset);
-			}
-			bool operator<=(const iterator &it) const
-			{
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset <= it.m_offset);
-			}
-			bool operator>=(const iterator &it) const
-			{
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset >= it.m_offset);
 			}
 
 			// Pre-increment
@@ -126,52 +102,6 @@ namespace edfio
 				--*this;
 				return tmp;
 			}
-			// Compound addition assignment
-			iterator& operator+=(size_type off)
-			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset + off > m_context->size())
-					throw std::length_error("Iterator + offset out of range");
-				m_offset += off;
-				return *this;
-			}
-			// Addition
-			iterator operator+(size_type off) const
-			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				iterator tmp = *this;
-				tmp += off;
-				return tmp;
-			}
-			// Compound subtraction assignment
-			iterator& operator-=(size_type off)
-			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset - off < 0)
-					throw std::length_error("Iterator - offset out of range");
-				m_offset -= off;
-				return *this;
-			}
-			// Subtraction
-			iterator operator-(size_type off) const
-			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				iterator tmp = *this;
-				tmp -= off;
-				return tmp;
-			}
-			difference_type operator-(iterator it) const
-			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return difference_type(it.m_offset - m_offset);
-			}
 
 			// Dereference
 			reference operator*() const
@@ -186,28 +116,17 @@ namespace edfio
 					throw std::invalid_argument("Invalid context");
 				return m_context->getP(m_offset);
 			}
-
-			// Subscripting
-			reference operator[](size_type off) const
-			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				iterator tmp = *this;
-				tmp += off;
-				return *tmp;
-			}
 		};
 
 		typedef iterator const const_iterator;
 		typedef std::reverse_iterator<iterator> reverse_iterator;
 		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		RecordStore() = delete;
+		AnnotationStore() = delete;
 
-		RecordStore(stream_type &stream, size_type recordSize, size_type storeSize, std::streamoff headerOffset)
+		AnnotationStore(stream_type &stream, size_type recordSize, std::streamoff headerOffset)
 			: store_type(stream)
 			, m_recordSize(recordSize)
-			, m_storeSize(storeSize)
 			, m_headerOffset(headerOffset)
 			, m_buffer(recordSize)
 		{
@@ -219,11 +138,11 @@ namespace edfio
 		}
 		const_iterator begin() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this));
+			return const_iterator(const_cast<AnnotationStore*>(this));
 		}
 		const_iterator cbegin() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this));
+			return const_iterator(const_cast<AnnotationStore*>(this));
 		}
 		iterator end()
 		{
@@ -231,11 +150,11 @@ namespace edfio
 		}
 		const_iterator end() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this), size());
+			return const_iterator(const_cast<AnnotationStore*>(this), size());
 		}
 		const_iterator cend() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this), size());
+			return const_iterator(const_cast<AnnotationStore*>(this), size());
 		}
 		reverse_iterator rbegin()
 		{
@@ -262,13 +181,8 @@ namespace edfio
 			return const_reverse_iterator(cbegin());
 		}
 
-		// Overrides
-		virtual size_type size() const
-		{
-			return m_storeSize;
-		}
-
 	protected:
+		// Overrides
 		reference getR(size_type off) override
 		{
 			load(off);
@@ -281,10 +195,11 @@ namespace edfio
 			return &m_buffer;
 		}
 
-		virtual void load(size_type off) = 0;
+		void load(size_type off)
+		{
+		}
 
 		size_type m_recordSize;
-		size_type m_storeSize;
 		std::streamoff m_headerOffset;
 		value_type m_buffer;
 	};

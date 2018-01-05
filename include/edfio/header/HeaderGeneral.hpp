@@ -38,8 +38,6 @@ namespace edfio
 		{
 			unsigned int m_recordSize = 0;
 			double m_fileDuration = 0;
-			long long m_startSubsecond = 0;
-			long long m_totalAnnotations = 0;
 
 			std::string m_patientCode;
 			std::string m_gender;
