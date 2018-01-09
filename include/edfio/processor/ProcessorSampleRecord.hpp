@@ -45,14 +45,14 @@ namespace edfio
 	}
 
 	template <SampleType SampleT>
-	struct ProcessorSample
+	struct ProcessorSampleRecord
 	{
 		using In = Record<char>;
 		using Out = typename impl::Sample<SampleT>::type;
 		using DigiType = impl::Sample<SampleType::Digital>::type;
 		using PhysType = impl::Sample<SampleType::Physical>::type;
 
-		ProcessorSample(double offset, double scaling)
+		ProcessorSampleRecord(double offset, double scaling)
 			: m_offset(offset)
 			, m_scaling(scaling)
 		{
@@ -70,4 +70,4 @@ namespace edfio
 
 }
 
-#include "impl/ProcessorSample.ipp"
+#include "impl/ProcessorSampleRecord.ipp"

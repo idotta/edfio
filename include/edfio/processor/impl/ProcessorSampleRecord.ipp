@@ -9,37 +9,35 @@
 
 #pragma once
 
-#include "../ProcessorSample.hpp"
-
 namespace edfio
 {
 
 	template<>
-	inline ProcessorSample<SampleType::Digital>::Out ProcessorSample<SampleType::Digital>::Calc(DigiType sample)
+	inline ProcessorSampleRecord<SampleType::Digital>::Out ProcessorSampleRecord<SampleType::Digital>::Calc(DigiType sample)
 	{
 		return sample;
 	}
 
 	template<>
-	ProcessorSample<SampleType::Digital>::Out ProcessorSample<SampleType::Digital>::Calc(PhysType sample)
+	ProcessorSampleRecord<SampleType::Digital>::Out ProcessorSampleRecord<SampleType::Digital>::Calc(PhysType sample)
 	{
 		return static_cast<Out>((sample - m_offset) / m_scaling);
 	}
 
 	template<>
-	inline ProcessorSample<SampleType::Physical>::Out ProcessorSample<SampleType::Physical>::Calc(DigiType sample)
+	inline ProcessorSampleRecord<SampleType::Physical>::Out ProcessorSampleRecord<SampleType::Physical>::Calc(DigiType sample)
 	{
 		return m_scaling * static_cast<double>(sample) + m_offset;
 	}
 
 	template<>
-	ProcessorSample<SampleType::Physical>::Out ProcessorSample<SampleType::Physical>::Calc(PhysType sample)
+	ProcessorSampleRecord<SampleType::Physical>::Out ProcessorSampleRecord<SampleType::Physical>::Calc(PhysType sample)
 	{
 		return (sample - m_offset) / m_scaling;
 	}
 
 	template<SampleType SampleT>
-	typename ProcessorSample<SampleT>::Out ProcessorSample<SampleT>::operator()(In in)
+	typename ProcessorSampleRecord<SampleT>::Out ProcessorSampleRecord<SampleT>::operator()(In in)
 	{
 		auto record = std::move(in);
 		int sample = 0;

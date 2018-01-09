@@ -69,13 +69,14 @@ namespace edfio
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
-			if (m_datarecordDuration < 1)
+			// TODO: check if this is true
+			/*if (m_datarecordDuration < 1)
 			{
 				if (signals.size() != totalAnnotationChannels || !IsPlus(m_version))
 				{
 					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
-			}
+			}*/
 		}
 		// Transducers Types
 		{

@@ -12,9 +12,11 @@
 #include "../DataRecordStore.hpp"
 #include "../SignalRecordStore.hpp"
 #include "../SignalSampleStore.hpp"
-
+#include "../TimeStampStore.hpp"
 #include "../../header/HeaderGeneral.hpp"
 #include "../../header/HeaderSignal.hpp"
+
+#include <utility>
 
 namespace edfio
 {
@@ -28,7 +30,7 @@ namespace edfio
 			auto recordSize = general.m_detail.m_recordSize;
 			auto storeSize = general.m_datarecordsFile;
 			auto headerSize = general.m_headerSize;
-			return DataRecordStore(stream, recordSize, storeSize, headerSize);
+			return std::move(DataRecordStore(stream, recordSize, storeSize, headerSize));
 		}
 
 		template <class Stream>
@@ -39,7 +41,7 @@ namespace edfio
 			auto headerSize = general.m_headerSize;
 			auto signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
 			auto signalOff = signal.m_detail.m_bufferOffset;
-			return SignalRecordStore(stream, signalSize, storeSize, headerSize, recordSize, signalOff);
+			return std::move(SignalRecordStore(stream, signalSize, storeSize, headerSize, recordSize, signalOff));
 		}
 
 		template <class Stream>
@@ -51,7 +53,18 @@ namespace edfio
 			auto sampleSize = GetSampleBytes(general.m_version);
 			auto signalSize = signal.m_samplesInDataRecord * sampleSize;
 			auto signalOff = signal.m_detail.m_bufferOffset;
-			return SignalSampleStore(stream, sampleSize, storeSize, headerSize, recordSize, signalSize, signalOff);
+			return std::move(SignalSampleStore(stream, sampleSize, storeSize, headerSize, recordSize, signalSize, signalOff));
+		}
+
+		template <class Stream>
+		TimeStampStore CreateTimeStampStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
+		{
+			auto recordSize = general.m_detail.m_recordSize;
+			auto storeSize = general.m_datarecordsFile;
+			auto headerSize = general.m_headerSize;
+			auto signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
+			auto signalOff = signal.m_detail.m_bufferOffset;
+			return std::move(TimeStampStore(stream, signalSize, storeSize, headerSize, recordSize, signalOff));
 		}
 
 	}

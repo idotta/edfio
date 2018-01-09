@@ -19,7 +19,7 @@
 namespace edfio
 {
 
-	// USE std::get_line()
+	// USE std::getline()
 	// SET NEWLINE TO 0
 	class AnnotationStore : public Store<Record<char>, std::ifstream, std::bidirectional_iterator_tag>
 	{
@@ -27,7 +27,6 @@ namespace edfio
 
 		class iterator : public store_type::iterator
 		{
-			size_type m_offset = 0; // Relative to total of Stores
 			AnnotationStore *m_context = nullptr;
 		public:
 
@@ -35,21 +34,18 @@ namespace edfio
 			iterator() = default;
 
 			iterator(AnnotationStore *context, size_type offset = 0)
-				: m_offset(offset)
-				, m_context(context)
+				: m_context(context)
 			{
 			}
 
 			iterator(const iterator &it)
-				: m_offset(it.m_offset)
-				, m_context(it.m_context)
+				: m_context(it.m_context)
 			{
 			}
 
 			// Assignment
 			iterator& operator=(const iterator &it)
 			{
-				m_offset = it.m_offset;
 				m_context = it.m_context;
 				return *this;
 			}
@@ -57,7 +53,7 @@ namespace edfio
 			// Equality
 			bool operator==(const iterator &it) const
 			{
-				return (m_offset == it.m_offset && m_context == it.m_context);
+				return (m_context == it.m_context);
 			}
 			bool operator!=(const iterator &it) const
 			{
