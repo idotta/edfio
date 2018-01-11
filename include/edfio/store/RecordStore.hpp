@@ -209,7 +209,7 @@ namespace edfio
 			, m_recordSize(recordSize)
 			, m_storeSize(storeSize)
 			, m_headerOffset(headerOffset)
-			, m_buffer(recordSize)
+			, m_value(recordSize)
 		{
 		}
 
@@ -272,13 +272,13 @@ namespace edfio
 		reference getR(size_type off) override
 		{
 			load(off);
-			return m_buffer;
+			return m_value;
 		}
 
 		pointer getP(size_type off) override
 		{
 			load(off);
-			return &m_buffer;
+			return &m_value;
 		}
 
 		virtual void load(size_type off) = 0;
@@ -286,7 +286,7 @@ namespace edfio
 		size_type m_recordSize;
 		size_type m_storeSize;
 		std::streamoff m_headerOffset;
-		value_type m_buffer;
+		value_type m_value;
 	};
 
 }

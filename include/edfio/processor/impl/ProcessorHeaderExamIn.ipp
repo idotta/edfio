@@ -15,11 +15,8 @@
 namespace edfio
 {
 
-	ProcessorHeaderExamIn::Out edfio::ProcessorHeaderExamIn::operator()(In in)
+	HeaderExam edfio::ProcessorHeaderExamIn::operator()(HeaderGeneral header, std::vector<HeaderSignal> signals)
 	{
-		auto &header = in.first;
-		auto &signals = in.second;
-		
 		// Record size
 		size_t recordsize = 0;
 		for (auto &signal : signals)
@@ -45,7 +42,7 @@ namespace edfio
 		}
 		header.m_detail.m_recordSize = recordsize;
 
-		return std::move(Out{ std::move(header), std::move(signals) });
+		return std::move(HeaderExam{ std::move(header), std::move(signals) });
 	}
 
 }

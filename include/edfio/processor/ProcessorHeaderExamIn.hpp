@@ -16,9 +16,7 @@ namespace edfio
 
 	struct ProcessorHeaderExamIn
 	{
-		using In = std::pair<HeaderGeneral, std::vector<HeaderSignal>>;
-		using Out = HeaderExam;
-		Out operator ()(In in);
+		HeaderExam operator ()(HeaderGeneral header, std::vector<HeaderSignal> signals);
 	};
 
 }

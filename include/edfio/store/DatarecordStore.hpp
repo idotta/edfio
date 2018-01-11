@@ -48,7 +48,7 @@ namespace edfio
 			{
 				m_stream.seekg(destPos, std::ios::beg);
 			}
-			m_stream >> m_buffer;
+			m_stream >> m_value;
 
 		}
 	};

@@ -51,7 +51,7 @@ namespace edfio
 			auto storeSize = general.m_datarecordsFile * signal.m_samplesInDataRecord;
 			auto headerSize = general.m_headerSize;
 			auto sampleSize = GetSampleBytes(general.m_version);
-			auto signalSize = signal.m_samplesInDataRecord * sampleSize;
+			auto signalSize = signal.m_samplesInDataRecord;
 			auto signalOff = signal.m_detail.m_bufferOffset;
 			return std::move(SignalSampleStore(stream, sampleSize, storeSize, headerSize, recordSize, signalSize, signalOff));
 		}

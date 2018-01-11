@@ -51,7 +51,7 @@ namespace edfio
 			{
 				m_stream.seekg(destPos, std::ios::beg);
 			}
-			m_stream.getline(m_buffer().data(), m_datarecordSize, 20);
+			m_stream.getline(m_value().data(), m_datarecordSize, 20);
 		}
 
 		size_type m_datarecordSize;

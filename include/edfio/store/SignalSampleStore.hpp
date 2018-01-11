@@ -32,6 +32,8 @@ namespace edfio
 			, m_datarecordSize(datarecordSize)
 			, m_signalrecordSize(signalrecordSize)
 			, m_signalOffset(signalOffset)
+			, m_buffer(recordSize * signalrecordSize)
+			, m_bufferPos(-1)
 		{
 		}
 
@@ -44,26 +46,39 @@ namespace edfio
 				throw std::out_of_range("Iterator not dereferenceable");
 			}
 
-			if (!m_stream.good())
-				m_stream.clear();
-
-			auto currentPos = m_stream.tellg();
-
-
 			auto dataRecordOffset = off / m_signalrecordSize;
 			auto sampleOffset = off % m_signalrecordSize;
 			auto destPos = m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset + sampleOffset * m_recordSize;
-			if (destPos != currentPos)
+
+			if (m_bufferPos < 0 || (destPos < m_bufferPos || destPos >= m_bufferPos + m_buffer.Size()))
 			{
-				m_stream.seekg(destPos, std::ios::beg);
+				readStream(destPos);
+				m_bufferPos = m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset;
+			}
+
+			auto first = m_buffer().begin() + sampleOffset * m_recordSize;
+			std::copy(first, first + m_value.Size(), m_value().begin());
+		}
+
+		void readStream(long long newPos)
+		{
+			if (!m_stream.good())
+				m_stream.clear();
+
+			auto oldPos = m_stream.tellg();
+			if (newPos != oldPos)
+			{
+				m_stream.seekg(newPos, std::ios::beg);
 			}
 			m_stream >> m_buffer;
-
 		}
 
 		size_type m_datarecordSize;
 		size_type m_signalrecordSize;
 		std::streamoff m_signalOffset;
+		// Samples buffer to decrease reading time
+		value_type m_buffer;
+		std::streamoff m_bufferPos;
 	};
 
 }

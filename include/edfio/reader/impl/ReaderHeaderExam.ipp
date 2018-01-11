@@ -41,7 +41,7 @@ namespace edfio
 
 		// Process header exam
 		ProcessorHeaderExamIn procHeader;
-		auto header = std::move(procHeader(std::move(std::make_pair(std::move(general), std::move(signals)))));
+		auto header = std::move(procHeader(std::move(general), std::move(signals)));
 
 		// File size
 		{

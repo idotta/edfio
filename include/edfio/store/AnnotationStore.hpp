@@ -19,27 +19,33 @@
 namespace edfio
 {
 
-	// USE std::getline()
-	// SET NEWLINE TO 0
 	class AnnotationStore : public Store<Record<char>, std::ifstream, std::bidirectional_iterator_tag>
 	{
 	public:
 
 		class iterator : public store_type::iterator
 		{
+			enum
+			{
+				_begin = 0,
+				_end = -1
+			};
 			AnnotationStore *m_context = nullptr;
+			difference_type m_offset = _end;
 		public:
 
 			// Construction
 			iterator() = default;
 
-			iterator(AnnotationStore *context, size_type offset = 0)
+			iterator(AnnotationStore *context)
 				: m_context(context)
+				, m_offset(_end)
 			{
 			}
 
 			iterator(const iterator &it)
 				: m_context(it.m_context)
+				, m_offset(it.m_offset)
 			{
 			}
 
@@ -47,13 +53,14 @@ namespace edfio
 			iterator& operator=(const iterator &it)
 			{
 				m_context = it.m_context;
+				m_offset = it.m_offset;
 				return *this;
 			}
 
 			// Equality
 			bool operator==(const iterator &it) const
 			{
-				return (m_context == it.m_context);
+				return (m_offset == it.m_offset && m_context == it.m_context);
 			}
 			bool operator!=(const iterator &it) const
 			{
@@ -124,7 +131,7 @@ namespace edfio
 			: store_type(stream)
 			, m_recordSize(recordSize)
 			, m_headerOffset(headerOffset)
-			, m_buffer(recordSize)
+			, m_value(recordSize)
 		{
 		}
 
@@ -182,13 +189,13 @@ namespace edfio
 		reference getR(size_type off) override
 		{
 			load(off);
-			return m_buffer;
+			return m_value;
 		}
 
 		pointer getP(size_type off) override
 		{
 			load(off);
-			return &m_buffer;
+			return &m_value;
 		}
 
 		void load(size_type off)
@@ -197,7 +204,7 @@ namespace edfio
 
 		size_type m_recordSize;
 		std::streamoff m_headerOffset;
-		value_type m_buffer;
+		value_type m_value;
 	};
 
 }

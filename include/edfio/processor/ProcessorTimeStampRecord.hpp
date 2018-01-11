@@ -18,7 +18,6 @@ namespace edfio
 
 	struct ProcessorTimeStampRecord
 	{
-
 		TimeStamp operator ()(Record<char> record, long long datarecord);
 	};
 
