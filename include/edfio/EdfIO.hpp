@@ -11,13 +11,4 @@
 
 #include <edfio/header/HeaderExam.hpp>
 #include <edfio/core/Record.hpp>
-#include <edfio/reader/ReaderHeader.hpp>
-#include <edfio/reader/ReaderRecord.hpp>
-#include <edfio/processor/ProcessorHeaderGeneral.hpp>
-#include <edfio/processor/ProcessorHeaderSignal.hpp>
-#include <edfio/processor/ProcessorHeaderExam.hpp>
-#include <edfio/processor/ProcessorDataRecord.hpp>
-#include <edfio/processor/ProcessorSignalRecord.hpp>
-#include <edfio/processor/ProcessorAnnotationRecord.hpp>
-#include <edfio/writer/WriterHeader.hpp>
-#include <edfio/writer/WriterRecord.hpp>
+#include <edfio/reader/ReaderHeaderExam.hpp>

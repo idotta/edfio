@@ -11,23 +11,22 @@
 
 #include "../header/HeaderGeneral.hpp"
 #include "../header/HeaderSignal.hpp"
-#include "../core/Streamer.hpp"
+#include "../core/StreamIO.hpp"
 
 #include <vector>
 
 namespace edfio
 {
 
-	struct WriterHeaderGeneral : Writer<HeaderGeneralFields>
+	struct ReaderHeaderSignal : Reader<char>
 	{
-		void operator ()(StreamT &stream, InputT &input);
-	};
+		ReaderHeaderSignal(size_t totalSignals) : m_totalSignals(totalSignals) {}
 
-	struct WriterHeaderSignal : Writer<std::vector<HeaderSignalFields>>
-	{
-		void operator ()(StreamT &stream, InputT &input);
+		std::vector<HeaderSignalFields> operator ()(Stream &stream);
+	private:
+		size_t m_totalSignals = 0;
 	};
 
 }
 
-#include "impl/WriterHeader.ipp"
+#include "impl/ReaderHeaderSignal.ipp"

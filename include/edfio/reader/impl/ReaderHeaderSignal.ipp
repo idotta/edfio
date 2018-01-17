@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../../Defs.hpp"
+#include "../../Utils.hpp"
 #include "../../header/HeaderGeneral.hpp"
 #include "../../header/HeaderSignal.hpp"
 
@@ -20,38 +20,9 @@
 namespace edfio
 {
 
-	ReaderHeaderGeneral::ResultT ReaderHeaderGeneral::operator ()(StreamT &stream)
+	std::vector<HeaderSignalFields> ReaderHeaderSignal::operator ()(Stream &stream)
 	{
-		ResultT hdr;
-		if (!stream || !stream.is_open())
-			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
-		
-		stream.clear();
-		stream.seekg(0, std::ios::beg);
-
-		try
-		{
-			stream >> hdr.m_version;
-			stream >> hdr.m_patient;
-			stream >> hdr.m_recording;
-			stream >> hdr.m_startDate;
-			stream >> hdr.m_startTime;
-			stream >> hdr.m_headerSize;
-			stream >> hdr.m_reserved;
-			stream >> hdr.m_datarecordsFile;
-			stream >> hdr.m_datarecordDuration;
-			stream >> hdr.m_totalSignals;
-		}
-		catch (std::exception e)
-		{
-			throw std::invalid_argument(detail::GetError(FileErrc::FileReadError));
-		}
-		return std::move(hdr);
-	}
-
-	ReaderHeaderSignal::ResultT ReaderHeaderSignal::operator ()(StreamT &stream)
-	{
-		ResultT signals(m_totalSignals);
+		std::vector<HeaderSignalFields> signals(m_totalSignals);
 		if (!stream || !stream.is_open())
 			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 

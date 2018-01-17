@@ -9,28 +9,40 @@
 
 #pragma once
 
-#include "../../Defs.hpp"
+#include "../../Utils.hpp"
+#include "../../core/DataFormat.hpp"
 
 namespace edfio
 {
 
-	ProcessorHeaderExam::TypeO ProcessorHeaderExam::operator << (TypeI in)
+	HeaderExam edfio::ProcessorHeaderExam::operator()(HeaderGeneral header, std::vector<HeaderSignal> signals)
 	{
-		TypeO ou = std::move(in);
-		// File size
+		// Record size
+		size_t recordsize = 0;
+		for (auto &signal : signals)
 		{
-			// get length of file:
-			m_is.seekg(0, m_is.end);
-			long long length = m_is.tellg();
-			// send back to beginning of file
-			m_is.seekg(0, m_is.beg);
+			recordsize += signal.m_samplesInDataRecord;
+		}
 
-			if (length != (in.m_general.m_detail.m_recordSize * in.m_general.m_datarecordsFile + in.m_general.m_headerSize))
+		if (IsBdf(header.m_version))
+		{
+			recordsize *= 3;
+			if (recordsize > 0xF00000)
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
-		return std::move(ou);
+		else
+		{
+			recordsize *= 2;
+			if (recordsize > 0xA00000)
+			{
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
+			}
+		}
+		header.m_detail.m_recordSize = recordsize;
+
+		return std::move(HeaderExam{ std::move(header), std::move(signals) });
 	}
 
 }

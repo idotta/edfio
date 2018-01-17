@@ -34,8 +34,6 @@ namespace edfio
 	{
 		struct HeaderSignalDetail
 		{
-			int m_signalIndex = -1;
-			long long m_samplesInFile = 0;
 			long m_bufferOffset = 0;
 			double m_scaling = 0;
 			double m_offset = 0;

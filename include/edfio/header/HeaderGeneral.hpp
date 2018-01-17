@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "../Defs.hpp"
 #include "../core/DataFormat.hpp"
 #include "../core/Field.hpp"
 
@@ -38,10 +37,7 @@ namespace edfio
 		struct HeaderGeneralDetail
 		{
 			unsigned int m_recordSize = 0;
-			double m_datarecordDuration = 0;
-			long long m_fileDuration = 0;
-			long long m_startSubsecond = 0;
-			long long m_totalAnnotations = 0;
+			double m_fileDuration = 0;
 
 			std::string m_patientCode;
 			std::string m_gender;
@@ -66,7 +62,7 @@ namespace edfio
 		int m_headerSize = 0;
 		std::string m_reserved;
 		long long m_datarecordsFile = 0;
-		long long m_datarecordDuration = 0;
+		double m_datarecordDuration = 0;
 		int m_totalSignals = 0;
 		// Extra values
 		detail::HeaderGeneralDetail m_detail;

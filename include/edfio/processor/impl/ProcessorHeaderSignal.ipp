@@ -9,429 +9,93 @@
 
 #pragma once
 
-#include "../../Defs.hpp"
+#include "../../Utils.hpp"
 #include "../../core/DataFormat.hpp"
 #include "../detail/ProcessorUtils.hpp"
+
+#include <vector>
+#include <string>
 
 namespace edfio
 {
 
-	ProcessorHeaderSignal::TypeO ProcessorHeaderSignal::operator << (TypeI in)
+	std::vector<HeaderSignal> ProcessorHeaderSignal::operator()(std::vector<HeaderSignalFields> in)
 	{
-		TypeO signals;
-		auto& header = m_general;
-
-		signals.resize(in.size());
-
-		for (auto& sigFields : in)
-		{
-			if (detail::CheckFormatErrors(sigFields.m_label())
-				|| detail::CheckFormatErrors(sigFields.m_transducer())
-				|| detail::CheckFormatErrors(sigFields.m_physDimension())
-				|| detail::CheckFormatErrors(sigFields.m_physicalMin())
-				|| detail::CheckFormatErrors(sigFields.m_physicalMax())
-				|| detail::CheckFormatErrors(sigFields.m_digitalMin())
-				|| detail::CheckFormatErrors(sigFields.m_digitalMax())
-				|| detail::CheckFormatErrors(sigFields.m_prefilter())
-				|| detail::CheckFormatErrors(sigFields.m_samplesInDataRecord())
-				|| detail::CheckFormatErrors(sigFields.m_reserved()))
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
-
-		}
-
-		// Labels
-		{
-			size_t totalAnnotationChannels = 0;
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& label = in[idx].m_label();
-				if (IsPlus(header.m_version))
-				{
-					if (label.find("Annotation") != std::string::npos)
-					{
-						totalAnnotationChannels++;
-						signal.m_detail.m_isAnnotation = true;
-					}
-					else
-					{
-						signal.m_detail.m_isAnnotation = false;
-					}
-				}
-				else
-				{
-					signal.m_detail.m_isAnnotation = false;
-				}
-				signal.m_label = label;
-				signal.m_detail.m_signalIndex = idx;
-			}
-			if (IsPlus(header.m_version) && totalAnnotationChannels == 0)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
-			if (signals.size() != totalAnnotationChannels || !IsPlus(header.m_version))
-			{
-				if (header.m_datarecordDuration < 1)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-			}
-		}
-		// Transducers Types
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& transducer = in[idx].m_transducer();
-
-				signal.m_transducer = transducer;
-
-				if (signal.m_detail.m_isAnnotation)
-				{
-					if (transducer.find_first_not_of(' ') != std::string::npos)
-					{
-						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-					}
-				}
-			}
-		}
-		// Physical Dimensions
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& physDimension = in[idx].m_physDimension();
-
-				signal.m_physDimension = physDimension;
-			}
-		}
-		// Physical Minima
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& physMin = in[idx].m_physicalMin();
-
-				try
-				{
-					signal.m_physicalMin = std::stod(physMin);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-			}
-		}
-		// Physical Maxima
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& physMax = in[idx].m_physicalMax();
-
-				try
-				{
-					signal.m_physicalMax = std::stod(physMax);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-			}
-		}
-		// Digital Minima
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& digMin = in[idx].m_digitalMin();
-
-				int n = 0;
-				try
-				{
-					n = std::stoi(digMin);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-
-				if (signal.m_detail.m_isAnnotation)
-				{
-					if (IsEdf(header.m_version) && IsPlus(header.m_version))
-					{
-						if (n != -32768)
-						{
-							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-						}
-					}
-					else if (IsBdf(header.m_version) && IsPlus(header.m_version))
-					{
-						if (n != -8388608)
-						{
-							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-						}
-					}
-				}
-				else if (IsEdf(header.m_version))
-				{
-					if ((n > 32767) || (n < -32768))
-					{
-						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-					}
-				}
-				else if (IsBdf(header.m_version))
-				{
-					if ((n > 8388607) || (n < -8388608))
-					{
-						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-					}
-				}
-				signal.m_digitalMin = n;
-			}
-		}
-		// Digital Maxima
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& digMax = in[idx].m_digitalMax();
-
-				int n = 0;
-				try
-				{
-					n = std::stoi(digMax);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-
-				if (signal.m_detail.m_isAnnotation)
-				{
-					if (IsEdf(header.m_version) && IsPlus(header.m_version))
-					{
-						if (n != 32767)
-						{
-							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-						}
-					}
-					else if (IsBdf(header.m_version) && IsPlus(header.m_version))
-					{
-						if (n != 8388607)
-						{
-							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-						}
-					}
-				}
-				else if (IsEdf(header.m_version))
-				{
-					if ((n > 32767) || (n < -32768))
-					{
-						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-					}
-				}
-				else if (IsBdf(header.m_version))
-				{
-					if ((n > 8388607) || (n < -8388608))
-					{
-						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-					}
-				}
-				signal.m_digitalMax = n;
-				if (signal.m_digitalMax < (signal.m_digitalMin + 1))
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-			}
-		}
-		// Prefilter
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& prefilter = in[idx].m_prefilter();
-
-				signal.m_prefilter = prefilter;
-
-				if (signal.m_detail.m_isAnnotation)
-				{
-					if (prefilter.find_first_not_of(' ') != std::string::npos)
-					{
-						throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-					}
-				}
-			}
-		}
-		// Samples in each datarecord
-		{
-			size_t recordsize = 0;
-
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& nrSamples = in[idx].m_samplesInDataRecord();
-
-				int n = 0;
-				try
-				{
-					n = std::stoi(nrSamples);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-
-				if (n < 1)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-				signal.m_samplesInDataRecord = n;
-				signal.m_detail.m_samplesInFile = n * header.m_datarecordsFile;
-				recordsize += n;
-			}
-
-			if (IsBdf(header.m_version))
-			{
-				recordsize *= 3;
-				if (recordsize > 0xF00000)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-			}
-			else
-			{
-				recordsize *= 2;
-				if (recordsize > 0xA00000)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
-			}
-			header.m_detail.m_recordSize = recordsize;
-		}
-		// Reserved
-		{
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-				auto& reserved = in[idx].m_reserved();
-				signal.m_reserved = reserved;
-			}
-		}
-		// Details
-		{
-			size_t n = 0;
-			for (size_t idx = 0; idx < signals.size(); idx++)
-			{
-				auto &signal = signals[idx];
-
-				signal.m_detail.m_bufferOffset = n;
-				if (IsBdf(header.m_version))
-					n += signal.m_samplesInDataRecord * 3;
-				else  if (IsEdf(header.m_version))
-					n += signal.m_samplesInDataRecord * 2;
-
-				signal.m_detail.m_scaling = (signal.m_physicalMax - signal.m_physicalMin) / (signal.m_digitalMax - signal.m_digitalMin);
-				signal.m_detail.m_offset = signal.m_physicalMin - signal.m_detail.m_scaling * signal.m_digitalMin;
-			}
-		}
-
-
-		for (auto &signal : signals)
-		{
-			signal.m_label = detail::ReduceString(signal.m_label);
-			signal.m_transducer = detail::ReduceString(signal.m_transducer);
-			signal.m_physDimension = detail::ReduceString(signal.m_physDimension);
-			signal.m_prefilter = detail::ReduceString(signal.m_prefilter);
-			signal.m_reserved = detail::ReduceString(signal.m_reserved);
-		}
-
-		return std::move(signals);
-	}
-
-	ProcessorHeaderSignal::TypeI ProcessorHeaderSignal::operator >> (TypeO in)
-	{
-		TypeI ou;
-
-		auto &header = m_general;
+		std::vector<HeaderSignal> out(in.size());
 		auto &signals = in;
 
-		ou.resize(in.size());
-
 		// Labels
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_label() = signals[idx].m_label;
+				out[idx].m_label(signals[idx].m_label);
 			}
 		}
 		// Transducers Types
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_transducer() = signals[idx].m_transducer;
+				out[idx].m_transducer(signals[idx].m_transducer);
 			}
 		}
 		// Physical Dimensions
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_physDimension() = signals[idx].m_physDimension;
+				out[idx].m_physDimension(signals[idx].m_physDimension);
 			}
 		}
 		// Physical Minima
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_physicalMin() = detail::to_string_decimal(signals[idx].m_physicalMin);
+				out[idx].m_physicalMin(detail::to_string_decimal(signals[idx].m_physicalMin));
 			}
 		}
 		// Physical Maxima
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_physicalMax() = detail::to_string_decimal(signals[idx].m_physicalMax);
+				out[idx].m_physicalMax(detail::to_string_decimal(signals[idx].m_physicalMax));
 			}
 		}
 		// Digital Minima
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_digitalMin() = std::to_string(signals[idx].m_digitalMin);
+				out[idx].m_digitalMin(std::to_string(signals[idx].m_digitalMin));
 			}
 		}
 		// Digital Maxima
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_digitalMax() = std::to_string(signals[idx].m_digitalMax);
+				out[idx].m_digitalMax(std::to_string(signals[idx].m_digitalMax));
 			}
 		}
 		// Prefilter
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_prefilter() = signals[idx].m_prefilter;
+				out[idx].m_prefilter(signals[idx].m_prefilter);
 			}
 		}
 		// Samples in each datarecord
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_samplesInDataRecord() = std::to_string(signals[idx].m_samplesInDataRecord);
+				out[idx].m_samplesInDataRecord(std::to_string(signals[idx].m_samplesInDataRecord));
 			}
 		}
 		// Reserved
 		{
 			for (size_t idx = 0; idx < signals.size(); idx++)
 			{
-				ou[idx].m_reserved() = signals[idx].m_reserved;
+				out[idx].m_reserved(signals[idx].m_reserved);
 			}
 		}
 
-		return std::move(ou);
+		return std::move(out);
 	}
 
 }

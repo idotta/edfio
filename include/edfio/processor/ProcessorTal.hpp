@@ -9,17 +9,18 @@
 
 #pragma once
 
+#include "../core/Annotation.hpp"
+
+#include <vector>
+
 namespace edfio
 {
 
-	enum class FileErrc
+	struct ProcessorTal
 	{
-		FileDoesNotOpen,
-		FileNotOpened,
-		FileReadError,
-		FileContainsFormatErrors,
-		FileContainsInvalidAnnotations,
-		FileWriteError
+		std::vector<Annotation> operator ()(std::vector<char> record, long long datarecord);
 	};
 
 }
+
+#include "impl/ProcessorTal.ipp"

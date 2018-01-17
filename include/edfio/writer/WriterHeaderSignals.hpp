@@ -9,17 +9,19 @@
 
 #pragma once
 
+#include "../core/StreamIO.hpp"
+#include "../header/HeaderSignal.hpp"
+
+#include <vector>
+
 namespace edfio
 {
 
-	enum class FileErrc
+	struct WriterHeaderSignals : Writer<char>
 	{
-		FileDoesNotOpen,
-		FileNotOpened,
-		FileReadError,
-		FileContainsFormatErrors,
-		FileContainsInvalidAnnotations,
-		FileWriteError
+		void operator ()(Stream &stream, std::vector<HeaderSignalFields> &signals);
 	};
 
 }
+
+#include "impl/WriterHeaderSignals.ipp"

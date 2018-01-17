@@ -9,17 +9,22 @@
 
 #pragma once
 
+#include <fstream>
+
 namespace edfio
 {
 
-	enum class FileErrc
+	template <class StreamT, class CharT>
+	struct StreamIO
 	{
-		FileDoesNotOpen,
-		FileNotOpened,
-		FileReadError,
-		FileContainsFormatErrors,
-		FileContainsInvalidAnnotations,
-		FileWriteError
+		using Stream = StreamT;
+		using ValueType = CharT;
 	};
+
+	template <class CharT>
+	using Reader = StreamIO <std::basic_ifstream<CharT>, CharT>;
+
+	template <class CharT>
+	using Writer = StreamIO <std::basic_ofstream<CharT>, CharT>;
 
 }

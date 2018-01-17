@@ -9,16 +9,24 @@
 
 #pragma once
 
+#include "../core/DataFormat.hpp"
 #include "../header/HeaderSignal.hpp"
 
 namespace edfio
 {
 
-	struct ProcessorHeaderSignal
+	struct ProcessorHeaderSignalFields
 	{
+		ProcessorHeaderSignalFields(DataFormat version, double datarecordDuration)
+			: m_version(version)
+			, m_datarecordDuration(datarecordDuration)
+		{}
 		std::vector<HeaderSignal> operator ()(std::vector<HeaderSignalFields> in);
+	private:
+		DataFormat m_version;
+		double m_datarecordDuration;
 	};
 
 }
 
-#include "impl/ProcessorHeaderSignal.ipp"
+#include "impl/ProcessorHeaderSignalFields.ipp"

@@ -9,21 +9,17 @@
 
 #pragma once
 
-#include "../core/Streamer.hpp"
-#include "../core/Record.hpp"
+#include "../core/StreamIO.hpp"
+#include "../header/HeaderExam.hpp"
 
 namespace edfio
 {
 
-	struct WriterRecord : Writer<RecordField>
+	struct ReaderHeaderExam : Reader<char>
 	{
-		WriterRecord(size_t recordSize) : m_recordSize(recordSize) {}
-
-		void operator ()(StreamT &stream, InputT &input);
-	private:
-		size_t m_recordSize = 0;
+		HeaderExam operator ()(Stream &stream);
 	};
 
 }
 
-#include "impl/WriterRecord.ipp"
+#include "impl/ReaderHeaderExam.ipp"

@@ -9,16 +9,14 @@
 
 #pragma once
 
-#include "ProcessorBase.hpp"
 #include "../header/HeaderGeneral.hpp"
 
 namespace edfio
 {
 
-	struct ProcessorHeaderGeneral : ProcessorBase<HeaderGeneralFields, HeaderGeneral>
+	struct ProcessorHeaderGeneral
 	{
-		TypeO operator << (TypeI in);
-		TypeI operator >> (TypeO in);
+		HeaderGeneralFields operator ()(HeaderGeneral in);
 	};
 
 }

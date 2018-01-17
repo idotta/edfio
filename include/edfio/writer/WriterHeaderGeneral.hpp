@@ -9,17 +9,19 @@
 
 #pragma once
 
+#include "../header/HeaderGeneral.hpp"
+#include "../core/StreamIO.hpp"
+
+#include <vector>
+
 namespace edfio
 {
 
-	template <class In, class Ou>
-	struct ProcessorBase
+	struct WriterHeaderGeneral : Writer<char>
 	{
-		using TypeI = In;
-		using TypeO = Ou;
-
-		virtual TypeO operator << (TypeI in) { return TypeO(); }
-		virtual TypeI operator >> (TypeO in) { return TypeI(); }
+		void operator ()(Stream &stream, HeaderGeneralFields &input);
 	};
 
 }
+
+#include "impl/WriterHeaderGeneral.ipp"

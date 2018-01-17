@@ -15,26 +15,36 @@
 namespace edfio
 {
 
-	template <size_t Sz>
+	// Fields have fixed predetermined sizes in the exam file
+	// They are used to read the headers
+	template <size_t Sz, typename CharT = char>
 	struct Field
 	{
-		std::string m_value;
+		using ValueType = CharT;
+
 		constexpr size_t Size() const
-		{ 
-			return Sz; 
+		{
+			return Sz;
 		}
-		const std::string& operator()() const
+		const std::basic_string<ValueType>& operator()() const
 		{
 			return m_value;
 		}
-		std::string& operator()()
+		std::basic_string<ValueType>& operator()()
 		{
 			return m_value;
 		}
+		void operator()(const std::basic_string<ValueType>& value)
+		{
+			m_value = value;
+			m_value.resize(Size());
+		}
+
+		std::basic_string<ValueType> m_value;
 	};
 
-	template <size_t Sz>
-	std::ostream& operator << (std::ostream &os, Field<Sz> &f)
+	template <size_t Sz, typename CharT>
+	std::ostream& operator << (std::ostream &os, Field<Sz, CharT> &f)
 	{
 		auto &value = f();
 		value.resize(Sz, ' ');
@@ -42,12 +52,12 @@ namespace edfio
 		return os;
 	}
 
-	template <size_t Sz>
-	std::istream& operator >> (std::istream &is, Field<Sz> &f)
+	template <size_t Sz, typename CharT>
+	std::istream& operator >> (std::istream &is, Field<Sz, CharT> &f)
 	{
 		auto &value = f();
-		value.resize(Sz, ' ');
-		is.read(&value[0], Sz);
+		value.resize(f.Size(), ' ');
+		is.read(&value[0], f.Size());
 		return is;
 	}
 
