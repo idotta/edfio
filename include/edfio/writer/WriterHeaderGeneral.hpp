@@ -10,24 +10,18 @@
 #pragma once
 
 #include "../header/HeaderGeneral.hpp"
-#include "../header/HeaderSignal.hpp"
-#include "../core/Streamer.hpp"
+#include "../core/StreamIO.hpp"
 
 #include <vector>
 
 namespace edfio
 {
 
-	struct WriterHeaderGeneral : Writer<HeaderGeneralFields>
+	struct WriterHeaderGeneral : Writer<char>
 	{
-		void operator ()(StreamT &stream, InputT &input);
-	};
-
-	struct WriterHeaderSignal : Writer<std::vector<HeaderSignalFields>>
-	{
-		void operator ()(StreamT &stream, InputT &input);
+		void operator ()(Stream &stream, HeaderGeneralFields &input);
 	};
 
 }
 
-#include "impl/WriterHeader.ipp"
+#include "impl/WriterHeaderGeneral.ipp"

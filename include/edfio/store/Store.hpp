@@ -23,7 +23,7 @@ namespace edfio
 		typedef Type const* pointer;
 		typedef Type const& reference;
 		typedef long long difference_type;
-		typedef unsigned long size_type;
+		typedef unsigned long long size_type;
 
 		class iterator
 		{
@@ -48,10 +48,8 @@ namespace edfio
 		}
 
 	protected:
-		virtual reference getR(size_type off) = 0;
-		virtual pointer getP(size_type off) = 0;
 
-		Stream &m_stream;
+		stream_type &m_stream;
 	};
 
 }

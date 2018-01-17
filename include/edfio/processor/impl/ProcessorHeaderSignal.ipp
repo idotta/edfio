@@ -13,15 +13,16 @@
 #include "../../core/DataFormat.hpp"
 #include "../detail/ProcessorUtils.hpp"
 
+#include <vector>
+#include <string>
+
 namespace edfio
 {
 
-	ProcessorHeaderSignal::Out ProcessorHeaderSignal::operator()(In in)
+	std::vector<HeaderSignal> ProcessorHeaderSignal::operator()(std::vector<HeaderSignalFields> in)
 	{
-		Out out;
+		std::vector<HeaderSignal> out(in.size());
 		auto &signals = in;
-
-		out.resize(in.size());
 
 		// Labels
 		{

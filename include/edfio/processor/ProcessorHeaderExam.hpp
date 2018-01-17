@@ -9,16 +9,16 @@
 
 #pragma once
 
-#include "../header/HeaderSignal.hpp"
+#include "../header/HeaderExam.hpp"
 
 namespace edfio
 {
 
-	struct ProcessorHeaderSignal
+	struct ProcessorHeaderExam
 	{
-		std::vector<HeaderSignal> operator ()(std::vector<HeaderSignalFields> in);
+		HeaderExam operator ()(HeaderGeneral header, std::vector<HeaderSignal> signals);
 	};
 
 }
 
-#include "impl/ProcessorHeaderSignal.ipp"
+#include "impl/ProcessorHeaderExam.ipp"

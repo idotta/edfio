@@ -16,9 +16,7 @@ namespace edfio
 
 	struct ProcessorHeaderGeneralFields
 	{
-		using In = HeaderGeneralFields;
-		using Out = HeaderGeneral;
-		Out operator ()(In in);
+		HeaderGeneral operator ()(HeaderGeneralFields in);
 	};
 
 }

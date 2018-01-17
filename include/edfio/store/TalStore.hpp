@@ -13,36 +13,40 @@
 #include "../core/Record.hpp"
 
 #include <iostream>
-#include <fstream>
 #include <iterator>
+
+// TAL - Timestamped Annotation List
+// TalStore is a particular kind of Store which iterates 
+// through a SignalRecordStore corresponding to an Annotation signal
+// and dereferences a TAL
 
 namespace edfio
 {
 
-	class AnnotationStore : public Store<Record<char>, std::ifstream, std::bidirectional_iterator_tag>
+	class TalStore : public Store<Record<char>::VectorType, const Record<char>, std::bidirectional_iterator_tag>
 	{
 	public:
 
 		class iterator : public store_type::iterator
 		{
-			enum
-			{
-				_begin = 0,
-				_end = -1
-			};
-			AnnotationStore *m_context = nullptr;
-			difference_type m_offset = _end;
+			friend class TalStore;
+			size_type m_offset = 0; // Absolute position in current Store
+			TalStore *m_context = nullptr;
 		public:
 
 			// Construction
 			iterator() = default;
 
-			iterator(AnnotationStore *context)
+		protected:
+			iterator(TalStore *context, size_type off)
 				: m_context(context)
-				, m_offset(_end)
+				, m_offset(off)
 			{
+				if (m_offset == 0)
+					++*this;
 			}
 
+		public:
 			iterator(const iterator &it)
 				: m_context(it.m_context)
 				, m_offset(it.m_offset)
@@ -72,9 +76,8 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset + 1 > m_context->size())
-					throw std::length_error("Iterator not incrementable");
-				m_offset++;
+
+				m_offset = m_context->next(m_offset);
 				return *this;
 			}
 			// Post-increment
@@ -91,9 +94,8 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset - 1 < 0)
-					throw std::length_error("Iterator not decrementable");
-				m_offset--;
+
+				m_offset = m_context->prev(m_offset);
 				return *this;
 			}
 			// Post-decrement
@@ -111,13 +113,13 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				return m_context->getR(m_offset);
+				return m_context->getR();
 			}
 			pointer operator->() const
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				return m_context->getP(m_offset);
+				return m_context->getP();
 			}
 		};
 
@@ -125,39 +127,36 @@ namespace edfio
 		typedef std::reverse_iterator<iterator> reverse_iterator;
 		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		AnnotationStore() = delete;
+		TalStore() = delete;
 
-		AnnotationStore(stream_type &stream, size_type recordSize, std::streamoff headerOffset)
+		TalStore(stream_type &stream)
 			: store_type(stream)
-			, m_recordSize(recordSize)
-			, m_headerOffset(headerOffset)
-			, m_value(recordSize)
 		{
 		}
 
 		iterator begin()
 		{
-			return iterator(this);
+			return iterator(this, 0);
 		}
 		const_iterator begin() const
 		{
-			return const_iterator(const_cast<AnnotationStore*>(this));
+			return const_iterator(const_cast<TalStore*>(this), 0);
 		}
 		const_iterator cbegin() const
 		{
-			return const_iterator(const_cast<AnnotationStore*>(this));
+			return const_iterator(const_cast<TalStore*>(this), 0);
 		}
 		iterator end()
 		{
-			return iterator(this, size());
+			return iterator(this, m_stream.Size());
 		}
 		const_iterator end() const
 		{
-			return const_iterator(const_cast<AnnotationStore*>(this), size());
+			return const_iterator(const_cast<TalStore*>(this), m_stream.Size());
 		}
 		const_iterator cend() const
 		{
-			return const_iterator(const_cast<AnnotationStore*>(this), size());
+			return const_iterator(const_cast<TalStore*>(this), m_stream.Size());
 		}
 		reverse_iterator rbegin()
 		{
@@ -185,25 +184,80 @@ namespace edfio
 		}
 
 	protected:
-		// Overrides
-		reference getR(size_type off) override
+		reference getR()
 		{
-			load(off);
 			return m_value;
 		}
 
-		pointer getP(size_type off) override
+		pointer getP()
 		{
-			load(off);
 			return &m_value;
 		}
 
-		void load(size_type off)
+		size_type next(size_type off)
 		{
+			if (off >= m_stream().size())
+				throw std::length_error("Iterator not incrementable");
+
+			if (off < m_stream().size())
+			{
+				auto first = m_stream().begin() + off;
+				auto last = m_stream().end();
+
+				while (first != last && *first == 0)
+				{
+					first++;
+					off++;
+				}
+
+				if (first != last)
+				{
+					size_type offOld = off;
+					for (auto it = first; *it != 0 && it != last; it++)
+					{
+						off++;
+					}
+					if (offOld != off)
+					{
+						m_value.assign(first, first + (off - offOld));
+					}
+				}
+			}
+			return off;
 		}
 
-		size_type m_recordSize;
-		std::streamoff m_headerOffset;
+		size_type prev(size_type off)
+		{
+			if (off <= 0)
+				throw std::length_error("Iterator not decrementable");
+
+			if (off > 0)
+			{
+				auto first = m_stream().rend() + off;
+				auto last = m_stream().rend();
+
+				while (*first == 0 && first != last)
+				{
+					first++;
+					off--;
+				}
+
+				if (first != last)
+				{
+					size_type offOld = off;
+					for (auto it = first; *it != 0 && it != last; it++)
+					{
+						off--;
+					}
+					if (offOld != off)
+					{
+						m_value.assign(first + offOld, first + off);
+					}
+				}
+			}
+			return off;
+		}
+
 		value_type m_value;
 	};
 

@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include "../../Defs.hpp"
-#include "../../header/HeaderGeneral.hpp"
+#include "../../Utils.hpp"
 #include "../../header/HeaderSignal.hpp"
 
 #include <vector>
@@ -20,45 +19,15 @@
 namespace edfio
 {
 
-	void WriterHeaderGeneral::operator ()(StreamT &stream, InputT &input)
+	void WriterHeaderSignals::operator()(Stream &stream, std::vector<HeaderSignalFields> &signals)
 	{
-		auto &hdr = input;
 		if (!stream || !stream.is_open())
 			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
-
-		stream.clear();
-		stream.seekp(0, std::ios::beg);
-
 		try
 		{
-			stream << hdr.m_version;
-			stream << hdr.m_patient;
-			stream << hdr.m_recording;
-			stream << hdr.m_startDate;
-			stream << hdr.m_startTime;
-			stream << hdr.m_headerSize;
-			stream << hdr.m_reserved;
-			stream << hdr.m_datarecordsFile;
-			stream << hdr.m_datarecordDuration;
-			stream << hdr.m_totalSignals;
-		}
-		catch (std::exception e)
-		{
-			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteError));
-		}
-	}
+			stream.clear();
+			stream.seekp(256, std::ios::beg);
 
-	void WriterHeaderSignal::operator ()(StreamT &stream, InputT &input)
-	{
-		auto &signals = input;
-		if (!stream || !stream.is_open())
-			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
-
-		stream.clear();
-		stream.seekp(256, std::ios::beg);
-
-		try
-		{
 			for (auto &s : signals)
 				stream << s.m_label;
 			for (auto &s : signals)

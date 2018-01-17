@@ -46,9 +46,9 @@ namespace edfio
 				throw std::out_of_range("Iterator not dereferenceable");
 			}
 
-			auto dataRecordOffset = off / m_signalrecordSize;
-			auto sampleOffset = off % m_signalrecordSize;
-			auto destPos = m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset + sampleOffset * m_recordSize;
+			std::streamoff dataRecordOffset = off / m_signalrecordSize;
+			std::streamoff sampleOffset = off % m_signalrecordSize;
+			std::streamoff destPos = m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset + sampleOffset * m_recordSize;
 
 			if (m_bufferPos < 0 || (destPos < m_bufferPos || destPos >= m_bufferPos + m_buffer.Size()))
 			{
@@ -76,7 +76,7 @@ namespace edfio
 		size_type m_datarecordSize;
 		size_type m_signalrecordSize;
 		std::streamoff m_signalOffset;
-		// Samples buffer to decrease reading time
+		// Samples buffer to decrease read requests
 		value_type m_buffer;
 		std::streamoff m_bufferPos;
 	};

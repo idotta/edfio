@@ -9,21 +9,18 @@
 
 #pragma once
 
-#include "../core/Streamer.hpp"
-#include "../core/Record.hpp"
+#include "../core/Annotation.hpp"
+
+#include <vector>
 
 namespace edfio
 {
 
-	struct WriterRecord : Writer<RecordField>
+	struct ProcessorTal
 	{
-		WriterRecord(size_t recordSize) : m_recordSize(recordSize) {}
-
-		void operator ()(StreamT &stream, InputT &input);
-	private:
-		size_t m_recordSize = 0;
+		std::vector<Annotation> operator ()(std::vector<char> record, long long datarecord);
 	};
 
 }
 
-#include "impl/WriterRecord.ipp"
+#include "impl/ProcessorTal.ipp"

@@ -19,9 +19,9 @@
 namespace edfio
 {
 
-	ProcessorHeaderGeneralFields::Out ProcessorHeaderGeneralFields::operator()(In in)
+	HeaderGeneral ProcessorHeaderGeneralFields::operator()(HeaderGeneralFields in)
 	{
-		Out out;
+		HeaderGeneral out;
 
 		if (detail::CheckFormatErrors(in.m_version())
 			|| detail::CheckFormatErrors(in.m_patient())

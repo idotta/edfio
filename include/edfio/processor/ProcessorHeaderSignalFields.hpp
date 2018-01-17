@@ -17,13 +17,11 @@ namespace edfio
 
 	struct ProcessorHeaderSignalFields
 	{
-		using In = std::vector<HeaderSignalFields>;
-		using Out = std::vector<HeaderSignal>;
 		ProcessorHeaderSignalFields(DataFormat version, double datarecordDuration)
 			: m_version(version)
 			, m_datarecordDuration(datarecordDuration)
 		{}
-		Out operator ()(In in);
+		std::vector<HeaderSignal> operator ()(std::vector<HeaderSignalFields> in);
 	private:
 		DataFormat m_version;
 		double m_datarecordDuration;

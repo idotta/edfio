@@ -15,7 +15,7 @@
 namespace edfio
 {
 
-	HeaderExam edfio::ProcessorHeaderExamIn::operator()(HeaderGeneral header, std::vector<HeaderSignal> signals)
+	HeaderExam edfio::ProcessorHeaderExam::operator()(HeaderGeneral header, std::vector<HeaderSignal> signals)
 	{
 		// Record size
 		size_t recordsize = 0;

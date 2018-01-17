@@ -15,7 +15,7 @@
 #include "../ReaderHeaderSignal.hpp"
 #include "../../processor/ProcessorHeaderGeneralFields.hpp"
 #include "../../processor/ProcessorHeaderSignalFields.hpp"
-#include "../../processor/ProcessorHeaderExamIn.hpp"
+#include "../../processor/ProcessorHeaderExam.hpp"
 
 #include <stdexcept>
 #include <fstream>
@@ -40,7 +40,7 @@ namespace edfio
 		auto signals = std::move(procSignalFields(std::move(signalFields)));
 
 		// Process header exam
-		ProcessorHeaderExamIn procHeader;
+		ProcessorHeaderExam procHeader;
 		auto header = std::move(procHeader(std::move(general), std::move(signals)));
 
 		// File size

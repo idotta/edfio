@@ -22,6 +22,7 @@ namespace edfio
 	struct Record
 	{
 		using ValueType = CharT;
+		using VectorType = std::vector<ValueType>;
 
 		Record() = delete;
 
@@ -29,24 +30,30 @@ namespace edfio
 			: m_size(recordSize)
 			, m_value(recordSize) {}
 
-		Record(typename std::vector<ValueType>::const_iterator first, typename std::vector<ValueType>::const_iterator last)
+		Record(typename VectorType::const_iterator first, typename VectorType::const_iterator last)
 			: m_size(std::distance(first, last))
 			, m_value(first, last) {}
+
+		Record(const Record<CharT> &record)
+			: m_size(record.m_size)
+			, m_value(record.m_value)
+		{
+		}
 
 		const size_t Size() const
 		{
 			return m_size;
 		}
-		const std::vector<ValueType>& operator()() const
+		const VectorType& operator()() const
 		{
 			return m_value;
 		}
-		std::vector<ValueType>& operator()()
+		VectorType& operator()()
 		{
 			return m_value;
 		}
 
-		std::vector<ValueType> m_value;
+		VectorType m_value;
 		const size_t m_size;
 	};
 

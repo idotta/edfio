@@ -269,13 +269,13 @@ namespace edfio
 		}
 
 	protected:
-		reference getR(size_type off) override
+		virtual reference getR(size_type off)
 		{
 			load(off);
 			return m_value;
 		}
 
-		pointer getP(size_type off) override
+		virtual pointer getP(size_type off)
 		{
 			load(off);
 			return &m_value;

@@ -47,8 +47,7 @@ namespace edfio
 	template <SampleType SampleT>
 	struct ProcessorSampleRecord
 	{
-		using In = Record<char>;
-		using Out = typename impl::Sample<SampleT>::type;
+		using ProcType = typename impl::Sample<SampleT>::type;
 		using DigiType = impl::Sample<SampleType::Digital>::type;
 		using PhysType = impl::Sample<SampleType::Physical>::type;
 
@@ -58,11 +57,11 @@ namespace edfio
 		{
 		}
 
-		Out operator ()(In in);
+		ProcType operator ()(Record<char> record);
 
 	private:
-		Out Calc(DigiType sample);
-		Out Calc(PhysType sample);
+		ProcType Calc(DigiType sample);
+		ProcType Calc(PhysType sample);
 
 		const double m_offset;
 		const double m_scaling;
