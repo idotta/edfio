@@ -306,7 +306,7 @@ namespace edfio
 									int month = detail::GetMonthFromString(str.substr(3, 3));
 									if (month == 0)
 									{
-										throw std::exception("Invalid Month");
+										throw std::invalid_argument("Invalid Month");
 									}
 									out.m_startDate = std::make_tuple(day, month, year);
 								}
