@@ -9,18 +9,17 @@
 
 #pragma once
 
+#include "../core/Record.hpp"
+#include "../core/Annotation.hpp"
+
 namespace edfio
 {
 
-	enum class FileErrc
+	struct ProcessorTimeStamp
 	{
-		FileDoesNotOpen,
-		FileNotOpened,
-		FileReadError,
-		FileContainsFormatErrors,
-		FileContainsInvalidAnnotations,
-		FileWriteError,
-		FileWriteInvalidAnnotations
+		Record<char> operator ()(TimeStamp timestamp);
 	};
 
 }
+
+#include "impl/ProcessorTimeStamp.ipp"

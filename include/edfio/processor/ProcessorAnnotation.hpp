@@ -9,18 +9,17 @@
 
 #pragma once
 
+#include "../core/Record.hpp"
 #include "../core/Annotation.hpp"
-
-#include <vector>
 
 namespace edfio
 {
 
-	struct ProcessorTal
+	struct ProcessorAnnotation
 	{
-		std::vector<Annotation> operator ()(std::vector<char> record, long long datarecord);
+		Record<char> operator ()(Annotation annotation);
 	};
 
 }
 
-#include "impl/ProcessorTal.ipp"
+#include "impl/ProcessorAnnotation.ipp"

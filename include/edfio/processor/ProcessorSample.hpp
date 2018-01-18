@@ -16,25 +16,27 @@ namespace edfio
 {
 
 	template <SampleType SampleT>
-	struct ProcessorSampleRecord
+	struct ProcessorSample
 	{
 		using ProcType = typename impl::Sample<SampleT>::type;
 		using DigiType = impl::Sample<SampleType::Digital>::type;
 		using PhysType = impl::Sample<SampleType::Physical>::type;
 
-		ProcessorSampleRecord(double offset, double scaling)
+		ProcessorSample(double offset, double scaling, size_t sampleSize)
 			: m_offset(offset)
 			, m_scaling(scaling)
+			, m_sampleSize(sampleSize)
 		{
 		}
 
-		ProcType operator ()(Record<char> record);
+		Record<char> operator ()(ProcType sample);
 
 	private:
 		const double m_offset;
 		const double m_scaling;
+		size_t m_sampleSize;
 	};
 
 }
 
-#include "impl/ProcessorSampleRecord.ipp"
+#include "impl/ProcessorSample.ipp"

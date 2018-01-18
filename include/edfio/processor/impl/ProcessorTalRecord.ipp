@@ -18,7 +18,7 @@
 namespace edfio
 {
 
-	std::vector<Annotation> ProcessorTal::operator()(std::vector<char> record, long long datarecord)
+	std::vector<Annotation> ProcessorTalRecord::operator()(std::vector<char> record, long long datarecord)
 	{
 		std::vector<Annotation> out;
 
@@ -47,19 +47,13 @@ namespace edfio
 						std::string tmp(first, it);
 						try
 						{
-							start = static_cast<long long>(std::stod(tmp));
+							start = std::stod(tmp);
 						}
 						catch (...)
 						{
 							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsInvalidAnnotations));
 						}
 						onset = false;
-
-						// Check if this TAL is in fact a timestamp, we don't want this
-						if (*it == detail::ANNOTATION_DIV && (it + 1) != last && *(it + 1) == detail::ANNOTATION_DIV)
-						{
-							break;
-						}
 
 						first = it;
 					}
@@ -71,7 +65,7 @@ namespace edfio
 						std::string tmp(first + 1, it);
 						try
 						{
-							duration = static_cast<long long>(std::stod(tmp));
+							duration = std::stod(tmp);
 						}
 						catch (...)
 						{
@@ -83,13 +77,17 @@ namespace edfio
 					{
 						std::string tmp(first + 1, it);
 
-						Annotation annot;
-						annot.m_start = start;
-						annot.m_duration = duration;
-						annot.m_annotation = tmp;
-						annot.m_dararecord = datarecord;
-						out.emplace_back(std::move(annot));
-						first = it + 1;
+						// Check if this TAL is in fact just a timestamp, we don't want this
+						if (!tmp.empty())
+						{
+							Annotation annot;
+							annot.m_start = start;
+							annot.m_duration = duration;
+							annot.m_annotation = tmp;
+							annot.m_dararecord = datarecord;
+							out.emplace_back(std::move(annot));
+						}
+						first = it;
 					}
 				}
 			}

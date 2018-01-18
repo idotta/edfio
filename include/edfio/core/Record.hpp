@@ -28,7 +28,7 @@ namespace edfio
 
 		Record(size_t recordSize)
 			: m_size(recordSize)
-			, m_value(recordSize) {}
+			, m_value(recordSize, 0) {}
 
 		Record(typename VectorType::const_iterator first, typename VectorType::const_iterator last)
 			: m_size(std::distance(first, last))
@@ -61,7 +61,7 @@ namespace edfio
 	std::ostream& operator << (std::ostream &os, Record<CharT> &r)
 	{
 		auto &record = r();
-		record.resize(r.Size());
+		record.resize(r.Size(), 0);
 		os.write(record.data(), r.Size());
 		return os;
 	}
@@ -70,7 +70,7 @@ namespace edfio
 	std::istream& operator >> (std::istream &is, Record<CharT> &r)
 	{
 		auto &record = r();
-		record.resize(r.Size());
+		record.resize(r.Size(), 0);
 		is.read(&record[0], r.Size());
 		return is;
 	}

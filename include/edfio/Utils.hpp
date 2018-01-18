@@ -42,6 +42,11 @@ namespace edfio
 			{
 				return "Error: can't write on file";
 			}
+			else if (err == FileErrc::FileWriteInvalidAnnotations)
+			{
+				return "Error: writing invalid annotations";
+
+			}
 			return "Unspecified error";
 		}
 	}
