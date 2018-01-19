@@ -12,6 +12,8 @@
 namespace edfio
 {
 
+	// A class created in order to have an easier way to access streams
+	// of specific data through their respective iterators.
 	template <class Type, class Stream, typename IterCategory>
 	class Store
 	{
