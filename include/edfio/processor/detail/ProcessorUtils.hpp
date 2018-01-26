@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "../../Config.hpp"
+
 #include <string>
 #include <vector>
 #include <cctype>
@@ -17,13 +19,11 @@
 namespace edfio
 {
 
-	namespace detail
+	namespace impl
 	{
 
-		static const char ADDITIONAL_SEPARATOR = '|';
-
-		template <typename CharT>
-		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
+		template <bool Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<Check, std::basic_string<CharT>>::type &str)
 		{
 			for (auto& c : str)
 			{
@@ -35,8 +35,14 @@ namespace edfio
 			return false;
 		}
 
-		template <typename CharT>
-		static bool CheckFormatErrors(const std::vector<CharT> &str)
+		template <bool Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<!Check, std::basic_string<CharT>>::type &str)
+		{
+			return false;
+		}
+
+		template <bool Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<Check, std::vector<CharT>>::type &str)
 		{
 			for (auto& c : str)
 			{
@@ -46,6 +52,31 @@ namespace edfio
 				}
 			}
 			return false;
+		}
+
+		template <bool Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<!Check, std::vector<CharT>>::type &str)
+		{
+			return false;
+		}
+
+	}
+
+	namespace detail
+	{
+
+		static const char ADDITIONAL_SEPARATOR = '|';
+
+		template <typename CharT>
+		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
+		{
+			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING == ProcessorErrorCheck::Strict, CharT>(str);
+		}
+
+		template <typename CharT>
+		static bool CheckFormatErrors(const std::vector<CharT> &str)
+		{
+			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING == ProcessorErrorCheck::Strict, CharT>(str);
 		}
 
 		static int GetMonthFromString(const std::string &str)

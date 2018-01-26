@@ -15,15 +15,14 @@
 #include <iostream>
 #include <iterator>
 
-// TAL - Timestamped Annotation List
-// TalStore is a particular kind of Store which iterates 
-// through a SignalRecordStore corresponding to an Annotation signal
-// and dereferences a TAL
-
 namespace edfio
 {
 
-	class TalStore : public Store<Record<char>::VectorType, const Record<char>, std::bidirectional_iterator_tag>
+	// TAL - Timestamped Annotation List
+	// TalStore is a particular kind of Store which iterates 
+	// through a SignalRecordStore corresponding to an Annotation signal
+	// and dereferences a TAL
+	class TalStore : public Store<Record<char>::VectorType, Record<char>::VectorType const*, Record<char>::VectorType const&, const Record<char>, std::bidirectional_iterator_tag>
 	{
 	public:
 

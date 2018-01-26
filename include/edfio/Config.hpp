@@ -9,16 +9,18 @@
 
 #pragma once
 
-#include "../header/HeaderSignal.hpp"
-
 namespace edfio
 {
 
-	struct ProcessorHeaderSignal
+	enum class ProcessorErrorCheck
 	{
-		std::vector<HeaderSignalFields> operator ()(std::vector<HeaderSignal> in);
+		Strict,
+		Permissive
 	};
 
-}
+	namespace config
+	{
+		static constexpr ProcessorErrorCheck PROCESSOR_ERROR_CHECKING = ProcessorErrorCheck::Strict;
+	}
 
-#include "impl/ProcessorHeaderSignal.ipp"
+}

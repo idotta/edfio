@@ -119,6 +119,7 @@ namespace edfio
 					std::replace(field.begin(), field.end(), ' ', '_'); // replace all ' ' to '_'
 					patient += field + " ";
 				}
+				patient.pop_back(); // remove last " "
 				out.m_patient(patient);
 			}
 			// Recording
@@ -152,6 +153,7 @@ namespace edfio
 					std::replace(field.begin(), field.end(), ' ', '_'); // replace all '_' to ' '
 					recording += field + " ";
 				}
+				recording.pop_back(); // remove last " "
 				out.m_recording(recording);
 			}
 		}

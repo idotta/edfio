@@ -27,44 +27,44 @@ namespace edfio
 		template <class Stream>
 		DataRecordStore CreateDataRecordStore(Stream &stream, const HeaderGeneral &general)
 		{
-			auto recordSize = general.m_detail.m_recordSize;
-			auto storeSize = general.m_datarecordsFile;
-			auto headerSize = general.m_headerSize;
-			return std::move(DataRecordStore(stream, recordSize, storeSize, headerSize));
+			DataRecordStore::size_type recordSize = general.m_detail.m_recordSize;
+			DataRecordStore::size_type storeSize = general.m_datarecordsFile;
+			std::streamoff headerSize = general.m_headerSize;
+			return std::move(DataRecordStore{ stream, recordSize, storeSize, headerSize });
 		}
 
 		template <class Stream>
 		SignalRecordStore CreateSignalRecordStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
-			auto recordSize = general.m_detail.m_recordSize;
-			auto storeSize = general.m_datarecordsFile;
-			auto headerSize = general.m_headerSize;
-			auto signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
-			auto signalOff = signal.m_detail.m_bufferOffset;
-			return std::move(SignalRecordStore(stream, signalSize, storeSize, headerSize, recordSize, signalOff));
+			SignalRecordStore::size_type recordSize = general.m_detail.m_recordSize;
+			SignalRecordStore::size_type storeSize = general.m_datarecordsFile;
+			std::streamoff headerSize = general.m_headerSize;
+			SignalRecordStore::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
+			std::streamoff signalOff = signal.m_detail.m_bufferOffset;
+			return std::move(SignalRecordStore{ stream, signalSize, storeSize, headerSize, recordSize, signalOff });
 		}
 
 		template <class Stream>
 		SignalSampleStore CreateSignalSampleStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
-			auto recordSize = general.m_detail.m_recordSize;
-			auto storeSize = general.m_datarecordsFile * signal.m_samplesInDataRecord;
-			auto headerSize = general.m_headerSize;
-			auto sampleSize = GetSampleBytes(general.m_version);
-			auto signalSize = signal.m_samplesInDataRecord;
-			auto signalOff = signal.m_detail.m_bufferOffset;
-			return std::move(SignalSampleStore(stream, sampleSize, storeSize, headerSize, recordSize, signalSize, signalOff));
+			SignalSampleStore::size_type recordSize = general.m_detail.m_recordSize;
+			SignalSampleStore::size_type storeSize = general.m_datarecordsFile * signal.m_samplesInDataRecord;
+			std::streamoff headerSize = general.m_headerSize;
+			SignalSampleStore::size_type sampleSize = GetSampleBytes(general.m_version);
+			SignalSampleStore::size_type signalSize = signal.m_samplesInDataRecord;
+			std::streamoff signalOff = signal.m_detail.m_bufferOffset;
+			return std::move(SignalSampleStore{ stream, sampleSize, storeSize, headerSize, recordSize, signalSize, signalOff });
 		}
 
 		template <class Stream>
 		TimeStampStore CreateTimeStampStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
-			auto recordSize = general.m_detail.m_recordSize;
-			auto storeSize = general.m_datarecordsFile;
-			auto headerSize = general.m_headerSize;
-			auto signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
-			auto signalOff = signal.m_detail.m_bufferOffset;
-			return std::move(TimeStampStore(stream, signalSize, storeSize, headerSize, recordSize, signalOff));
+			TimeStampStore::size_type recordSize = general.m_detail.m_recordSize;
+			TimeStampStore::size_type storeSize = general.m_datarecordsFile;
+			std::streamoff headerSize = general.m_headerSize;
+			TimeStampStore::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
+			std::streamoff signalOff = signal.m_detail.m_bufferOffset;
+			return std::move(TimeStampStore{ stream, signalSize, storeSize, headerSize, recordSize, signalOff });
 		}
 
 	}

@@ -37,7 +37,7 @@ namespace edfio
 		void operator()(const std::basic_string<ValueType>& value)
 		{
 			m_value = value;
-			m_value.resize(Size());
+			m_value.resize(Size(), ' ');
 		}
 
 		std::basic_string<ValueType> m_value;

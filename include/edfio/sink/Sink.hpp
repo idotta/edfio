@@ -14,19 +14,18 @@
 namespace edfio
 {
 
-	// A class created in order to have an easier way to read streams
+	// A class created in order to have an easier way to write streams
 	// of specific data through their respective iterators.
 	template <class Value, class Pointer, class Reference, class Stream, typename IterCategory>
-	class Store : public Device<Value, Pointer, Reference, Stream, IterCategory>
+	class Sink : public Device<Value, Pointer, Reference, Stream, IterCategory>
 	{
 	public:
-		typedef Store<Value, Pointer, Reference, Stream, IterCategory> store_type;
+		typedef Sink<Value, Pointer, Reference, Stream, IterCategory> sink_type;
 		typedef device_type::iterator iterator;
-		typedef iterator const const_iterator;
 
-		Store() = delete;
+		Sink() = delete;
 
-		Store(stream_type &stream)
+		Sink(stream_type &stream)
 			: device_type(stream)
 		{
 		}

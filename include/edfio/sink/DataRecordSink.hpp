@@ -9,30 +9,29 @@
 
 #pragma once
 
-#include "Store.hpp"
+#include "Sink.hpp"
 #include "../core/Record.hpp"
 
 #include <iostream>
 #include <fstream>
-#include <iterator>
 
 namespace edfio
 {
 
-	class RecordStore : public Store<Record<char>, Record<char> const*, Record<char> const&, std::ifstream, std::random_access_iterator_tag>
+	class DataRecordSink : public Sink<Record<char>, Record<char>*, Record<char>&, std::ofstream, std::output_iterator_tag>
 	{
 	public:
 
-		class iterator : public store_type::iterator
+		class iterator : public sink_type::iterator
 		{
-			size_type m_offset = 0; // Relative to total of Stores
-			RecordStore *m_context = nullptr;
+			size_type m_offset = -1; // Default is end
+			DataRecordSink *m_context = nullptr;
 		public:
 
 			// Construction
 			iterator() = default;
 
-			iterator(RecordStore *context, size_type offset = 0)
+			iterator(DataRecordSink *context, size_type offset = -1)
 				: m_offset(offset)
 				, m_context(context)
 			{
@@ -45,10 +44,11 @@ namespace edfio
 			}
 
 			// Assignment
-			iterator& operator=(const iterator &it)
+			iterator& operator=(value_type value)
 			{
-				m_offset = it.m_offset;
-				m_context = it.m_context;
+				if (!m_context)
+					throw std::invalid_argument("Invalid context");
+				m_context->save(m_offset, std::move(value));
 				return *this;
 			}
 
@@ -93,9 +93,10 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset + 1 > m_context->size())
+				if (m_offset == -1)
 					throw std::length_error("Iterator not incrementable");
-				m_offset++;
+				if (++m_offset >= m_context->size())
+					m_offset = -1;
 				return *this;
 			}
 			// Post-increment
@@ -112,9 +113,12 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset == 0)
+				if (m_offset == 0)
 					throw std::length_error("Iterator not decrementable");
-				m_offset--;
+				if (m_offset == -1)
+					m_offset = m_context->size() - 1;
+				else
+					m_offset--;
 				return *this;
 			}
 			// Post-decrement
@@ -131,9 +135,14 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset + off > m_context->size())
+				if (m_offset == -1)
+					throw std::length_error("Iterator not incrementable");
+				if (m_offset + off > m_context->size())
 					throw std::length_error("Iterator + offset out of range");
-				m_offset += off;
+				if (m_offset + off == m_context->size())
+					m_offset = -1;
+				else
+					m_offset += off;
 				return *this;
 			}
 			// Addition
@@ -150,9 +159,14 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_context->size() <= 0 || m_offset < off)
+				if (m_offset == 0)
+					throw std::length_error("Iterator not decrementable");
+				if (m_offset != -1 && m_offset < off)
 					throw std::length_error("Iterator - offset out of range");
-				m_offset -= off;
+				if (m_offset == -1)
+					m_offset = m_context->size() - off;
+				else
+					m_offset -= off;
 				return *this;
 			}
 			// Subtraction
@@ -174,27 +188,19 @@ namespace edfio
 			}
 
 			// Dereference
-			reference operator*() const
+			iterator& operator*()
 			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				return m_context->getR(m_offset);
+				return *this;
 			}
-			pointer operator->() const
+			iterator* operator->()
 			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				return m_context->getP(m_offset);
+				return this;
 			}
 
 			// Subscripting
-			reference operator[](size_type off) const
+			iterator& operator[](size_type)
 			{
-				if (!m_context)
-					throw std::invalid_argument("Invalid context");
-				iterator tmp = *this;
-				tmp += off;
-				return *tmp;
+				return *this;
 			}
 		};
 
@@ -202,40 +208,40 @@ namespace edfio
 		typedef std::reverse_iterator<iterator> reverse_iterator;
 		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		RecordStore() = delete;
+		DataRecordSink() = delete;
 
-		RecordStore(stream_type &stream, size_type recordSize, size_type storeSize, std::streamoff headerOffset)
-			: store_type(stream)
+		DataRecordSink(stream_type &stream, size_type recordSize, size_type storeSize, std::streamoff headerOffset)
+			: sink_type(stream)
 			, m_recordSize(recordSize)
-			, m_storeSize(storeSize)
 			, m_headerOffset(headerOffset)
 			, m_value(recordSize)
 		{
+			measure();
 		}
 
 		iterator begin()
 		{
-			return iterator(this);
+			return iterator(this, 0);
 		}
 		const_iterator begin() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this));
+			return const_iterator(const_cast<DataRecordSink*>(this), 0);
 		}
 		const_iterator cbegin() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this));
+			return const_iterator(const_cast<DataRecordSink*>(this), 0);
 		}
 		iterator end()
 		{
-			return iterator(this, size());
+			return iterator(this);
 		}
 		const_iterator end() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this), size());
+			return const_iterator(const_cast<DataRecordSink*>(this));
 		}
 		const_iterator cend() const
 		{
-			return const_iterator(const_cast<RecordStore*>(this), size());
+			return const_iterator(const_cast<DataRecordSink*>(this));
 		}
 		reverse_iterator rbegin()
 		{
@@ -262,29 +268,42 @@ namespace edfio
 			return const_reverse_iterator(cbegin());
 		}
 
-		// Overrides
-		virtual size_type size() const
+		size_type size() const
 		{
-			return m_storeSize;
+			return m_sinkSize;
 		}
 
 	protected:
-		virtual reference getR(size_type off)
+		void measure()
 		{
-			load(off);
-			return m_value;
+			auto pos = m_stream.tellp();
+			m_stream.seekp(0, std::ios::end);
+			size_type sz = m_stream.tellp();
+			m_stream.seekp(pos);
+			if (sz < m_headerOffset)
+				throw std::invalid_argument("Invalid header");
+			m_sinkSize = (sz - m_headerOffset) / m_recordSize;
 		}
 
-		virtual pointer getP(size_type off)
+		void save(size_type off, value_type value)
 		{
-			load(off);
-			return &m_value;
+			measure();
+			if (off >= m_sinkSize || off == -1)
+			{
+				m_stream.seekp(0, std::ios::end);
+				m_sinkSize++;
+			}
+			else
+			{
+				off = m_headerOffset + off * m_recordSize;
+				m_stream.seekp(off, std::ios::beg);
+			}
+			m_value() = std::move(value());
+			m_stream << m_value;
 		}
-
-		virtual void load(size_type off) = 0;
 
 		size_type m_recordSize;
-		size_type m_storeSize;
+		size_type m_sinkSize;
 		std::streamoff m_headerOffset;
 		value_type m_value;
 	};

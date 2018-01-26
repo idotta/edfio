@@ -19,9 +19,9 @@
 namespace edfio
 {
 
-	std::vector<HeaderSignal> ProcessorHeaderSignal::operator()(std::vector<HeaderSignalFields> in)
+	std::vector<HeaderSignalFields> ProcessorHeaderSignal::operator()(std::vector<HeaderSignal> in)
 	{
-		std::vector<HeaderSignal> out(in.size());
+		std::vector<HeaderSignalFields> out(in.size());
 		auto &signals = in;
 
 		// Labels

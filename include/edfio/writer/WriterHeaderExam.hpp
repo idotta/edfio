@@ -9,16 +9,19 @@
 
 #pragma once
 
-#include "../header/HeaderSignal.hpp"
+#include "../header/HeaderExam.hpp"
+#include "../core/StreamIO.hpp"
+
+#include <vector>
 
 namespace edfio
 {
 
-	struct ProcessorHeaderSignal
+	struct WriterHeaderExam : Writer<char>
 	{
-		std::vector<HeaderSignalFields> operator ()(std::vector<HeaderSignal> in);
+		void operator ()(Stream &stream, HeaderExam &input);
 	};
 
 }
 
-#include "impl/ProcessorHeaderSignal.ipp"
+#include "impl/WriterHeaderExam.ipp"
