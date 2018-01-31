@@ -40,7 +40,7 @@ namespace edfio
 			SignalRecordStore::size_type storeSize = general.m_datarecordsFile;
 			std::streamoff headerSize = general.m_headerSize;
 			SignalRecordStore::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
-			std::streamoff signalOff = signal.m_detail.m_bufferOffset;
+			std::streamoff signalOff = signal.m_detail.m_signalOffset;
 			return std::move(SignalRecordStore{ stream, signalSize, storeSize, headerSize, recordSize, signalOff });
 		}
 
@@ -52,7 +52,7 @@ namespace edfio
 			std::streamoff headerSize = general.m_headerSize;
 			SignalSampleStore::size_type sampleSize = GetSampleBytes(general.m_version);
 			SignalSampleStore::size_type signalSize = signal.m_samplesInDataRecord;
-			std::streamoff signalOff = signal.m_detail.m_bufferOffset;
+			std::streamoff signalOff = signal.m_detail.m_signalOffset;
 			return std::move(SignalSampleStore{ stream, sampleSize, storeSize, headerSize, recordSize, signalSize, signalOff });
 		}
 
@@ -63,7 +63,7 @@ namespace edfio
 			TimeStampStore::size_type storeSize = general.m_datarecordsFile;
 			std::streamoff headerSize = general.m_headerSize;
 			TimeStampStore::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
-			std::streamoff signalOff = signal.m_detail.m_bufferOffset;
+			std::streamoff signalOff = signal.m_detail.m_signalOffset;
 			return std::move(TimeStampStore{ stream, signalSize, storeSize, headerSize, recordSize, signalOff });
 		}
 

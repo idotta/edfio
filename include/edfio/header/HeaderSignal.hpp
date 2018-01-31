@@ -34,7 +34,7 @@ namespace edfio
 	{
 		struct HeaderSignalDetail
 		{
-			long m_bufferOffset = 0;
+			long m_signalOffset = 0;
 			double m_scaling = 0;
 			double m_offset = 0;
 			bool m_isAnnotation = false;

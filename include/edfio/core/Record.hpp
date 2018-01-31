@@ -52,6 +52,13 @@ namespace edfio
 		{
 			return m_value;
 		}
+		Record<ValueType> operator+(const Record<ValueType>& record)
+		{
+			Record<ValueType> tmp(Size() + record.Size());
+			std::copy(m_value.begin(), m_value.end(), tmp().begin());
+			std::copy(record().begin(), record().end(), tmp().begin() + Size());
+			return tmp;
+		}
 
 		VectorType m_value;
 		const size_t m_size;

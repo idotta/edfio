@@ -22,8 +22,8 @@ namespace edfio
 	namespace impl
 	{
 
-		template <bool Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check, std::basic_string<CharT>>::type &str)
+		template <ProcessorErrorCheck Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Strict, std::basic_string<CharT>>::type &str)
 		{
 			for (auto& c : str)
 			{
@@ -35,14 +35,14 @@ namespace edfio
 			return false;
 		}
 
-		template <bool Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<!Check, std::basic_string<CharT>>::type &str)
+		template <ProcessorErrorCheck Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Permissive, std::basic_string<CharT>>::type &str)
 		{
 			return false;
 		}
 
-		template <bool Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check, std::vector<CharT>>::type &str)
+		template <ProcessorErrorCheck Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Strict, std::vector<CharT>>::type &str)
 		{
 			for (auto& c : str)
 			{
@@ -54,8 +54,8 @@ namespace edfio
 			return false;
 		}
 
-		template <bool Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<!Check, std::vector<CharT>>::type &str)
+		template <ProcessorErrorCheck Check, typename CharT>
+		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Permissive, std::vector<CharT>>::type &str)
 		{
 			return false;
 		}
@@ -70,13 +70,13 @@ namespace edfio
 		template <typename CharT>
 		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
 		{
-			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING == ProcessorErrorCheck::Strict, CharT>(str);
+			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING, CharT>(str);
 		}
 
 		template <typename CharT>
 		static bool CheckFormatErrors(const std::vector<CharT> &str)
 		{
-			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING == ProcessorErrorCheck::Strict, CharT>(str);
+			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING, CharT>(str);
 		}
 
 		static int GetMonthFromString(const std::string &str)

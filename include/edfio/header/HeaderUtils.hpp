@@ -103,7 +103,7 @@ namespace edfio
 			double physicalMax,
 			int digitalMin,
 			int digitalMax,
-			long bufferOffset = 0,
+			long signalOffset = 0,
 			bool annotation = false,
 			std::string transducer = "",
 			std::string physDimension = "",
@@ -124,7 +124,7 @@ namespace edfio
 			signal.m_samplesInDataRecord = samplesInDataRecord;
 			signal.m_reserved = reserved;
 
-			signal.m_detail.m_bufferOffset = bufferOffset;
+			signal.m_detail.m_signalOffset = signalOffset;
 			signal.m_detail.m_scaling = (signal.m_physicalMax - signal.m_physicalMin) / (signal.m_digitalMax - signal.m_digitalMin);
 			signal.m_detail.m_offset = signal.m_physicalMin - signal.m_detail.m_scaling * signal.m_digitalMin;
 			signal.m_detail.m_isAnnotation = annotation;

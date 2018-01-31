@@ -302,7 +302,7 @@ namespace edfio
 			{
 				auto &signal = signals[idx];
 
-				signal.m_detail.m_bufferOffset = n;
+				signal.m_detail.m_signalOffset = n;
 				if (IsBdf(m_version))
 					n += signal.m_samplesInDataRecord * 3;
 				else  if (IsEdf(m_version))
