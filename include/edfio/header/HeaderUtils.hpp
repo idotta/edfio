@@ -36,7 +36,7 @@ namespace edfio
 			std::string reserved,
 			long long datarecordsFile,
 			double datarecordDuration,
-			int totalSignals
+			const std::vector<HeaderSignal>& signals
 		)
 		{
 			HeaderGeneral header;
@@ -49,7 +49,15 @@ namespace edfio
 			header.m_reserved = reserved;
 			header.m_datarecordsFile = datarecordsFile;
 			header.m_datarecordDuration = datarecordDuration;
-			header.m_totalSignals = totalSignals;
+			header.m_totalSignals = signals.size();
+
+			// Record size
+			header.m_detail.m_recordSize = 0;
+			for (auto &signal : signals)
+			{
+				header.m_detail.m_recordSize += signal.m_samplesInDataRecord;
+			}
+			header.m_detail.m_recordSize *= GetSampleBytes(version);
 
 			return std::move(header);
 		}
@@ -75,12 +83,12 @@ namespace edfio
 			std::string reserved,
 			long long datarecordsFile,
 			double datarecordDuration,
-			int totalSignals
+			const std::vector<HeaderSignal>& signals
 		)
 		{
 			auto header = std::move(CreateHeaderGeneral(
 				version, "", "", startDateD, startDateM, startDateY, startTimeH, startTimeM, startTimeS,
-				headerSize, reserved, datarecordsFile, datarecordDuration, totalSignals
+				headerSize, reserved, datarecordsFile, datarecordDuration, signals
 			));
 
 			header.m_detail.m_patientCode = patientCode;
