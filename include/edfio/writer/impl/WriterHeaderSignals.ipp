@@ -19,7 +19,7 @@
 namespace edfio
 {
 
-	void WriterHeaderSignals::operator()(Stream &stream, std::vector<HeaderSignalFields> &signals)
+	inline void WriterHeaderSignals::operator()(Stream &stream, std::vector<HeaderSignalFields> &signals)
 	{
 		if (!stream || !stream.is_open())
 			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));

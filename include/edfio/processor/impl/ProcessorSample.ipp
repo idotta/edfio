@@ -13,7 +13,7 @@ namespace edfio
 {
 
 	template<SampleType SampleT>
-	Record<char> ProcessorSample<SampleT>::operator()(ProcType sample)
+	inline Record<char> ProcessorSample<SampleT>::operator()(ProcType sample)
 	{
 		DigiType value = 0;
 		if (std::is_same<DigiType, ProcType>::value)

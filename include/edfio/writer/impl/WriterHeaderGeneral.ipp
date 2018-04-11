@@ -19,7 +19,7 @@
 namespace edfio
 {
 
-	void WriterHeaderGeneral::operator()(Stream & stream, HeaderGeneralFields & input)
+	inline void WriterHeaderGeneral::operator()(Stream & stream, HeaderGeneralFields & input)
 	{
 		auto &hdr = input;
 		if (!stream || !stream.is_open())

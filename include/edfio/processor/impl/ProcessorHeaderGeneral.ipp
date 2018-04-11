@@ -19,7 +19,7 @@
 namespace edfio
 {
 
-	HeaderGeneralFields ProcessorHeaderGeneral::operator()(HeaderGeneral in)
+	inline HeaderGeneralFields ProcessorHeaderGeneral::operator()(HeaderGeneral in)
 	{
 		HeaderGeneralFields out;
 

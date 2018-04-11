@@ -23,7 +23,7 @@
 namespace edfio
 {
 
-	HeaderExam ReaderHeaderExam::operator ()(Stream &stream)
+	inline HeaderExam ReaderHeaderExam::operator ()(Stream &stream)
 	{
 		// Read general fields
 		ReaderHeaderGeneral readerGeneral;

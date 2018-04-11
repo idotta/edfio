@@ -20,7 +20,7 @@
 namespace edfio
 {
 
-	std::vector<HeaderSignalFields> ReaderHeaderSignal::operator ()(Stream &stream)
+	inline std::vector<HeaderSignalFields> ReaderHeaderSignal::operator ()(Stream &stream)
 	{
 		std::vector<HeaderSignalFields> signals(m_totalSignals);
 		if (!stream || !stream.is_open())

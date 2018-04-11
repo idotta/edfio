@@ -16,7 +16,7 @@
 namespace edfio
 {
 
-	std::vector<HeaderSignal> ProcessorHeaderSignalFields::operator()(std::vector<HeaderSignalFields> in)
+	inline std::vector<HeaderSignal> ProcessorHeaderSignalFields::operator()(std::vector<HeaderSignalFields> in)
 	{
 		std::vector<HeaderSignal> signals(in.size());
 

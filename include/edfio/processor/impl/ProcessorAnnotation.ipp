@@ -17,7 +17,7 @@
 namespace edfio
 {
 
-	Record<char> ProcessorAnnotation::operator()(Annotation annotation)
+	inline Record<char> ProcessorAnnotation::operator()(Annotation annotation)
 	{
 		if (annotation.m_annotation.empty())
 		{

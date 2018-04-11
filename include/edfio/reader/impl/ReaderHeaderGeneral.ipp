@@ -18,7 +18,7 @@
 namespace edfio
 {
 
-	HeaderGeneralFields ReaderHeaderGeneral::operator ()(Stream &stream)
+	inline HeaderGeneralFields ReaderHeaderGeneral::operator ()(Stream &stream)
 	{
 		HeaderGeneralFields hdr;
 		if (!stream || !stream.is_open())

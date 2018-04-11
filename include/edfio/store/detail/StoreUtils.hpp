@@ -25,7 +25,7 @@ namespace edfio
 	{
 
 		template <class Stream>
-		DataRecordStore CreateDataRecordStore(Stream &stream, const HeaderGeneral &general)
+		static DataRecordStore CreateDataRecordStore(Stream &stream, const HeaderGeneral &general)
 		{
 			DataRecordStore::size_type recordSize = general.m_detail.m_recordSize;
 			DataRecordStore::size_type storeSize = general.m_datarecordsFile;
@@ -34,7 +34,7 @@ namespace edfio
 		}
 
 		template <class Stream>
-		SignalRecordStore CreateSignalRecordStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
+		static SignalRecordStore CreateSignalRecordStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
 			SignalRecordStore::size_type recordSize = general.m_detail.m_recordSize;
 			SignalRecordStore::size_type storeSize = general.m_datarecordsFile;
@@ -45,7 +45,7 @@ namespace edfio
 		}
 
 		template <class Stream>
-		SignalSampleStore CreateSignalSampleStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
+		static SignalSampleStore CreateSignalSampleStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
 			SignalSampleStore::size_type recordSize = general.m_detail.m_recordSize;
 			SignalSampleStore::size_type storeSize = general.m_datarecordsFile * signal.m_samplesInDataRecord;
@@ -57,7 +57,7 @@ namespace edfio
 		}
 
 		template <class Stream>
-		TimeStampStore CreateTimeStampStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
+		static TimeStampStore CreateTimeStampStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
 			TimeStampStore::size_type recordSize = general.m_detail.m_recordSize;
 			TimeStampStore::size_type storeSize = general.m_datarecordsFile;

@@ -18,7 +18,7 @@
 namespace edfio
 {
 
-	std::vector<Annotation> ProcessorTalRecord::operator()(std::vector<char> record, long long datarecord)
+	inline std::vector<Annotation> ProcessorTalRecord::operator()(std::vector<char> record, long long datarecord)
 	{
 		std::vector<Annotation> out;
 

@@ -22,7 +22,7 @@
 namespace edfio
 {
 
-	void WriterHeaderExam::operator ()(Stream &stream, HeaderExam &input)
+	inline void WriterHeaderExam::operator ()(Stream &stream, HeaderExam &input)
 	{
 		// Process header general
 		auto general = std::move(ProcessorHeaderGeneral{}(input.m_general));

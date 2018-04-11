@@ -17,7 +17,7 @@
 namespace edfio
 {
 
-	void WriterRecord::operator()(Stream &stream, Record<char> &record)
+	inline void WriterRecord::operator()(Stream &stream, Record<char> &record)
 	{
 		if (!stream || !stream.is_open())
 			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));

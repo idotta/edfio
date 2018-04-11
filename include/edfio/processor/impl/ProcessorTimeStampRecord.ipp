@@ -18,7 +18,7 @@
 namespace edfio
 {
 
-	TimeStamp edfio::ProcessorTimeStampRecord::operator()(Record<char> record, long long datarecord)
+	inline TimeStamp edfio::ProcessorTimeStampRecord::operator()(Record<char> record, long long datarecord)
 	{
 		TimeStamp timestamp;
 		timestamp.m_dararecord = datarecord;

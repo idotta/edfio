@@ -23,7 +23,7 @@ namespace edfio
 	{
 
 		template <class Stream>
-		DataRecordSink CreateDataRecordSink(Stream &stream, const HeaderGeneral &general)
+		static DataRecordSink CreateDataRecordSink(Stream &stream, const HeaderGeneral &general)
 		{
 			DataRecordSink::size_type recordSize = general.m_detail.m_recordSize;
 			DataRecordSink::size_type sinkSize = general.m_datarecordsFile;
@@ -32,7 +32,7 @@ namespace edfio
 		}
 
 		template <class Stream>
-		SignalRecordSink CreateSignalRecordSink(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
+		static SignalRecordSink CreateSignalRecordSink(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
 			SignalRecordSink::size_type recordSize = general.m_detail.m_recordSize;
 			SignalRecordSink::size_type sinkSize = general.m_datarecordsFile;

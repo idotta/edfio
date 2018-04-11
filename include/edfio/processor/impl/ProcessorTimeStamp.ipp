@@ -19,7 +19,7 @@
 namespace edfio
 {
 
-	Record<char> ProcessorTimeStamp::operator()(TimeStamp timestamp)
+	inline Record<char> ProcessorTimeStamp::operator()(TimeStamp timestamp)
 	{
 		std::string ts = detail::to_string_decimal(timestamp.m_start);
 

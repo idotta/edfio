@@ -13,7 +13,7 @@ namespace edfio
 {
 
 	template<SampleType SampleT>
-	typename ProcessorSampleRecord<SampleT>::ProcType ProcessorSampleRecord<SampleT>::operator()(Record<char> record)
+	inline typename ProcessorSampleRecord<SampleT>::ProcType ProcessorSampleRecord<SampleT>::operator()(Record<char> record)
 	{
 		DigiType sample = 0;
 		size_t idx = 0;
