@@ -23,8 +23,8 @@ namespace edfio
 	{
 		HeaderGeneral out;
 
-		if (detail::CheckFormatErrors(in.m_version())
-			|| detail::CheckFormatErrors(in.m_patient())
+		if (/*detail::CheckFormatErrors(in.m_version())
+			||*/ detail::CheckFormatErrors(in.m_patient())
 			|| detail::CheckFormatErrors(in.m_recording())
 			|| detail::CheckFormatErrors(in.m_startDate())
 			|| detail::CheckFormatErrors(in.m_startTime())
@@ -169,7 +169,7 @@ namespace edfio
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
-			if (out.m_datarecordsFile < 1)
+			if (out.m_datarecordsFile < 0)
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}

@@ -31,7 +31,9 @@ namespace edfio
 			}
 			else if (IsBdf(in.m_version))
 			{
-				out.m_version(" BIOSEMI");
+				std::string value = "BIOSEMI";
+				value.insert(value.begin(), -1);
+				out.m_version(value);
 			}
 		}
 		// Patient Name
