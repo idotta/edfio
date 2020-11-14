@@ -18,10 +18,10 @@ namespace edfio
 	// Records have fixed sizes that can vary according to the signal
 	// They can be used for either single signal record or data record IO
 	// It is important that data records always have one size in the same file
-	template <typename CharT = char>
+	template <typename ValT = char>
 	struct Record
 	{
-		using ValueType = CharT;
+		using ValueType = ValT;
 		using VectorType = std::vector<ValueType>;
 
 		Record() = delete;
@@ -34,7 +34,7 @@ namespace edfio
 			: m_size(std::distance(first, last))
 			, m_value(first, last) {}
 
-		Record(const Record<CharT> &record)
+		Record(const Record<ValT> &record)
 			: m_size(record.m_size)
 			, m_value(record.m_value)
 		{
@@ -64,21 +64,21 @@ namespace edfio
 		const size_t m_size;
 	};
 
-	template <typename CharT = char>
-	std::ostream& operator << (std::ostream &os, Record<CharT> &r)
+	template <typename ValT = char>
+	std::ostream& operator << (std::ostream &os, Record<ValT> &r)
 	{
 		auto &record = r();
 		record.resize(r.Size(), 0);
-		os.write(record.data(), r.Size());
+		os.write(record.data(), r.Size() * sizeof(ValT));
 		return os;
 	}
 
-	template <typename CharT = char>
-	std::istream& operator >> (std::istream &is, Record<CharT> &r)
+	template <typename ValT = char>
+	std::istream& operator >> (std::istream &is, Record<ValT> &r)
 	{
 		auto &record = r();
 		record.resize(r.Size(), 0);
-		is.read(&record[0], r.Size());
+		is.read(&record[0], r.Size()  * sizeof(ValT));
 		return is;
 	}
 
