@@ -59,20 +59,20 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Configure CMake
-        run: cmake --preset ci
+        run: cmake --preset debug
 
       - name: Build
-        run: cmake --build build/ci
+        run: cmake --build build/debug
 
       - name: Run tests
-        run: ctest --test-dir build/ci --output-on-failure
+        run: ctest --test-dir build/debug --output-on-failure
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.os }}-${{ matrix.compiler }}
-          path: build/ci/Testing/
+          path: build/debug/Testing/
           if-no-files-found: ignore
 
   sanitizers:

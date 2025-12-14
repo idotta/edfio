@@ -63,9 +63,10 @@ jobs:
             edfio-${{ github.ref_name }}.tar.gz
           body_path: RELEASE_NOTES.md
           draft: false
-          prerelease: ${{ contains(github.ref_name, 'alpha') ||
-            contains(github.ref_name, 'beta') ||
-            contains(github.ref_name, 'rc') }}
+          prerelease: >-
+            ${{ contains(github.ref_name, 'alpha')
+            || contains(github.ref_name, 'beta')
+            || contains(github.ref_name, 'rc') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

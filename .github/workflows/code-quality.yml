@@ -27,8 +27,9 @@ jobs:
 
       - name: Check formatting
         run: |
-          find include tests examples -name '*.cpp' -o -name '*.hpp' | \
-            xargs clang-format-17 --dry-run --Werror
+          # Find all C++ files excluding build directories
+          find . -path ./build -prune -o \( -name '*.cpp' -o -name '*.hpp' \) \
+            -print0 | xargs -0 clang-format-17 --dry-run --Werror
 
   clang-tidy:
     name: Static Analysis (clang-tidy)
