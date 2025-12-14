@@ -29,101 +29,101 @@ jobs:
             compiler: clang
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v4
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v4
 
-    - name: Setup GCC
-      if: matrix.compiler == 'gcc' && matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y g++-13
-        echo "CC=gcc-13" >> $GITHUB_ENV
-        echo "CXX=g++-13" >> $GITHUB_ENV
+      - name: Setup GCC
+        if: matrix.compiler == 'gcc' && matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++-13
+          echo "CC=gcc-13" >> $GITHUB_ENV
+          echo "CXX=g++-13" >> $GITHUB_ENV
 
-    - name: Setup Clang
-      if: matrix.compiler == 'clang' && matrix.os == 'ubuntu-latest'
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 17
-        echo "CC=clang-17" >> $GITHUB_ENV
-        echo "CXX=clang++-17" >> $GITHUB_ENV
+      - name: Setup Clang
+        if: matrix.compiler == 'clang' && matrix.os == 'ubuntu-latest'
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 17
+          echo "CC=clang-17" >> $GITHUB_ENV
+          echo "CXX=clang++-17" >> $GITHUB_ENV
 
-    - name: Setup MSVC
-      if: matrix.compiler == 'msvc' && matrix.os == 'windows-latest'
-      uses: ilammy/msvc-dev-cmd@v1
+      - name: Setup MSVC
+        if: matrix.compiler == 'msvc' && matrix.os == 'windows-latest'
+        uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Configure CMake
-      run: cmake --preset ci
+      - name: Configure CMake
+        run: cmake --preset ci
 
-    - name: Build
-      run: cmake --build build/ci --config Debug
+      - name: Build
+        run: cmake --build build/ci --config Debug
 
-    - name: Run tests
-      run: ctest --test-dir build/ci --output-on-failure -C Debug
+      - name: Run tests
+        run: ctest --test-dir build/ci --output-on-failure -C Debug
 
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results-${{ matrix.os }}-${{ matrix.compiler }}
-        path: build/ci/Testing/
-        if-no-files-found: ignore
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.compiler }}
+          path: build/ci/Testing/
+          if-no-files-found: ignore
 
   sanitizers:
     name: Sanitizers (Ubuntu - Clang)
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v4
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v4
 
-    - name: Setup Clang
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 17
-        echo "CC=clang-17" >> $GITHUB_ENV
-        echo "CXX=clang++-17" >> $GITHUB_ENV
+      - name: Setup Clang
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 17
+          echo "CC=clang-17" >> $GITHUB_ENV
+          echo "CXX=clang++-17" >> $GITHUB_ENV
 
-    - name: Configure CMake with sanitizers
-      run: cmake --preset sanitize
+      - name: Configure CMake with sanitizers
+        run: cmake --preset sanitize
 
-    - name: Build
-      run: cmake --build build/sanitize
+      - name: Build
+        run: cmake --build build/sanitize
 
-    - name: Run tests with sanitizers
-      run: ctest --test-dir build/sanitize --output-on-failure
+      - name: Run tests with sanitizers
+        run: ctest --test-dir build/sanitize --output-on-failure
 
   examples:
     name: Build Examples
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v4
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v4
 
-    - name: Setup GCC
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y g++-13
-        echo "CC=gcc-13" >> $GITHUB_ENV
-        echo "CXX=g++-13" >> $GITHUB_ENV
+      - name: Setup GCC
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++-13
+          echo "CC=gcc-13" >> $GITHUB_ENV
+          echo "CXX=g++-13" >> $GITHUB_ENV
 
-    - name: Configure CMake
-      run: cmake --preset debug
+      - name: Configure CMake
+        run: cmake --preset debug
 
-    - name: Build
-      run: cmake --build build/debug
+      - name: Build
+        run: cmake --build build/debug
 
-    - name: Run example
-      run: ./build/debug/examples/basic_usage
+      - name: Run example
+        run: ./build/debug/examples/basic_usage

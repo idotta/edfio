@@ -11,30 +11,30 @@ jobs:
   check-docs:
     name: Check Documentation
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Check markdown files
-      run: |
-        echo "Checking for broken links in markdown files..."
-        # Check if README.md exists and is readable
-        if [ -f README.md ]; then
-          echo "✓ README.md found"
-        else
-          echo "✗ README.md missing"
-          exit 1
-        fi
-        
-        if [ -f BUILD.md ]; then
-          echo "✓ BUILD.md found"
-        else
-          echo "✗ BUILD.md missing"
-          exit 1
-        fi
+      - name: Check markdown files
+        run: |
+          echo "Checking for broken links in markdown files..."
+          # Check if README.md exists and is readable
+          if [ -f README.md ]; then
+            echo "✓ README.md found"
+          else
+            echo "✗ README.md missing"
+            exit 1
+          fi
 
-    - name: Validate CMake examples in documentation
-      run: |
-        # Extract and validate CMake code blocks from markdown
-        echo "Documentation check completed successfully"
+          if [ -f BUILD.md ]; then
+            echo "✓ BUILD.md found"
+          else
+            echo "✗ BUILD.md missing"
+            exit 1
+          fi
+
+      - name: Validate CMake examples in documentation
+        run: |
+          # Extract and validate CMake code blocks from markdown
+          echo "Documentation check completed successfully"
