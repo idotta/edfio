@@ -11,6 +11,8 @@ jobs:
   build-and-test:
     name: ${{ matrix.os }} - ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -76,6 +78,8 @@ jobs:
   sanitizers:
     name: Sanitizers (Ubuntu - Clang)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
@@ -104,6 +108,8 @@ jobs:
   examples:
     name: Build Examples
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code

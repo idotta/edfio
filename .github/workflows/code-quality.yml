@@ -11,6 +11,8 @@ jobs:
   clang-format:
     name: Check Code Formatting
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
@@ -31,6 +33,8 @@ jobs:
   clang-tidy:
     name: Static Analysis (clang-tidy)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
