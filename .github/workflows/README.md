@@ -85,14 +85,14 @@ Add these badges to your README.md:
 Before pushing changes, you can test locally:
 
 ```bash
-# Build and test
-cmake --preset ci
-cmake --build build/ci
-ctest --test-dir build/ci
+# Build and test (same as CI)
+cmake --preset debug
+cmake --build build/debug
+ctest --test-dir build/debug
 
-# Check formatting
-find tests examples -name '*.cpp' -o -name '*.hpp' | \
-  xargs clang-format --dry-run --Werror
+# Check formatting (same as workflow)
+find . -path './build*' -prune -o \( -name '*.cpp' -o -name '*.hpp' \) \
+  -print0 | xargs -0 clang-format --dry-run --Werror
 
 # Run with sanitizers
 cmake --preset sanitize

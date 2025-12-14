@@ -28,7 +28,8 @@ jobs:
       - name: Check formatting
         run: |
           # Find all C++ files excluding build directories
-          find . -path ./build -prune -o \( -name '*.cpp' -o -name '*.hpp' \) \
+          find . -path './build*' -prune -o \
+            \( -name '*.cpp' -o -name '*.hpp' \) \
             -print0 | xargs -0 clang-format-17 --dry-run --Werror
 
   clang-tidy:
