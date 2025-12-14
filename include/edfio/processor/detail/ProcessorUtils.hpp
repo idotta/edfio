@@ -15,6 +15,7 @@
 #include <vector>
 #include <cctype>
 #include <regex>
+#include <concepts>
 
 namespace edfio
 {
@@ -23,7 +24,8 @@ namespace edfio
 	{
 
 		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Strict, std::basic_string<CharT>>::type &str)
+			requires (Check == ProcessorErrorCheck::Strict)
+		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
 		{
 			for (auto& c : str)
 			{
@@ -36,13 +38,15 @@ namespace edfio
 		}
 
 		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Permissive, std::basic_string<CharT>>::type &str)
+			requires (Check == ProcessorErrorCheck::Permissive)
+		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
 		{
 			return false;
 		}
 
 		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Strict, std::vector<CharT>>::type &str)
+			requires (Check == ProcessorErrorCheck::Strict)
+		static bool CheckFormatErrors(const std::vector<CharT> &str)
 		{
 			for (auto& c : str)
 			{
@@ -55,7 +59,8 @@ namespace edfio
 		}
 
 		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Permissive, std::vector<CharT>>::type &str)
+			requires (Check == ProcessorErrorCheck::Permissive)
+		static bool CheckFormatErrors(const std::vector<CharT> &str)
 		{
 			return false;
 		}
@@ -65,7 +70,7 @@ namespace edfio
 	namespace detail
 	{
 
-		static const char ADDITIONAL_SEPARATOR = '|';
+		inline constexpr char ADDITIONAL_SEPARATOR = '|';
 
 		template <typename CharT>
 		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
@@ -106,21 +111,25 @@ namespace edfio
 			return std::regex_replace(value, std::regex("^ +| +$|( ) +"), "$1");
 		}
 
-		static std::string GetFormatName(DataFormat format)
+		[[nodiscard]] constexpr const char* GetFormatName(DataFormat format)
 		{
-			if (format == DataFormat::Edf)
+			switch (format)
+			{
+			case DataFormat::Edf:
 				return "EDF";
-			if (format == DataFormat::EdfPlusC)
+			case DataFormat::EdfPlusC:
 				return "EDF+C";
-			if (format == DataFormat::EdfPlusD)
+			case DataFormat::EdfPlusD:
 				return "EDF+D";
-			if (format == DataFormat::Bdf)
+			case DataFormat::Bdf:
 				return "BDF";
-			if (format == DataFormat::BdfPlusC)
+			case DataFormat::BdfPlusC:
 				return "BDF+C";
-			if (format == DataFormat::BdfPlusD)
+			case DataFormat::BdfPlusD:
 				return "BDF+D";
-			return "";
+			default:
+				return "";
+			}
 		}
 
 		template <typename T>
