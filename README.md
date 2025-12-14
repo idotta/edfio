@@ -1,6 +1,6 @@
 # edfio
 
-A C++ 11 header-only library to read/write EDF(+)/BDF(+) files.
+A C++20 header-only library to read/write EDF(+)/BDF(+) files.
 
 ### Sample file
 The sample file 'Calib5.edf' provided in the root directory of this source tree

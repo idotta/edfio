@@ -18,10 +18,10 @@ namespace edfio
 	{
 	public:
 
-		typedef RecordStore::iterator iterator;
-		typedef iterator const const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator; //optional
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
+		using iterator = RecordStore::iterator;
+		using const_iterator = iterator;
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 		TimeStampStore() = delete;
 

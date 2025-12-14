@@ -42,12 +42,12 @@ namespace edfio
 			using type = int;
 		};
 
-		inline Sample<SampleType::Digital>::type ConvertSample(double offset, double scaling, Sample<SampleType::Physical>::type sample)
+		[[nodiscard]] constexpr Sample<SampleType::Digital>::type ConvertSample(double offset, double scaling, Sample<SampleType::Physical>::type sample)
 		{
 			return static_cast<Sample<SampleType::Digital>::type>((sample - offset) / scaling);
 		}
 
-		inline Sample<SampleType::Physical>::type ConvertSample(double offset, double scaling, Sample<SampleType::Digital>::type sample)
+		[[nodiscard]] constexpr Sample<SampleType::Physical>::type ConvertSample(double offset, double scaling, Sample<SampleType::Digital>::type sample)
 		{
 			return scaling * static_cast<Sample<SampleType::Physical>::type>(sample) + offset;
 		}

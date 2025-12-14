@@ -28,7 +28,7 @@ namespace edfio
 			DataRecordSink::size_type recordSize = general.m_detail.m_recordSize;
 			DataRecordSink::size_type sinkSize = general.m_datarecordsFile;
 			std::streamoff headerSize = general.m_headerSize;
-			return std::move(DataRecordSink{ stream, recordSize, sinkSize, headerSize });
+			return DataRecordSink{ stream, recordSize, sinkSize, headerSize };
 		}
 
 		template <class Stream>
@@ -39,7 +39,7 @@ namespace edfio
 			std::streamoff headerSize = general.m_headerSize;
 			SignalRecordSink::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
 			std::streamoff signalOff = signal.m_detail.m_signalOffset;
-			return std::move(SignalRecordSink{ stream, signalSize, sinkSize, headerSize, recordSize, signalOff });
+			return SignalRecordSink{ stream, signalSize, sinkSize, headerSize, recordSize, signalOff };
 		}
 
 	}
