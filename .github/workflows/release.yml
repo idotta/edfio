@@ -50,7 +50,7 @@ jobs:
           echo "## Changes" > RELEASE_NOTES.md
           if git describe --tags --abbrev=0 HEAD^ 2>/dev/null; then
             PREV_TAG=$(git describe --tags --abbrev=0 HEAD^)
-            git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" \
+            git log "${PREV_TAG}..HEAD" --pretty=format:"- %s (%h)" \
               >> RELEASE_NOTES.md
           else
             echo "- Initial release" >> RELEASE_NOTES.md

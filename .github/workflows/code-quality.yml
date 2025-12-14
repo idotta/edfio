@@ -20,9 +20,9 @@ jobs:
 
       - name: Install clang-format
         run: |
-          wget https://apt.llvm.org/llvm.sh
+          wget -O llvm.sh https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 17
+          sudo ./llvm.sh 17 all
           sudo apt-get install -y clang-format-17
 
       - name: Check formatting
@@ -47,9 +47,9 @@ jobs:
 
       - name: Install clang-tidy
         run: |
-          wget https://apt.llvm.org/llvm.sh
+          wget -O llvm.sh https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 17
+          sudo ./llvm.sh 17 all
           sudo apt-get install -y clang-tidy-17
 
       - name: Setup Clang
