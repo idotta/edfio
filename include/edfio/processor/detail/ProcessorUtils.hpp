@@ -12,6 +12,7 @@
 #include "../../Config.hpp"
 
 #include <string>
+#include <string_view>
 #include <vector>
 #include <cctype>
 #include <regex>
@@ -84,24 +85,25 @@ namespace edfio
 			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING, CharT>(str);
 		}
 
-		static int GetMonthFromString(const std::string &str)
+		[[nodiscard]] constexpr int GetMonthFromString(std::string_view str)
 		{
-			static const std::vector<std::string> months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-			for (size_t idx = 0; idx < months.size(); idx++)
+			constexpr std::string_view months[] = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+			for (size_t idx = 0; idx < 12; idx++)
 			{
 				if (str == months[idx])
 				{
-					return idx + 1;
+					return static_cast<int>(idx + 1);
 				}
 			}
 			return 0;
 		}
 
-		static std::string GetStringFromMonth(size_t idx)
+		[[nodiscard]] constexpr std::string_view GetStringFromMonth(size_t idx)
 		{
+			if (idx == 0) return "JAN";
 			idx--;
-			static const std::vector<std::string> months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-			if (idx >= 0 && idx < months.size())
+			constexpr std::string_view months[] = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+			if (idx < 12)
 				return months[idx];
 			return "JAN";
 		}
