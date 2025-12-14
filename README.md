@@ -1,5 +1,9 @@
 # edfio
 
+[![CI](https://github.com/idotta/edfio/workflows/CI/badge.svg)](https://github.com/idotta/edfio/actions/workflows/ci.yml)
+[![Code Quality](https://github.com/idotta/edfio/workflows/Code%20Quality/badge.svg)](https://github.com/idotta/edfio/actions/workflows/code-quality.yml)
+[![Security](https://github.com/idotta/edfio/workflows/Security/badge.svg)](https://github.com/idotta/edfio/actions/workflows/security.yml)
+
 A C++20 header-only library to read/write EDF(+)/BDF(+) files.
 
 ## Building and Testing
