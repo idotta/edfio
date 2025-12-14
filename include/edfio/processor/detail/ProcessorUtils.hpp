@@ -100,11 +100,9 @@ namespace edfio
 
 		[[nodiscard]] constexpr std::string_view GetStringFromMonth(size_t idx)
 		{
-			if (idx == 0) return "JAN";
-			idx--;
 			constexpr std::string_view months[] = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-			if (idx < 12)
-				return months[idx];
+			if (idx > 0 && idx <= 12)
+				return months[idx - 1];
 			return "JAN";
 		}
 
