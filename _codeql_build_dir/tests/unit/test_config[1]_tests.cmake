@@ -1,5 +1,0 @@
-add_test([=[ConfigTest.ProcessorErrorCheckEnum]=]  /home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit/test_config [==[--gtest_filter=ConfigTest.ProcessorErrorCheckEnum]==] --gtest_also_run_disabled_tests)
-set_tests_properties([=[ConfigTest.ProcessorErrorCheckEnum]=]  PROPERTIES WORKING_DIRECTORY /home/runner/work/edfio/edfio/tests/unit SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==] LABELS unit)
-add_test([=[ConfigTest.DefaultConfiguration]=]  /home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit/test_config [==[--gtest_filter=ConfigTest.DefaultConfiguration]==] --gtest_also_run_disabled_tests)
-set_tests_properties([=[ConfigTest.DefaultConfiguration]=]  PROPERTIES WORKING_DIRECTORY /home/runner/work/edfio/edfio/tests/unit SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==] LABELS unit)
-set(  test_config_TESTS ConfigTest.ProcessorErrorCheckEnum ConfigTest.DefaultConfiguration)

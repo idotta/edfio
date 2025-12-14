@@ -1,5 +1,0 @@
-if(EXISTS "/home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit/test_data_format[1]_tests.cmake")
-  include("/home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit/test_data_format[1]_tests.cmake")
-else()
-  add_test(test_data_format_NOT_BUILT test_data_format_NOT_BUILT)
-endif()
