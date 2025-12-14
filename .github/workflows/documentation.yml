@@ -34,7 +34,11 @@ jobs:
             exit 1
           fi
 
-      - name: Validate CMake examples in documentation
+      - name: Check for LICENSE file
         run: |
-          # Extract and validate CMake code blocks from markdown
-          echo "Documentation check completed successfully"
+          if [ -f LICENSE ]; then
+            echo "✓ LICENSE found"
+          else
+            echo "✗ LICENSE missing"
+            exit 1
+          fi

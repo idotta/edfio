@@ -25,7 +25,7 @@ jobs:
 
       - name: Check formatting
         run: |
-          find tests examples -name '*.cpp' -o -name '*.hpp' | \
+          find include tests examples -name '*.cpp' -o -name '*.hpp' | \
             xargs clang-format-17 --dry-run --Werror
 
   clang-tidy:

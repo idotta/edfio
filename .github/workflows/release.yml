@@ -48,9 +48,13 @@ jobs:
         id: changelog
         run: |
           echo "## Changes" > RELEASE_NOTES.md
-          git log $(git describe --tags --abbrev=0 HEAD^)..HEAD \
-            --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || \
+          if git describe --tags --abbrev=0 HEAD^ 2>/dev/null; then
+            PREV_TAG=$(git describe --tags --abbrev=0 HEAD^)
+            git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" \
+              >> RELEASE_NOTES.md
+          else
             echo "- Initial release" >> RELEASE_NOTES.md
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -92,7 +96,7 @@ jobs:
         run: |
           cmake --preset release
           cmake --build build/release
-          sudo cmake --install build/release
+          cmake --install build/release --prefix $HOME/.local
 
       - name: Create test project
         run: |
@@ -114,5 +118,5 @@ jobs:
       - name: Build test project
         run: |
           cd /tmp/test-install
-          cmake -B build -G Ninja
+          cmake -B build -G Ninja -DCMAKE_PREFIX_PATH=$HOME/.local
           cmake --build build
