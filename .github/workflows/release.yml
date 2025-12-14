@@ -1,0 +1,114 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v4
+
+    - name: Setup GCC
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++-13
+        echo "CC=gcc-13" >> $GITHUB_ENV
+        echo "CXX=g++-13" >> $GITHUB_ENV
+
+    - name: Configure CMake (Release)
+      run: cmake --preset release
+
+    - name: Build
+      run: cmake --build build/release
+
+    - name: Install to staging directory
+      run: cmake --install build/release --prefix ./install-staging
+
+    - name: Create archive
+      run: |
+        cd install-staging
+        tar -czf ../edfio-${{ github.ref_name }}.tar.gz *
+        cd ..
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        echo "## Changes" > RELEASE_NOTES.md
+        git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- Initial release" >> RELEASE_NOTES.md
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          edfio-${{ github.ref_name }}.tar.gz
+        body_path: RELEASE_NOTES.md
+        draft: false
+        prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  verify-install:
+    name: Verify Installation
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v4
+
+    - name: Setup GCC (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++-13
+        echo "CC=gcc-13" >> $GITHUB_ENV
+        echo "CXX=g++-13" >> $GITHUB_ENV
+
+    - name: Install library
+      run: |
+        cmake --preset release
+        cmake --build build/release
+        sudo cmake --install build/release
+
+    - name: Create test project
+      run: |
+        mkdir -p /tmp/test-install
+        cd /tmp/test-install
+        cat > CMakeLists.txt << 'EOF'
+        cmake_minimum_required(VERSION 3.21)
+        project(test_edfio CXX)
+        set(CMAKE_CXX_STANDARD 20)
+        find_package(edfio REQUIRED)
+        add_executable(test_app main.cpp)
+        target_link_libraries(test_app PRIVATE edfio::edfio)
+        EOF
+        cat > main.cpp << 'EOF'
+        #include <edfio/core/data_format.hpp>
+        int main() { return 0; }
+        EOF
+
+    - name: Build test project
+      run: |
+        cd /tmp/test-install
+        cmake -B build -G Ninja
+        cmake --build build
