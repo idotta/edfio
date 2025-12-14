@@ -1,0 +1,81 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  clang-format:
+    name: Check Code Formatting
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: |
+          # Using official LLVM installation script from apt.llvm.org
+          wget -O llvm.sh https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 17 all
+          sudo apt-get install -y clang-format-17
+
+      - name: Check formatting
+        run: |
+          # Find all C++ files excluding build directories
+          find . -path './build*' -prune -o \
+            \( -name '*.cpp' -o -name '*.hpp' \) \
+            -print0 | xargs -0 clang-format-17 --dry-run --Werror
+
+  clang-tidy:
+    name: Static Analysis (clang-tidy)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v4
+
+      - name: Install clang-tidy
+        run: |
+          # Using official LLVM installation script from apt.llvm.org
+          wget -O llvm.sh https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 17 all
+          sudo apt-get install -y clang-tidy-17
+
+      - name: Setup Clang
+        run: |
+          echo "CC=clang-17" >> $GITHUB_ENV
+          echo "CXX=clang++-17" >> $GITHUB_ENV
+
+      - name: Configure CMake with clang-tidy
+        run: cmake --preset lint
+
+      - name: Build with clang-tidy
+        run: cmake --build build/lint 2>&1 | tee clang-tidy-output.log
+
+      - name: Check for clang-tidy errors
+        run: |
+          if grep -q "error:" clang-tidy-output.log; then
+            echo "clang-tidy found errors"
+            exit 1
+          fi
+
+      - name: Upload clang-tidy results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang-tidy-results
+          path: clang-tidy-output.log
+          if-no-files-found: ignore
