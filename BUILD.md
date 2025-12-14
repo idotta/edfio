@@ -2,6 +2,8 @@
 
 This document describes how to build and test the edfio library.
 
+> **Note**: The edfio library has been modernized to use C++20 features. For details on the modernization changes, see [CPP20_UPGRADE_SUMMARY.md](CPP20_UPGRADE_SUMMARY.md).
+
 ## Requirements
 
 - CMake 3.21 or higher
