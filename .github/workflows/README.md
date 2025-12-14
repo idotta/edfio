@@ -32,25 +32,7 @@ This directory contains GitHub Actions workflows for the edfio project.
 
 **Artifacts**: clang-tidy analysis results
 
-### 3. Release Workflow (`release.yml`)
-
-**Trigger**: Push of version tags (e.g., `v1.0.0`), manual dispatch
-
-**Purpose**: Create releases with artifacts.
-
-**Jobs**:
-- **create-release**: 
-  - Builds the library in release mode
-  - Creates installation archive
-  - Generates changelog
-  - Creates GitHub release with artifacts
-- **verify-install**:
-  - Verifies installation on Ubuntu and macOS
-  - Tests that the installed library can be used in a new project
-
-**Artifacts**: Compressed installation archive (`edfio-vX.Y.Z.tar.gz`)
-
-### 4. Security Workflow (`security.yml`)
+### 3. Security Workflow (`security.yml`)
 
 **Trigger**: Push/PR to `main` or `develop` branches, weekly schedule, manual dispatch
 
@@ -60,15 +42,6 @@ This directory contains GitHub Actions workflows for the edfio project.
 - **codeql**: Runs GitHub's CodeQL security analysis
 
 **Schedule**: Weekly on Monday at 00:00 UTC
-
-### 5. Documentation Workflow (`documentation.yml`)
-
-**Trigger**: Push/PR to `main` branch, manual dispatch
-
-**Purpose**: Validate documentation files.
-
-**Jobs**:
-- **check-docs**: Verifies that essential documentation files exist
 
 ## Workflow Status Badges
 
@@ -109,4 +82,3 @@ No additional secrets are required. The workflows use the default `GITHUB_TOKEN`
 - Update compiler versions in CI as new versions become available
 - Update action versions regularly for security and features
 - Monitor CodeQL results and address any security findings
-- Keep the release workflow in sync with project versioning scheme
