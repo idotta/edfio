@@ -8,7 +8,8 @@
 //
 
 #include <gtest/gtest.h>
-#include <edfio/EdfIO.hpp>
+#include <edfio/core/DataFormat.hpp>
+#include <edfio/header/HeaderGeneral.hpp>
 #include <fstream>
 #include <filesystem>
 
@@ -67,9 +68,10 @@ TEST(EdfReadTest, DataFormatEnumAvailable)
 TEST(EdfReadTest, HeaderStructuresAvailable)
 {
     HeaderGeneralFields headerGeneral;
-    EXPECT_EQ(sizeof(headerGeneral.m_version), 8);
-    EXPECT_EQ(sizeof(headerGeneral.m_patient), 80);
-    EXPECT_EQ(sizeof(headerGeneral.m_recording), 80);
+    // Field template wraps strings, check the Size() method instead
+    EXPECT_EQ(headerGeneral.m_version.Size(), 8);
+    EXPECT_EQ(headerGeneral.m_patient.Size(), 80);
+    EXPECT_EQ(headerGeneral.m_recording.Size(), 80);
 }
 
 } // namespace edfio::test

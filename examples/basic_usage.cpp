@@ -7,7 +7,8 @@
 // Official repository: https://github.com/idotta/edfio
 //
 
-#include <edfio/EdfIO.hpp>
+#include <edfio/core/DataFormat.hpp>
+#include <edfio/core/SampleType.hpp>
 #include <iostream>
 #include <filesystem>
 

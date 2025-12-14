@@ -1,6 +1,17 @@
 # edfio
 
-A C++ 11 header-only library to read/write EDF(+)/BDF(+) files.
+A C++20 header-only library to read/write EDF(+)/BDF(+) files.
+
+## Building and Testing
+
+This project uses CMake for building tests and examples. See [BUILD.md](BUILD.md) for detailed build instructions.
+
+Quick start:
+```bash
+cmake --preset debug
+cmake --build build/debug
+ctest --test-dir build/debug
+```
 
 ### Sample file
 The sample file 'Calib5.edf' provided in the root directory of this source tree
