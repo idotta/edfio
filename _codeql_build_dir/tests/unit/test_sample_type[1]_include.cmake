@@ -1,0 +1,5 @@
+if(EXISTS "/home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit/test_sample_type[1]_tests.cmake")
+  include("/home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit/test_sample_type[1]_tests.cmake")
+else()
+  add_test(test_sample_type_NOT_BUILT test_sample_type_NOT_BUILT)
+endif()

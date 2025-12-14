@@ -1,0 +1,56 @@
+[
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-build/googlemock",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -I/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock/include -I/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "file": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-build/googlemock",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gmock_main.dir/src/gmock_main.cc.o -c /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "file": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-build/googletest",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -I/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -I/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "file": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-build/googletest",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "file": "/home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -I/home/runner/work/edfio/edfio/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wuseless-cast -o CMakeFiles/test_config.dir/test_config.cpp.o -c /home/runner/work/edfio/edfio/tests/unit/test_config.cpp",
+  "file": "/home/runner/work/edfio/edfio/tests/unit/test_config.cpp",
+  "output": "tests/unit/CMakeFiles/test_config.dir/test_config.cpp.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -I/home/runner/work/edfio/edfio/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wuseless-cast -o CMakeFiles/test_data_format.dir/test_data_format.cpp.o -c /home/runner/work/edfio/edfio/tests/unit/test_data_format.cpp",
+  "file": "/home/runner/work/edfio/edfio/tests/unit/test_data_format.cpp",
+  "output": "tests/unit/CMakeFiles/test_data_format.dir/test_data_format.cpp.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/tests/unit",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -I/home/runner/work/edfio/edfio/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wuseless-cast -o CMakeFiles/test_sample_type.dir/test_sample_type.cpp.o -c /home/runner/work/edfio/edfio/tests/unit/test_sample_type.cpp",
+  "file": "/home/runner/work/edfio/edfio/tests/unit/test_sample_type.cpp",
+  "output": "tests/unit/CMakeFiles/test_sample_type.dir/test_sample_type.cpp.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/tests/integration",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -I/home/runner/work/edfio/edfio/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest/include -isystem /home/runner/work/edfio/edfio/_codeql_build_dir/_deps/googletest-src/googletest -O3 -DNDEBUG -std=c++20 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wuseless-cast -o CMakeFiles/test_edf_read.dir/test_edf_read.cpp.o -c /home/runner/work/edfio/edfio/tests/integration/test_edf_read.cpp",
+  "file": "/home/runner/work/edfio/edfio/tests/integration/test_edf_read.cpp",
+  "output": "tests/integration/CMakeFiles/test_edf_read.dir/test_edf_read.cpp.o"
+},
+{
+  "directory": "/home/runner/work/edfio/edfio/_codeql_build_dir/examples",
+  "command": "/home/runner/work/edfio/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++  -I/home/runner/work/edfio/edfio/include -O3 -DNDEBUG -std=c++20 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wuseless-cast -o CMakeFiles/basic_usage.dir/basic_usage.cpp.o -c /home/runner/work/edfio/edfio/examples/basic_usage.cpp",
+  "file": "/home/runner/work/edfio/edfio/examples/basic_usage.cpp",
+  "output": "examples/CMakeFiles/basic_usage.dir/basic_usage.cpp.o"
+}
+]
