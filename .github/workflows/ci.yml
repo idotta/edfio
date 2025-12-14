@@ -48,6 +48,7 @@ jobs:
       - name: Setup Clang
         if: matrix.compiler == 'clang' && matrix.os == 'ubuntu-latest'
         run: |
+          # Using official LLVM installation script from apt.llvm.org
           wget -O llvm.sh https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 17 all
@@ -90,6 +91,7 @@ jobs:
 
       - name: Setup Clang
         run: |
+          # Using official LLVM installation script from apt.llvm.org
           wget -O llvm.sh https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 17 all
