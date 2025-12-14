@@ -1,0 +1,114 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "description": "Debug build with tests",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "EDFIO_BUILD_TESTS": "ON",
+        "EDFIO_BUILD_EXAMPLES": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Release build",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "EDFIO_BUILD_TESTS": "OFF",
+        "EDFIO_BUILD_EXAMPLES": "OFF"
+      }
+    },
+    {
+      "name": "sanitize",
+      "displayName": "Debug with Sanitizers",
+      "description": "Debug build with sanitizers enabled",
+      "inherits": "debug",
+      "cacheVariables": {
+        "EDFIO_ENABLE_SANITIZERS": "ON"
+      }
+    },
+    {
+      "name": "lint",
+      "displayName": "Debug with Linting",
+      "description": "Debug build with clang-tidy enabled",
+      "inherits": "debug",
+      "cacheVariables": {
+        "EDFIO_ENABLE_CLANG_TIDY": "ON"
+      }
+    },
+    {
+      "name": "ci",
+      "displayName": "CI Build",
+      "description": "Build configuration for CI with all checks",
+      "inherits": "debug",
+      "cacheVariables": {
+        "EDFIO_ENABLE_SANITIZERS": "ON",
+        "EDFIO_ENABLE_CLANG_TIDY": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "sanitize",
+      "configurePreset": "sanitize"
+    },
+    {
+      "name": "lint",
+      "configurePreset": "lint"
+    },
+    {
+      "name": "ci",
+      "configurePreset": "ci"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "sanitize",
+      "configurePreset": "sanitize",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "ci",
+      "configurePreset": "ci",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

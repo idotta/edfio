@@ -16,8 +16,8 @@
 // Writer
 #include "writer/WriterHeaderExam.hpp"
 // Store
-#include "store/DataRecordStore.hpp"
-#include "store/SignalRecordStore.hpp"
+#include "store/DatarecordStore.hpp"
+#include "store/SignalrecordStore.hpp"
 #include "store/SignalSampleStore.hpp"
 #include "store/detail/StoreUtils.hpp"
 #include "store/TalStore.hpp"
