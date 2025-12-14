@@ -16,38 +16,27 @@ namespace edfio
 
 	namespace detail
 	{
-		static const char* GetError(FileErrc err)
+		[[nodiscard]] constexpr const char* GetError(FileErrc err)
 		{
-			if (err == FileErrc::FileDoesNotOpen)
+			switch (err)
 			{
+			case FileErrc::FileDoesNotOpen:
 				return "Error: file does not open";
-			}
-			else if (err == FileErrc::FileNotOpened)
-			{
+			case FileErrc::FileNotOpened:
 				return "Error: file not opened";
-			}
-			else if (err == FileErrc::FileReadError)
-			{
+			case FileErrc::FileReadError:
 				return "Error: can't read file";
-			}
-			else if (err == FileErrc::FileContainsFormatErrors)
-			{
+			case FileErrc::FileContainsFormatErrors:
 				return "Error: file contains format errors";
-			}
-			else if (err == FileErrc::FileContainsInvalidAnnotations)
-			{
+			case FileErrc::FileContainsInvalidAnnotations:
 				return "Error: file contains invalid annotations";
-			}
-			else if (err == FileErrc::FileWriteError)
-			{
+			case FileErrc::FileWriteError:
 				return "Error: can't write on file";
-			}
-			else if (err == FileErrc::FileWriteInvalidAnnotations)
-			{
+			case FileErrc::FileWriteInvalidAnnotations:
 				return "Error: writing invalid annotations";
-
+			default:
+				return "Unspecified error";
 			}
-			return "Unspecified error";
 		}
 	}
 

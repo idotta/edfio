@@ -20,24 +20,24 @@ namespace edfio
 	class Device
 	{
 	public:
-		typedef Stream stream_type;
-		typedef Device<Value, Pointer, Reference, Stream, IterCategory> device_type;
+		using stream_type = Stream;
+		using device_type = Device<Value, Pointer, Reference, Stream, IterCategory>;
 
-		typedef Value value_type;
-		typedef Pointer pointer;
-		typedef Reference reference;
-		typedef long long difference_type;
-		typedef unsigned long long size_type;
+		using value_type = Value;
+		using pointer = Pointer;
+		using reference = Reference;
+		using difference_type = long long;
+		using size_type = unsigned long long;
 
 		class iterator
 		{
 		public:
-			typedef typename Device::difference_type difference_type;
-			typedef typename Device::value_type value_type;
-			typedef typename Device::reference reference;
-			typedef typename Device::pointer pointer;
-			typedef IterCategory iterator_category;
-			typedef typename Device::stream_type stream_type;
+			using difference_type = typename Device::difference_type;
+			using value_type = typename Device::value_type;
+			using reference = typename Device::reference;
+			using pointer = typename Device::pointer;
+			using iterator_category = IterCategory;
+			using stream_type = typename Device::stream_type;
 		};
 
 		Device() = delete;

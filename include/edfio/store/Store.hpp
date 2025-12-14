@@ -20,9 +20,9 @@ namespace edfio
 	class Store : public Device<Value, Pointer, Reference, Stream, IterCategory>
 	{
 	public:
-		typedef Store<Value, Pointer, Reference, Stream, IterCategory> store_type;
-		typedef device_type::iterator iterator;
-		typedef iterator const const_iterator;
+		using store_type = Store<Value, Pointer, Reference, Stream, IterCategory>;
+		using iterator = device_type::iterator;
+		using const_iterator = iterator;
 
 		Store() = delete;
 

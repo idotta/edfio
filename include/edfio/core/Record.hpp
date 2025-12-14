@@ -40,19 +40,19 @@ namespace edfio
 		{
 		}
 
-		const size_t Size() const
+		[[nodiscard]] const size_t Size() const
 		{
 			return m_size;
 		}
-		const VectorType& operator()() const
+		[[nodiscard]] const VectorType& operator()() const
 		{
 			return m_value;
 		}
-		VectorType& operator()()
+		[[nodiscard]] VectorType& operator()()
 		{
 			return m_value;
 		}
-		Record<ValueType> operator+(const Record<ValueType>& record)
+		[[nodiscard]] Record<ValueType> operator+(const Record<ValueType>& record)
 		{
 			Record<ValueType> tmp(Size() + record.Size());
 			std::copy(m_value.begin(), m_value.end(), tmp().begin());

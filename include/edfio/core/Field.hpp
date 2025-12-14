@@ -22,15 +22,15 @@ namespace edfio
 	{
 		using ValueType = CharT;
 
-		constexpr size_t Size() const
+		[[nodiscard]] constexpr size_t Size() const
 		{
 			return Sz;
 		}
-		const std::basic_string<ValueType>& operator()() const
+		[[nodiscard]] const std::basic_string<ValueType>& operator()() const
 		{
 			return m_value;
 		}
-		std::basic_string<ValueType>& operator()()
+		[[nodiscard]] std::basic_string<ValueType>& operator()()
 		{
 			return m_value;
 		}
