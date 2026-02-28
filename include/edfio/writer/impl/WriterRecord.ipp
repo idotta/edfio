@@ -26,7 +26,7 @@ namespace edfio
 		{
 			stream << record;
 		}
-		catch (std::exception e)
+		catch (const std::exception&)
 		{
 			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteError));
 		}

@@ -30,7 +30,7 @@ namespace edfio
 			*it++ = tmp;
 		}
 
-		return std::move(record);
+		return record;
 	}
 
 }

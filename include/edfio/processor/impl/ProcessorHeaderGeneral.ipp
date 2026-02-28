@@ -14,7 +14,7 @@
 #include "../detail/ProcessorUtils.hpp"
 
 #include <sstream>
-#include <iomanip>
+#include <format>
 
 namespace edfio
 {
@@ -50,22 +50,14 @@ namespace edfio
 			int month = std::get<1>(in.m_startDate);
 			int year = std::get<2>(in.m_startDate);
 			year -= year > 1999 ? 2000 : 1900;
-			std::ostringstream oss;
-			oss << std::setw(2) << std::setfill('0') << day << ".";
-			oss << std::setw(2) << std::setfill('0') << month << ".";
-			oss << std::setw(2) << std::setfill('0') << year;
-			out.m_startDate(oss.str());
+			out.m_startDate(std::format("{:02d}.{:02d}.{:02d}", day, month, year));
 		}
 		// Start Time
 		{
 			int hour = std::get<0>(in.m_startTime);
 			int minute = std::get<1>(in.m_startTime);
 			int second = std::get<2>(in.m_startTime);
-			std::ostringstream oss;
-			oss << std::setw(2) << std::setfill('0') << hour << ".";
-			oss << std::setw(2) << std::setfill('0') << minute << ".";
-			oss << std::setw(2) << std::setfill('0') << second;
-			out.m_startTime(oss.str());
+			out.m_startTime(std::format("{:02d}.{:02d}.{:02d}", hour, minute, second));
 		}
 		// Header Size
 		{
@@ -79,7 +71,7 @@ namespace edfio
 			}
 			else if (IsPlus(in.m_version))
 			{
-				out.m_reserved(detail::GetFormatName(in.m_version));
+				out.m_reserved(std::string(detail::GetFormatName(in.m_version)));
 			}
 		}
 		// Datarecords in File
@@ -130,12 +122,10 @@ namespace edfio
 				// The text 'Startdate'
 				fields.push_back("Startdate");
 				// The startdate itself in dd-MMM-yyyy format using the English 3-character abbreviations of the month in capitals: dd-MMM-yyyy (MMM = 'JAN' | 'FEV' | ...)
-				std::ostringstream oss;
 				int day = std::get<0>(in.m_startDate);
 				int month = std::get<1>(in.m_startDate);
 				int year = std::get<2>(in.m_startDate);
-				oss << std::setw(2) << std::setfill('0') << (day ? day : 1) << "-" << detail::GetStringFromMonth(month) << "-" << (year ? year : 1984);
-				fields.push_back(oss.str());
+				fields.push_back(std::format("{:02d}-{}-{}", day ? day : 1, detail::GetStringFromMonth(month), year ? year : 1984));
 				// The hospital administration code of the investigation, i.e. EEG number or PSG number.
 				fields.push_back(in.m_detail.m_admincode.empty() ? "X" : in.m_detail.m_admincode);
 				// A code specifying the responsible investigator or technician.
@@ -159,6 +149,6 @@ namespace edfio
 				out.m_recording(recording);
 			}
 		}
-		return std::move(out);
+		return out;
 	}
 }

@@ -14,7 +14,6 @@
 #include "../detail/ProcessorUtils.hpp"
 
 #include <sstream>
-#include <iomanip>
 
 namespace edfio
 {
@@ -76,23 +75,18 @@ namespace edfio
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
-			try
 			{
-				int day = std::stoi(startdate);
-				int month = std::stoi(startdate.substr(3));
-				int year = std::stoi(startdate.substr(6));
-
-				if (day < 1 || day > 31 || month < 1 || month > 12)
+				int day{}, month{}, year{};
+				auto [p1, e1] = std::from_chars(startdate.data(), startdate.data() + 2, day);
+				auto [p2, e2] = std::from_chars(startdate.data() + 3, startdate.data() + 5, month);
+				auto [p3, e3] = std::from_chars(startdate.data() + 6, startdate.data() + 8, year);
+				if (e1 != std::errc{} || e2 != std::errc{} || e3 != std::errc{}
+					|| day < 1 || day > 31 || month < 1 || month > 12)
 				{
 					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 				year += year > 84 ? 1900 : 2000;
-
 				out.m_startDate = std::make_tuple(day, month, year);
-			}
-			catch (...)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Start Time
@@ -105,33 +99,22 @@ namespace edfio
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
-			try
 			{
-				int hour = std::stoi(starttime);
-				int minute = std::stoi(starttime.substr(3));
-				int second = std::stoi(starttime.substr(6));
-
-				if (hour > 23 || minute > 59 || second > 59)
+				int hour{}, minute{}, second{};
+				auto [p1, e1] = std::from_chars(starttime.data(), starttime.data() + 2, hour);
+				auto [p2, e2] = std::from_chars(starttime.data() + 3, starttime.data() + 5, minute);
+				auto [p3, e3] = std::from_chars(starttime.data() + 6, starttime.data() + 8, second);
+				if (e1 != std::errc{} || e2 != std::errc{} || e3 != std::errc{}
+					|| hour > 23 || minute > 59 || second > 59)
 				{
 					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 				}
 				out.m_startTime = std::make_tuple(hour, minute, second);
 			}
-			catch (...)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
 		}
 		// Header Size
 		{
-			try
-			{
-				out.m_headerSize = std::stoi(in.m_headerSize());
-			}
-			catch (...)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
+			out.m_headerSize = detail::ParseInt(in.m_headerSize(), detail::GetError(FileErrc::FileContainsFormatErrors));
 		}
 		// Reserved
 		{
@@ -161,14 +144,7 @@ namespace edfio
 		}
 		// Datarecords in File
 		{
-			try
-			{
-				out.m_datarecordsFile = std::stoll(in.m_datarecordsFile());
-			}
-			catch (...)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
+			out.m_datarecordsFile = detail::ParseLongLong(in.m_datarecordsFile(), detail::GetError(FileErrc::FileContainsFormatErrors));
 			if (out.m_datarecordsFile < 0)
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
@@ -176,16 +152,8 @@ namespace edfio
 		}
 		// Datarecord Duration
 		{
-			double duration = -1;
-			try
-			{
-				duration = std::stod(in.m_datarecordDuration());
-				out.m_datarecordDuration = duration;
-			}
-			catch (...)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
+			double duration = detail::ParseDouble(in.m_datarecordDuration(), detail::GetError(FileErrc::FileContainsFormatErrors));
+			out.m_datarecordDuration = duration;
 			if (duration < 0)
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
@@ -194,15 +162,7 @@ namespace edfio
 		}
 		// Number of signals
 		{
-			int signals = 0;
-			try
-			{
-				signals = std::stoi(in.m_totalSignals());
-			}
-			catch (...)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
+			int signals = detail::ParseInt(in.m_totalSignals(), detail::GetError(FileErrc::FileContainsFormatErrors));
 			if (signals <= 0 || (signals * 256 + 256) != out.m_headerSize)
 			{
 				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
@@ -299,20 +259,16 @@ namespace edfio
 						case 1: // The startdate itself in dd-MMM-yyyy format using the English 3-character abbreviations of the month in capitals: dd-MMM-yyyy (MMM = 'JAN' | 'FEV' | ...)
 							if (str.size() == 11 && str[2] == '-' && str[6] == '-')
 							{
-								try
 								{
-									int day = std::stoi(str.substr(0, 2));
-									int year = std::stoi(str.substr(7, 4));
-									int month = detail::GetMonthFromString(str.substr(3, 3));
-									if (month == 0)
+									int day{}, year{};
+									auto [p1, e1] = std::from_chars(str.data(), str.data() + 2, day);
+									auto [p2, e2] = std::from_chars(str.data() + 7, str.data() + 11, year);
+									int month = detail::GetMonthFromString(std::string_view{str}.substr(3, 3));
+									if (e1 != std::errc{} || e2 != std::errc{} || month == 0)
 									{
-										throw std::invalid_argument("Invalid Month");
+										throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 									}
 									out.m_startDate = std::make_tuple(day, month, year);
-								}
-								catch (...)
-								{
-									throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
 								}
 							}
 							else
@@ -355,7 +311,7 @@ namespace edfio
 		out.m_detail.m_equipment = detail::ReduceString(out.m_detail.m_equipment);
 		out.m_detail.m_recordingAdditional = detail::ReduceString(out.m_detail.m_recordingAdditional);
 
-		return std::move(out);
+		return out;
 	}
 
 }

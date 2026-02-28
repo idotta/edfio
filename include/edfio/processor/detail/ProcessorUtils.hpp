@@ -13,8 +13,11 @@
 
 #include <string>
 #include <vector>
+#include <array>
+#include <algorithm>
 #include <cctype>
-#include <regex>
+#include <charconv>
+#include <string_view>
 
 namespace edfio
 {
@@ -23,41 +26,33 @@ namespace edfio
 	{
 
 		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Strict, std::basic_string<CharT>>::type &str)
+		inline bool CheckFormatErrors(const std::basic_string<CharT> &str)
 		{
-			for (auto& c : str)
-			{
-				if (!std::isprint(c))
+			if constexpr (Check == ProcessorErrorCheck::Permissive) {
+				return false;
+			} else {
+				for (auto c : str)
 				{
-					return true;
+					if (!std::isprint(static_cast<unsigned char>(c)))
+						return true;
 				}
+				return false;
 			}
-			return false;
 		}
 
 		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Permissive, std::basic_string<CharT>>::type &str)
+		inline bool CheckFormatErrors(const std::vector<CharT> &str)
 		{
-			return false;
-		}
-
-		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Strict, std::vector<CharT>>::type &str)
-		{
-			for (auto& c : str)
-			{
-				if (!std::isprint(c))
+			if constexpr (Check == ProcessorErrorCheck::Permissive) {
+				return false;
+			} else {
+				for (auto c : str)
 				{
-					return true;
+					if (!std::isprint(static_cast<unsigned char>(c)))
+						return true;
 				}
+				return false;
 			}
-			return false;
-		}
-
-		template <ProcessorErrorCheck Check, typename CharT>
-		static bool CheckFormatErrors(const typename std::enable_if<Check == ProcessorErrorCheck::Permissive, std::vector<CharT>>::type &str)
-		{
-			return false;
 		}
 
 	}
@@ -65,26 +60,28 @@ namespace edfio
 	namespace detail
 	{
 
-		static const char ADDITIONAL_SEPARATOR = '|';
+		inline constexpr char ADDITIONAL_SEPARATOR = '|';
+		inline constexpr std::array<std::string_view, 12> MONTHS = {
+			"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+		};
 
 		template <typename CharT>
-		static bool CheckFormatErrors(const std::basic_string<CharT> &str)
+		inline bool CheckFormatErrors(const std::basic_string<CharT> &str)
 		{
 			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING, CharT>(str);
 		}
 
 		template <typename CharT>
-		static bool CheckFormatErrors(const std::vector<CharT> &str)
+		inline bool CheckFormatErrors(const std::vector<CharT> &str)
 		{
 			return impl::CheckFormatErrors<config::PROCESSOR_ERROR_CHECKING, CharT>(str);
 		}
 
-		static int GetMonthFromString(const std::string &str)
+		inline int GetMonthFromString(std::string_view str)
 		{
-			static const std::vector<std::string> months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-			for (size_t idx = 0; idx < months.size(); idx++)
+			for (size_t idx = 0; idx < MONTHS.size(); idx++)
 			{
-				if (str == months[idx])
+				if (str == MONTHS[idx])
 				{
 					return idx + 1;
 				}
@@ -92,21 +89,39 @@ namespace edfio
 			return 0;
 		}
 
-		static std::string GetStringFromMonth(size_t idx)
+		inline std::string GetStringFromMonth(size_t idx)
 		{
-			idx--;
-			static const std::vector<std::string> months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-			if (idx >= 0 && idx < months.size())
-				return months[idx];
+			if (idx >= 1 && idx <= 12)
+				return std::string{ MONTHS[idx - 1] };
 			return "JAN";
 		}
 
-		static std::string ReduceString(const std::string &value)
+		inline std::string ReduceString(std::string_view value)
 		{
-			return std::regex_replace(value, std::regex("^ +| +$|( ) +"), "$1");
+			// Trim leading spaces
+			auto start = value.find_first_not_of(' ');
+			if (start == std::string::npos) return "";
+			// Trim trailing spaces
+			auto end = value.find_last_not_of(' ');
+			// Collapse interior runs of spaces to single space
+			std::string result;
+			result.reserve(end - start + 1);
+			bool prev_space = false;
+			for (size_t i = start; i <= end; ++i) {
+				if (value[i] == ' ') {
+					if (!prev_space) {
+						result += ' ';
+						prev_space = true;
+					}
+				} else {
+					result += value[i];
+					prev_space = false;
+				}
+			}
+			return result;
 		}
 
-		static std::string GetFormatName(DataFormat format)
+		inline std::string_view GetFormatName(DataFormat format)
 		{
 			if (format == DataFormat::Edf)
 				return "EDF";
@@ -123,8 +138,43 @@ namespace edfio
 			return "";
 		}
 
+		inline int ParseInt(std::string_view sv, const char* error_msg)
+		{
+			while (!sv.empty() && sv.front() == ' ') sv.remove_prefix(1);
+			while (!sv.empty() && sv.back() == ' ') sv.remove_suffix(1);
+			int value{};
+			auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), value);
+			if (ec != std::errc{})
+				throw std::invalid_argument(error_msg);
+			return value;
+		}
+
+		inline long long ParseLongLong(std::string_view sv, const char* error_msg)
+		{
+			while (!sv.empty() && sv.front() == ' ') sv.remove_prefix(1);
+			while (!sv.empty() && sv.back() == ' ') sv.remove_suffix(1);
+			long long value{};
+			auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), value);
+			if (ec != std::errc{})
+				throw std::invalid_argument(error_msg);
+			return value;
+		}
+
+		inline double ParseDouble(std::string_view sv, const char* error_msg)
+		{
+			while (!sv.empty() && sv.front() == ' ') sv.remove_prefix(1);
+			while (!sv.empty() && sv.back() == ' ') sv.remove_suffix(1);
+			// std::from_chars accepts '-' but not '+' by standard; strip leading '+'
+			if (!sv.empty() && sv.front() == '+') sv.remove_prefix(1);
+			double value{};
+			auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), value);
+			if (ec != std::errc{})
+				throw std::invalid_argument(error_msg);
+			return value;
+		}
+
 		template <typename T>
-		std::string to_string_decimal(const T& t)
+		inline std::string to_string_decimal(const T& t)
 		{
 			std::string str{ std::to_string(t) };
 			std::replace(str.begin(), str.end(), ',', '.');

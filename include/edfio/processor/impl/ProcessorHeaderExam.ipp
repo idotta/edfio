@@ -42,7 +42,7 @@ namespace edfio
 		}
 		header.m_detail.m_recordSize = recordsize;
 
-		return std::move(HeaderExam{ std::move(header), std::move(signals) });
+		return HeaderExam{ std::move(header), std::move(signals) };
 	}
 
 }

@@ -18,10 +18,10 @@ namespace edfio
 	{
 	public:
 
-		typedef RecordStore::iterator iterator;
-		typedef iterator const const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator; //optional
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
+		using iterator = RecordStore::iterator;
+		using const_iterator = iterator;
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 		SignalSampleStore() = delete;
 
@@ -39,9 +39,9 @@ namespace edfio
 
 	protected:
 
-		void load(size_type off) override
+		void load(size_type off) const override
 		{
-			if (off < 0 || off >= size())
+			if (off >= size())
 			{
 				throw std::out_of_range("Iterator not dereferenceable");
 			}
@@ -60,7 +60,7 @@ namespace edfio
 			std::copy(first, first + m_value.Size(), m_value().begin());
 		}
 
-		void readStream(long long newPos)
+		void readStream(long long newPos) const
 		{
 			if (!m_stream.good())
 				m_stream.clear();
@@ -77,8 +77,8 @@ namespace edfio
 		size_type m_signalrecordSize;
 		std::streamoff m_signalOffset;
 		// Samples buffer to decrease read requests
-		value_type m_buffer;
-		std::streamoff m_bufferPos;
+		mutable value_type m_buffer;
+		mutable std::streamoff m_bufferPos;
 	};
 
 }

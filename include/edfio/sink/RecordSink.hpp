@@ -14,24 +14,33 @@
 
 #include <iostream>
 #include <fstream>
+#include <compare>
+#include <optional>
 
 namespace edfio
 {
 
 	class RecordSink : public Sink<Record<char>, Record<char>*, Record<char>&, std::ofstream, std::output_iterator_tag>
 	{
+		using base_sink = Sink<Record<char>, Record<char>*, Record<char>&, std::ofstream, std::output_iterator_tag>;
 	public:
+		using typename base_sink::stream_type;
+		using typename base_sink::value_type;
+		using typename base_sink::pointer;
+		using typename base_sink::reference;
+		using typename base_sink::difference_type;
+		using typename base_sink::size_type;
 
-		class iterator : public sink_type::iterator
+		class iterator : public base_sink::iterator
 		{
-			size_type m_offset = -1; // Default is end
+			std::optional<size_type> m_offset; // nullopt = end
 			RecordSink *m_context = nullptr;
 		public:
 
 			// Construction
 			iterator() = default;
 
-			iterator(RecordSink *context, size_type offset = -1)
+			iterator(RecordSink *context, std::optional<size_type> offset = std::nullopt)
 				: m_offset(offset)
 				, m_context(context)
 			{
@@ -48,44 +57,26 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				m_context->save(m_offset, std::move(value));
+				if (!m_offset)
+					throw std::length_error("Cannot assign to end iterator");
+				m_context->save(*m_offset, std::move(value));
 				return *this;
 			}
 
-			// Equality
+			// Equality (!= auto-generated)
 			bool operator==(const iterator &it) const
 			{
 				return (m_offset == it.m_offset && m_context == it.m_context);
 			}
-			bool operator!=(const iterator &it) const
-			{
-				return !(*this == it);
-			}
 
-			// Relation
-			bool operator<(const iterator &it) const
+			// Three-way comparison (<, >, <=, >= auto-generated)
+			std::strong_ordering operator<=>(const iterator &it) const
 			{
 				if (m_context != it.m_context)
 					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset < it.m_offset);
-			}
-			bool operator>(const iterator &it) const
-			{
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset > it.m_offset);
-			}
-			bool operator<=(const iterator &it) const
-			{
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset <= it.m_offset);
-			}
-			bool operator>=(const iterator &it) const
-			{
-				if (m_context != it.m_context)
-					throw std::invalid_argument("Iterators incompatible");
-				return (m_offset >= it.m_offset);
+				auto lhs = m_offset.value_or(m_context->size());
+				auto rhs = it.m_offset.value_or(it.m_context->size());
+				return lhs <=> rhs;
 			}
 
 			// Pre-increment
@@ -93,10 +84,10 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_offset == -1)
+				if (!m_offset)
 					throw std::length_error("Iterator not incrementable");
-				if (++m_offset >= m_context->size())
-					m_offset = -1;
+				if (++(*m_offset) >= m_context->size())
+					m_offset = std::nullopt;
 				return *this;
 			}
 			// Post-increment
@@ -113,12 +104,12 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_offset == 0)
+				if (m_offset && *m_offset == 0)
 					throw std::length_error("Iterator not decrementable");
-				if (m_offset == -1)
+				if (!m_offset)
 					m_offset = m_context->size() - 1;
 				else
-					m_offset--;
+					(*m_offset)--;
 				return *this;
 			}
 			// Post-decrement
@@ -135,14 +126,14 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_offset == -1)
+				if (!m_offset)
 					throw std::length_error("Iterator not incrementable");
-				if (m_offset + off > m_context->size())
+				if (*m_offset + off > m_context->size())
 					throw std::length_error("Iterator + offset out of range");
-				if (m_offset + off == m_context->size())
-					m_offset = -1;
+				if (*m_offset + off == m_context->size())
+					m_offset = std::nullopt;
 				else
-					m_offset += off;
+					*m_offset += off;
 				return *this;
 			}
 			// Addition
@@ -159,14 +150,10 @@ namespace edfio
 			{
 				if (!m_context)
 					throw std::invalid_argument("Invalid context");
-				if (m_offset == 0)
-					throw std::length_error("Iterator not decrementable");
-				if (m_offset != -1 && m_offset < off)
+				auto pos = m_offset.value_or(m_context->size());
+				if (pos < off)
 					throw std::length_error("Iterator - offset out of range");
-				if (m_offset == -1)
-					m_offset = m_context->size() - off;
-				else
-					m_offset -= off;
+				m_offset = pos - off;
 				return *this;
 			}
 			// Subtraction
@@ -184,7 +171,9 @@ namespace edfio
 					throw std::invalid_argument("Invalid context");
 				if (m_context != it.m_context)
 					throw std::invalid_argument("Iterators incompatible");
-				return difference_type(it.m_offset - m_offset);
+				auto lhs = static_cast<difference_type>(m_offset.value_or(m_context->size()));
+				auto rhs = static_cast<difference_type>(it.m_offset.value_or(it.m_context->size()));
+				return lhs - rhs;
 			}
 
 			// Dereference
@@ -204,9 +193,9 @@ namespace edfio
 			}
 		};
 
-		typedef iterator const const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator;
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+		using const_iterator = iterator;
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 		RecordSink() = delete;
 

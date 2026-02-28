@@ -21,7 +21,7 @@ namespace edfio
 	inline TimeStamp edfio::ProcessorTimeStampRecord::operator()(Record<char> record, long long datarecord)
 	{
 		TimeStamp timestamp;
-		timestamp.m_dararecord = datarecord;
+		timestamp.m_datarecord = datarecord;
 		auto& value = record();
 
 		// TimeStamp MUST start with '+' or '-'
@@ -53,7 +53,7 @@ namespace edfio
 				timestamp.m_start = start;
 			}
 		}
-		return std::move(timestamp);
+		return timestamp;
 	}
 
 }

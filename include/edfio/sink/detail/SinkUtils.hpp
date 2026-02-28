@@ -14,8 +14,6 @@
 #include "../../header/HeaderGeneral.hpp"
 #include "../../header/HeaderSignal.hpp"
 
-#include <utility>
-
 namespace edfio
 {
 
@@ -23,23 +21,23 @@ namespace edfio
 	{
 
 		template <class Stream>
-		static DataRecordSink CreateDataRecordSink(Stream &stream, const HeaderGeneral &general)
+		inline DataRecordSink CreateDataRecordSink(Stream &stream, const HeaderGeneral &general)
 		{
 			DataRecordSink::size_type recordSize = general.m_detail.m_recordSize;
 			DataRecordSink::size_type sinkSize = general.m_datarecordsFile;
 			std::streamoff headerSize = general.m_headerSize;
-			return std::move(DataRecordSink{ stream, recordSize, sinkSize, headerSize });
+			return DataRecordSink{ stream, recordSize, sinkSize, headerSize };
 		}
 
 		template <class Stream>
-		static SignalRecordSink CreateSignalRecordSink(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
+		inline SignalRecordSink CreateSignalRecordSink(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
 		{
 			SignalRecordSink::size_type recordSize = general.m_detail.m_recordSize;
 			SignalRecordSink::size_type sinkSize = general.m_datarecordsFile;
 			std::streamoff headerSize = general.m_headerSize;
 			SignalRecordSink::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
 			std::streamoff signalOff = signal.m_detail.m_signalOffset;
-			return std::move(SignalRecordSink{ stream, signalSize, sinkSize, headerSize, recordSize, signalOff });
+			return SignalRecordSink{ stream, signalSize, sinkSize, headerSize, recordSize, signalOff };
 		}
 
 	}

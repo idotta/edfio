@@ -12,7 +12,6 @@
 #include "Store.hpp"
 #include "../core/Record.hpp"
 
-#include <iostream>
 #include <iterator>
 
 namespace edfio
@@ -24,22 +23,29 @@ namespace edfio
 	// and dereferences a TAL
 	class TalStore : public Store<Record<char>::VectorType, Record<char>::VectorType const*, Record<char>::VectorType const&, const Record<char>, std::bidirectional_iterator_tag>
 	{
+		using base_store = Store<Record<char>::VectorType, Record<char>::VectorType const*, Record<char>::VectorType const&, const Record<char>, std::bidirectional_iterator_tag>;
 	public:
+		using typename base_store::stream_type;
+		using typename base_store::value_type;
+		using typename base_store::pointer;
+		using typename base_store::reference;
+		using typename base_store::difference_type;
+		using typename base_store::size_type;
 
-		class iterator : public store_type::iterator
+		class iterator : public base_store::iterator
 		{
 			friend class TalStore;
 			size_type m_offset = 0; // Absolute position in current Store
-			TalStore *m_context = nullptr;
+			const TalStore *m_context = nullptr;
 		public:
 
 			// Construction
 			iterator() = default;
 
 		protected:
-			iterator(TalStore *context, size_type off)
-				: m_context(context)
-				, m_offset(off)
+			iterator(const TalStore *context, size_type off)
+				: m_offset(off)
+				, m_context(context)
 			{
 				if (m_offset == 0)
 					++*this;
@@ -47,8 +53,8 @@ namespace edfio
 
 		public:
 			iterator(const iterator &it)
-				: m_context(it.m_context)
-				, m_offset(it.m_offset)
+				: m_offset(it.m_offset)
+				, m_context(it.m_context)
 			{
 			}
 
@@ -60,14 +66,10 @@ namespace edfio
 				return *this;
 			}
 
-			// Equality
+			// Equality (!= auto-generated)
 			bool operator==(const iterator &it) const
 			{
 				return (m_offset == it.m_offset && m_context == it.m_context);
-			}
-			bool operator!=(const iterator &it) const
-			{
-				return !(*this == it);
 			}
 
 			// Pre-increment
@@ -122,9 +124,9 @@ namespace edfio
 			}
 		};
 
-		typedef iterator const const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator;
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+		using const_iterator = iterator;
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 		TalStore() = delete;
 
@@ -133,49 +135,33 @@ namespace edfio
 		{
 		}
 
-		iterator begin()
+		iterator begin() const
 		{
 			return iterator(this, 0);
 		}
-		const_iterator begin() const
-		{
-			return const_iterator(const_cast<TalStore*>(this), 0);
-		}
 		const_iterator cbegin() const
 		{
-			return const_iterator(const_cast<TalStore*>(this), 0);
+			return begin();
 		}
-		iterator end()
+		iterator end() const
 		{
 			return iterator(this, m_stream.Size());
 		}
-		const_iterator end() const
-		{
-			return const_iterator(const_cast<TalStore*>(this), m_stream.Size());
-		}
 		const_iterator cend() const
 		{
-			return const_iterator(const_cast<TalStore*>(this), m_stream.Size());
+			return end();
 		}
-		reverse_iterator rbegin()
+		reverse_iterator rbegin() const
 		{
 			return reverse_iterator(end());
-		}
-		const_reverse_iterator rbegin() const
-		{
-			return const_reverse_iterator(end());
 		}
 		const_reverse_iterator crbegin() const
 		{
 			return const_reverse_iterator(cend());
 		}
-		reverse_iterator rend()
+		reverse_iterator rend() const
 		{
 			return reverse_iterator(begin());
-		}
-		const_reverse_iterator rend() const
-		{
-			return const_reverse_iterator(begin());
 		}
 		const_reverse_iterator crend() const
 		{
@@ -183,17 +169,17 @@ namespace edfio
 		}
 
 	protected:
-		reference getR()
+		reference getR() const
 		{
 			return m_value;
 		}
 
-		pointer getP()
+		pointer getP() const
 		{
 			return &m_value;
 		}
 
-		size_type next(size_type off)
+		size_type next(size_type off) const
 		{
 			if (off >= m_stream().size())
 				throw std::length_error("Iterator not incrementable");
@@ -225,39 +211,31 @@ namespace edfio
 			return off;
 		}
 
-		size_type prev(size_type off)
+		size_type prev(size_type off) const
 		{
-			if (off <= 0)
+			if (off == 0)
 				throw std::length_error("Iterator not decrementable");
 
-			if (off > 0)
-			{
-				auto first = m_stream().rend() + off;
-				auto last = m_stream().rend();
+			auto const& data = m_stream();
 
-				while (*first == 0 && first != last)
-				{
-					first++;
-					off--;
-				}
+			// Walk backward from position (off - 1), skipping zeros
+			size_type pos = off;
+			while (pos > 0 && data[pos - 1] == 0)
+				--pos;
 
-				if (first != last)
-				{
-					size_type offOld = off;
-					for (auto it = first; *it != 0 && it != last; it++)
-					{
-						off--;
-					}
-					if (offOld != off)
-					{
-						m_value.assign(first + offOld, first + off);
-					}
-				}
-			}
-			return off;
+			if (pos == 0)
+				throw std::length_error("Iterator not decrementable");
+
+			// Find the start of the previous non-zero TAL
+			size_type end_of_tal = pos;
+			while (pos > 0 && data[pos - 1] != 0)
+				--pos;
+
+			m_value.assign(data.begin() + pos, data.begin() + end_of_tal);
+			return pos;
 		}
 
-		value_type m_value;
+		mutable value_type m_value;
 	};
 
 }

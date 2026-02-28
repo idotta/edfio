@@ -22,7 +22,7 @@ namespace edfio
 	namespace detail
 	{
 
-		static HeaderGeneral CreateHeaderGeneral(
+		inline HeaderGeneral CreateHeaderGeneral(
 			DataFormat version,
 			std::string patient,
 			std::string recording,
@@ -59,10 +59,10 @@ namespace edfio
 			}
 			header.m_detail.m_recordSize *= GetSampleBytes(version);
 
-			return std::move(header);
+			return header;
 		}
 
-		static HeaderGeneral CreateHeaderGeneralPlus(
+		inline HeaderGeneral CreateHeaderGeneralPlus(
 			DataFormat version,
 			std::string patientCode,
 			std::string gender,
@@ -86,10 +86,10 @@ namespace edfio
 			const std::vector<HeaderSignal>& signals
 		)
 		{
-			auto header = std::move(CreateHeaderGeneral(
+			auto header = CreateHeaderGeneral(
 				version, "", "", startDateD, startDateM, startDateY, startTimeH, startTimeM, startTimeS,
 				headerSize, reserved, datarecordsFile, datarecordDuration, signals
-			));
+			);
 
 			header.m_detail.m_patientCode = patientCode;
 			header.m_detail.m_gender = gender;
@@ -101,10 +101,10 @@ namespace edfio
 			header.m_detail.m_equipment = equipment;
 			header.m_detail.m_recordingAdditional = recordingAdditional;
 
-			return std::move(header);
+			return header;
 		}
 
-		static HeaderSignal CreateHeaderSignal(
+		inline HeaderSignal CreateHeaderSignal(
 			std::string label,
 			int samplesInDataRecord,
 			double physicalMin,
@@ -137,7 +137,7 @@ namespace edfio
 			signal.m_detail.m_offset = signal.m_physicalMin - signal.m_detail.m_scaling * signal.m_digitalMin;
 			signal.m_detail.m_isAnnotation = annotation;
 
-			return std::move(signal);
+			return signal;
 		}
 
 	}

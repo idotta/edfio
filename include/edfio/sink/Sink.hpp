@@ -20,8 +20,15 @@ namespace edfio
 	class Sink : public Device<Value, Pointer, Reference, Stream, IterCategory>
 	{
 	public:
-		typedef Sink<Value, Pointer, Reference, Stream, IterCategory> sink_type;
-		typedef device_type::iterator iterator;
+		using device_type = Device<Value, Pointer, Reference, Stream, IterCategory>;
+		using sink_type = Sink<Value, Pointer, Reference, Stream, IterCategory>;
+		using typename device_type::stream_type;
+		using typename device_type::value_type;
+		using typename device_type::pointer;
+		using typename device_type::reference;
+		using typename device_type::difference_type;
+		using typename device_type::size_type;
+		using iterator = typename device_type::iterator;
 
 		Sink() = delete;
 

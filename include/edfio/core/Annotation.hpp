@@ -24,7 +24,7 @@ namespace edfio
 
 	struct TimeStamp
 	{
-		long long m_dararecord = 0;
+		long long m_datarecord = 0;
 		double m_start = 0;
 	};
 

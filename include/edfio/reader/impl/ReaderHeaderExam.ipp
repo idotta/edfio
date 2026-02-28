@@ -30,18 +30,18 @@ namespace edfio
 		auto generalFields = readerGeneral(stream);
 		// Process general fields
 		ProcessorHeaderGeneralFields procGeneralFields;
-		auto general = std::move(procGeneralFields(std::move(generalFields)));
+		auto general = procGeneralFields(std::move(generalFields));
 
 		// Read signal fields
 		ReaderHeaderSignal readerSignals(general.m_totalSignals);
 		auto signalFields = readerSignals(stream);
 		// Process signal fields
 		ProcessorHeaderSignalFields procSignalFields(general.m_version, general.m_datarecordDuration);
-		auto signals = std::move(procSignalFields(std::move(signalFields)));
+		auto signals = procSignalFields(std::move(signalFields));
 
 		// Process header exam
 		ProcessorHeaderExam procHeader;
-		auto header = std::move(procHeader(std::move(general), std::move(signals)));
+		auto header = procHeader(std::move(general), std::move(signals));
 
 		// File size
 		{
@@ -59,7 +59,7 @@ namespace edfio
 			}
 		}
 
-		return std::move(header);
+		return header;
 	}
 
 }

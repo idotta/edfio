@@ -27,22 +27,19 @@ namespace edfio
 		Record() = delete;
 
 		Record(size_t recordSize)
-			: m_size(recordSize)
-			, m_value(recordSize, 0) {}
+			: m_value(recordSize, 0) {}
 
 		Record(typename VectorType::const_iterator first, typename VectorType::const_iterator last)
-			: m_size(std::distance(first, last))
-			, m_value(first, last) {}
+			: m_value(first, last) {}
 
-		Record(const Record<ValT> &record)
-			: m_size(record.m_size)
-			, m_value(record.m_value)
-		{
-		}
+		Record(const Record&) = default;
+		Record(Record&&) = default;
+		Record& operator=(const Record&) = default;
+		Record& operator=(Record&&) = default;
 
-		const size_t Size() const
+		size_t Size() const
 		{
-			return m_size;
+			return m_value.size();
 		}
 		const VectorType& operator()() const
 		{
@@ -52,7 +49,7 @@ namespace edfio
 		{
 			return m_value;
 		}
-		Record<ValueType> operator+(const Record<ValueType>& record)
+		Record<ValueType> operator+(const Record<ValueType>& record) const
 		{
 			Record<ValueType> tmp(Size() + record.Size());
 			std::copy(m_value.begin(), m_value.end(), tmp().begin());
@@ -61,7 +58,6 @@ namespace edfio
 		}
 
 		VectorType m_value;
-		const size_t m_size;
 	};
 
 	template <typename ValT = char>

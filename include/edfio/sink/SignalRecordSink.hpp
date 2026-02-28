@@ -18,10 +18,10 @@ namespace edfio
 	{
 	public:
 
-		typedef RecordSink::iterator iterator;
-		typedef iterator const const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator;
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+		using iterator = RecordSink::iterator;
+		using const_iterator = iterator;
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 		SignalRecordSink() = delete;
 
@@ -44,7 +44,7 @@ namespace edfio
 				throw std::invalid_argument("Invalid header");
 			
 			size_type datarecords = (sz - m_headerOffset) / m_datarecordSize;
-			size_type offset = (sz - m_headerOffset) % m_datarecordSize;;
+			size_type offset = (sz - m_headerOffset) % m_datarecordSize;
 			
 			m_sinkSize = datarecords;
 			if (offset >= m_signalOffset)
@@ -58,7 +58,7 @@ namespace edfio
 			{
 				m_stream.seekp(0, std::ios::end);
 				size_type sz = m_stream.tellp();
-				size_type offset = (sz - m_headerOffset) % m_datarecordSize;;
+				size_type offset = (sz - m_headerOffset) % m_datarecordSize;
 				if (offset < m_signalOffset)
 					throw std::invalid_argument("Invalid signal order");
 				m_sinkSize++;

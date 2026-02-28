@@ -52,11 +52,11 @@ namespace edfio
 			for (auto &s : signals)
 				stream >> s.m_reserved;
 		}
-		catch (std::exception e)
+		catch (const std::exception&)
 		{
 			throw std::invalid_argument(detail::GetError(FileErrc::FileReadError));
 		}
-		return std::move(signals);
+		return signals;
 	}
 
 }

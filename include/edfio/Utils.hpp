@@ -16,7 +16,7 @@ namespace edfio
 
 	namespace detail
 	{
-		static const char* GetError(FileErrc err)
+		inline constexpr const char* GetError(FileErrc err)
 		{
 			if (err == FileErrc::FileDoesNotOpen)
 			{

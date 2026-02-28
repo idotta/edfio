@@ -25,16 +25,16 @@ namespace edfio
 	inline void WriterHeaderExam::operator ()(Stream &stream, HeaderExam &input)
 	{
 		// Process header general
-		auto general = std::move(ProcessorHeaderGeneral{}(input.m_general));
+		auto general = ProcessorHeaderGeneral{}(input.m_general);
 
 		// Process signal fields
-		auto signals = std::move(ProcessorHeaderSignal{}(input.m_signals));
+		auto signals = ProcessorHeaderSignal{}(input.m_signals);
 
 		// Write general
-		WriterHeaderGeneral{}(stream, std::move(general));
+		WriterHeaderGeneral{}(stream, general);
 
 		// Write signals
-		WriterHeaderSignals{}(stream, std::move(signals));
+		WriterHeaderSignals{}(stream, signals);
 	}
 
 }

@@ -95,7 +95,7 @@ namespace edfio
 			}
 		}
 
-		return std::move(out);
+		return out;
 	}
 
 }

@@ -32,12 +32,13 @@ namespace edfio
 		class iterator
 		{
 		public:
-			typedef typename Device::difference_type difference_type;
-			typedef typename Device::value_type value_type;
-			typedef typename Device::reference reference;
-			typedef typename Device::pointer pointer;
-			typedef IterCategory iterator_category;
-			typedef typename Device::stream_type stream_type;
+			using difference_type = typename Device::difference_type;
+			using value_type = typename Device::value_type;
+			using reference = typename Device::reference;
+			using pointer = typename Device::pointer;
+			using iterator_category = IterCategory;
+			using iterator_concept = IterCategory;
+			using stream_type = typename Device::stream_type;
 		};
 
 		Device() = delete;

@@ -45,14 +45,7 @@ namespace edfio
 					if (*it == detail::DURATION_DIV || *it == detail::ANNOTATION_DIV)
 					{
 						std::string tmp(first, it);
-						try
-						{
-							start = std::stod(tmp);
-						}
-						catch (...)
-						{
-							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsInvalidAnnotations));
-						}
+						start = detail::ParseDouble(tmp, detail::GetError(FileErrc::FileContainsInvalidAnnotations));
 						onset = false;
 
 						first = it;
@@ -63,14 +56,7 @@ namespace edfio
 					if (*first == detail::DURATION_DIV)
 					{
 						std::string tmp(first + 1, it);
-						try
-						{
-							duration = std::stod(tmp);
-						}
-						catch (...)
-						{
-							throw std::invalid_argument(detail::GetError(FileErrc::FileContainsInvalidAnnotations));
-						}
+						duration = detail::ParseDouble(tmp, detail::GetError(FileErrc::FileContainsInvalidAnnotations));
 						first = it;
 					}
 					else if (*first == detail::ANNOTATION_DIV)
@@ -84,7 +70,7 @@ namespace edfio
 							annot.m_start = start;
 							annot.m_duration = duration;
 							annot.m_annotation = tmp;
-							annot.m_dararecord = datarecord;
+							annot.m_datarecord = datarecord;
 							out.emplace_back(std::move(annot));
 						}
 						first = it;
@@ -93,7 +79,7 @@ namespace edfio
 			}
 
 		}
-		return std::move(out);
+		return out;
 	}
 
 }

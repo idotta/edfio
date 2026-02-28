@@ -110,15 +110,7 @@ namespace edfio
 			{
 				auto &signal = signals[idx];
 				auto& physMin = in[idx].m_physicalMin();
-
-				try
-				{
-					signal.m_physicalMin = std::stod(physMin);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
+				signal.m_physicalMin = detail::ParseDouble(physMin, detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Physical Maxima
@@ -127,15 +119,7 @@ namespace edfio
 			{
 				auto &signal = signals[idx];
 				auto& physMax = in[idx].m_physicalMax();
-
-				try
-				{
-					signal.m_physicalMax = std::stod(physMax);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
+				signal.m_physicalMax = detail::ParseDouble(physMax, detail::GetError(FileErrc::FileContainsFormatErrors));
 			}
 		}
 		// Digital Minima
@@ -144,16 +128,7 @@ namespace edfio
 			{
 				auto &signal = signals[idx];
 				auto& digMin = in[idx].m_digitalMin();
-
-				int n = 0;
-				try
-				{
-					n = std::stoi(digMin);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
+				int n = detail::ParseInt(digMin, detail::GetError(FileErrc::FileContainsFormatErrors));
 
 				if (signal.m_detail.m_isAnnotation)
 				{
@@ -195,16 +170,7 @@ namespace edfio
 			{
 				auto &signal = signals[idx];
 				auto& digMax = in[idx].m_digitalMax();
-
-				int n = 0;
-				try
-				{
-					n = std::stoi(digMax);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
+				int n = detail::ParseInt(digMax, detail::GetError(FileErrc::FileContainsFormatErrors));
 
 				if (signal.m_detail.m_isAnnotation)
 				{
@@ -268,16 +234,7 @@ namespace edfio
 			{
 				auto &signal = signals[idx];
 				auto& nrSamples = in[idx].m_samplesInDataRecord();
-
-				int n = 0;
-				try
-				{
-					n = std::stoi(nrSamples);
-				}
-				catch (...)
-				{
-					throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-				}
+				int n = detail::ParseInt(nrSamples, detail::GetError(FileErrc::FileContainsFormatErrors));
 
 				if (n < 1)
 				{
@@ -323,7 +280,7 @@ namespace edfio
 			signal.m_reserved = detail::ReduceString(signal.m_reserved);
 		}
 
-		return std::move(signals);
+		return signals;
 	}
 
 }
