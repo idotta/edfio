@@ -46,8 +46,6 @@ inline bool CheckFormatErrors(const std::vector<CharT> &str) {
   }
 }
 
-} // namespace edfio
-
 namespace detail {
 
 inline constexpr char ADDITIONAL_SEPARATOR = '|';
@@ -57,12 +55,12 @@ inline constexpr std::array<std::string_view, 12> MONTHS = {
 
 template <typename CharT>
 inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
-  return CheckFormatErrors<detail::PROCESSOR_ERROR_CHECKING, CharT>(str);
+  return edfio::CheckFormatErrors<PROCESSOR_ERROR_CHECKING, CharT>(str);
 }
 
 template <typename CharT>
 inline bool CheckFormatErrors(const std::vector<CharT> &str) {
-  return CheckFormatErrors<detail::PROCESSOR_ERROR_CHECKING, CharT>(str);
+  return edfio::CheckFormatErrors<PROCESSOR_ERROR_CHECKING, CharT>(str);
 }
 
 inline int GetMonthFromString(std::string_view str) {
@@ -171,3 +169,5 @@ template <typename T> inline std::string to_string_decimal(const T &t) {
   return str;
 }
 } // namespace detail
+
+} // namespace edfio

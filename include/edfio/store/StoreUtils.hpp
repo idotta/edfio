@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "../../header/HeaderGeneral.hpp"
-#include "../../header/HeaderSignal.hpp"
-#include "../DataRecordStore.hpp"
-#include "../SignalRecordStore.hpp"
-#include "../SignalSampleStore.hpp"
-#include "../TimeStampStore.hpp"
+#include "../header/HeaderGeneral.hpp"
+#include "../header/HeaderSignal.hpp"
+#include "DatarecordStore.hpp"
+#include "SignalrecordStore.hpp"
+#include "SignalSampleStore.hpp"
+#include "TimeStampStore.hpp"
 
 #include <utility>
 

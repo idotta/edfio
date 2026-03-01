@@ -19,17 +19,17 @@
 #include "writer/WriterHeaderExam.hpp"
 
 // Store
-#include "store/DataRecordStore.hpp"
-#include "store/SignalRecordStore.hpp"
+#include "store/DatarecordStore.hpp"
+#include "store/SignalrecordStore.hpp"
 #include "store/SignalSampleStore.hpp"
 #include "store/TalStore.hpp"
 #include "store/TimeStampStore.hpp"
-#include "store/detail/StoreUtils.hpp"
+#include "store/StoreUtils.hpp"
 
 // Sink
 #include "sink/DataRecordSink.hpp"
 #include "sink/SignalRecordSink.hpp"
-#include "sink/detail/SinkUtils.hpp"
+#include "sink/SinkUtils.hpp"
 
 // Processor
 #include "processor/ProcessorAnnotation.hpp"

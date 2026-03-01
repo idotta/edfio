@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "../../header/HeaderGeneral.hpp"
-#include "../../header/HeaderSignal.hpp"
-#include "../DataRecordSink.hpp"
-#include "../SignalRecordSink.hpp"
+#include "../header/HeaderGeneral.hpp"
+#include "../header/HeaderSignal.hpp"
+#include "DataRecordSink.hpp"
+#include "SignalRecordSink.hpp"
 
 
 namespace edfio {
