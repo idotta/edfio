@@ -9,58 +9,50 @@
 
 #pragma once
 
-#include "../core/SampleType.hpp"
 #include "../core/Record.hpp"
+#include "../core/SampleType.hpp"
 
-namespace edfio
-{
 
-	template <SampleType SampleT>
-	struct ProcessorSampleRecord
-	{
-		using ProcType = typename impl::Sample<SampleT>::type;
-		using DigiType = impl::Sample<SampleType::Digital>::type;
-		using PhysType = impl::Sample<SampleType::Physical>::type;
+namespace edfio {
 
-		ProcessorSampleRecord(double offset, double scaling)
-			: m_offset(offset)
-			, m_scaling(scaling)
-		{
-		}
+template <SampleType SampleT> struct ProcessorSampleRecord {
+  using ProcType = typename Sample<SampleT>::type;
+  using DigiType = Sample<SampleType::Digital>::type;
+  using PhysType = Sample<SampleType::Physical>::type;
 
-		ProcType operator ()(Record<char> record);
+  ProcessorSampleRecord(double offset, double scaling)
+      : m_offset(offset), m_scaling(scaling) {}
 
-	private:
-		const double m_offset;
-		const double m_scaling;
-	};
+  ProcType operator()(Record<char> record);
 
-	template<SampleType SampleT>
-	inline typename ProcessorSampleRecord<SampleT>::ProcType
-	ProcessorSampleRecord<SampleT>::operator()(Record<char> record)
-	{
-		DigiType sample = 0;
-		auto const& bytes = record();
-		std::size_t const nbytes = bytes.size();
+private:
+  const double m_offset;
+  const double m_scaling;
+};
 
-		// Assemble bytes (big-endian order as written by ProcessorSample)
-		for (std::size_t i = 0; i < nbytes; ++i)
-		{
-			sample <<= 8;
-			sample |= static_cast<unsigned char>(bytes[i]);
-		}
+template <SampleType SampleT>
+inline typename ProcessorSampleRecord<SampleT>::ProcType
+ProcessorSampleRecord<SampleT>::operator()(Record<char> record) {
+  DigiType sample = 0;
+  auto const &bytes = record();
+  std::size_t const nbytes = bytes.size();
 
-		// Sign-extend: if high bit of the MSB is set, the value is negative
-		if (nbytes > 0 && nbytes < sizeof(DigiType))
-		{
-			unsigned int sign_bit = 1u << (nbytes * 8 - 1);
-			if (sample & sign_bit)
-				sample |= ~((1 << (nbytes * 8)) - 1);
-		}
+  // Assemble bytes (big-endian order as written by ProcessorSample)
+  for (std::size_t i = 0; i < nbytes; ++i) {
+    sample <<= 8;
+    sample |= static_cast<unsigned char>(bytes[i]);
+  }
 
-		if constexpr (std::is_same_v<DigiType, ProcType>)
-			return sample;
-		return impl::ConvertSample(m_offset, m_scaling, sample);
-	}
+  // Sign-extend: if high bit of the MSB is set, the value is negative
+  if (nbytes > 0 && nbytes < sizeof(DigiType)) {
+    unsigned int sign_bit = 1u << (nbytes * 8 - 1);
+    if (sample & sign_bit)
+      sample |= ~((1 << (nbytes * 8)) - 1);
+  }
 
+  if constexpr (std::is_same_v<DigiType, ProcType>)
+    return sample;
+  return ConvertSample(m_offset, m_scaling, sample);
 }
+
+} // namespace edfio

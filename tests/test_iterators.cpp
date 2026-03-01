@@ -17,8 +17,7 @@ static_assert(std::ranges::bidirectional_range<TalStore>);
 TEST_CASE("RecordStore iterator subtraction and arithmetic (multi-record file)") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
     REQUIRE(store.size() == 600);
 
@@ -35,8 +34,7 @@ TEST_CASE("RecordStore iterator subtraction and arithmetic (multi-record file)")
 TEST_CASE("RecordStore iterator n + it and negative offsets") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
     REQUIRE(store.size() >= 10);
 
@@ -59,8 +57,7 @@ TEST_CASE("RecordStore iterator n + it and negative offsets") {
 TEST_CASE("DataRecordStore iteration works") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
 
     CHECK(store.size() == static_cast<unsigned long long>(header.m_general.m_datarecordsFile));
@@ -79,8 +76,7 @@ TEST_CASE("DataRecordStore iteration works") {
 TEST_CASE("RecordStore iterator comparisons via spaceship") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
     REQUIRE(store.size() >= 10);
 
@@ -101,8 +97,7 @@ TEST_CASE("RecordStore iterator comparisons via spaceship") {
 TEST_CASE("RecordStore iterator subscript operator") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
     REQUIRE(store.size() >= 3);
 
@@ -116,8 +111,7 @@ TEST_CASE("RecordStore iterator subscript operator") {
 TEST_CASE("SignalRecordStore iteration works") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     REQUIRE(header.m_signals.size() > 0);
 
     auto store = detail::CreateSignalRecordStore(stream, header.m_general, header.m_signals[0]);
@@ -136,8 +130,7 @@ TEST_CASE("SignalRecordStore iteration works") {
 TEST_CASE("DataRecordStore satisfies ranges::random_access_range") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
 
     // Use std::ranges algorithms
@@ -155,8 +148,7 @@ TEST_CASE("DataRecordStore satisfies ranges::random_access_range") {
 TEST_CASE("Const iteration works without const_cast issues") {
     std::ifstream stream("test_generator_2.edf", std::ios::binary);
     REQUIRE(stream.is_open());
-    ReaderHeaderExam reader;
-    auto header = reader(stream);
+    auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
 
     // Call const begin/end

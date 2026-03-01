@@ -9,64 +9,71 @@
 
 #pragma once
 
+#include "../../header/HeaderGeneral.hpp"
+#include "../../header/HeaderSignal.hpp"
 #include "../DataRecordStore.hpp"
 #include "../SignalRecordStore.hpp"
 #include "../SignalSampleStore.hpp"
 #include "../TimeStampStore.hpp"
-#include "../../header/HeaderGeneral.hpp"
-#include "../../header/HeaderSignal.hpp"
 
 #include <utility>
 
-namespace edfio
-{
+namespace edfio {
 
-	namespace detail
-	{
+namespace detail {
 
-		template <class Stream>
-		inline DataRecordStore CreateDataRecordStore(Stream &stream, const HeaderGeneral &general)
-		{
-			DataRecordStore::size_type recordSize = general.m_detail.m_recordSize;
-			DataRecordStore::size_type storeSize = general.m_datarecordsFile;
-			std::streamoff headerSize = general.m_headerSize;
-			return DataRecordStore{ stream, recordSize, storeSize, headerSize };
-		}
-
-		template <class Stream>
-		inline SignalRecordStore CreateSignalRecordStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
-		{
-			SignalRecordStore::size_type recordSize = general.m_detail.m_recordSize;
-			SignalRecordStore::size_type storeSize = general.m_datarecordsFile;
-			std::streamoff headerSize = general.m_headerSize;
-			SignalRecordStore::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
-			std::streamoff signalOff = signal.m_detail.m_signalOffset;
-			return SignalRecordStore{ stream, signalSize, storeSize, headerSize, recordSize, signalOff };
-		}
-
-		template <class Stream>
-		inline SignalSampleStore CreateSignalSampleStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
-		{
-			SignalSampleStore::size_type recordSize = general.m_detail.m_recordSize;
-			SignalSampleStore::size_type storeSize = general.m_datarecordsFile * signal.m_samplesInDataRecord;
-			std::streamoff headerSize = general.m_headerSize;
-			SignalSampleStore::size_type sampleSize = GetSampleBytes(general.m_version);
-			SignalSampleStore::size_type signalSize = signal.m_samplesInDataRecord;
-			std::streamoff signalOff = signal.m_detail.m_signalOffset;
-			return SignalSampleStore{ stream, sampleSize, storeSize, headerSize, recordSize, signalSize, signalOff };
-		}
-
-		template <class Stream>
-		inline TimeStampStore CreateTimeStampStore(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
-		{
-			TimeStampStore::size_type recordSize = general.m_detail.m_recordSize;
-			TimeStampStore::size_type storeSize = general.m_datarecordsFile;
-			std::streamoff headerSize = general.m_headerSize;
-			TimeStampStore::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
-			std::streamoff signalOff = signal.m_detail.m_signalOffset;
-			return TimeStampStore{ stream, signalSize, storeSize, headerSize, recordSize, signalOff };
-		}
-
-	}
-
+template <class Stream>
+inline DataRecordStore CreateDataRecordStore(Stream &stream,
+                                             const HeaderGeneral &general) {
+  DataRecordStore::size_type recordSize = general.m_detail.m_recordSize;
+  DataRecordStore::size_type storeSize = general.m_datarecordsFile;
+  std::streamoff headerSize = general.m_headerSize;
+  return DataRecordStore{stream, recordSize, storeSize, headerSize};
 }
+
+template <class Stream>
+inline SignalRecordStore CreateSignalRecordStore(Stream &stream,
+                                                 const HeaderGeneral &general,
+                                                 const HeaderSignal &signal) {
+  SignalRecordStore::size_type recordSize = general.m_detail.m_recordSize;
+  SignalRecordStore::size_type storeSize = general.m_datarecordsFile;
+  std::streamoff headerSize = general.m_headerSize;
+  SignalRecordStore::size_type signalSize =
+      signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
+  std::streamoff signalOff = signal.m_detail.m_signalOffset;
+  return SignalRecordStore{stream,     signalSize, storeSize,
+                           headerSize, recordSize, signalOff};
+}
+
+template <class Stream>
+inline SignalSampleStore CreateSignalSampleStore(Stream &stream,
+                                                 const HeaderGeneral &general,
+                                                 const HeaderSignal &signal) {
+  SignalSampleStore::size_type recordSize = general.m_detail.m_recordSize;
+  SignalSampleStore::size_type storeSize =
+      general.m_datarecordsFile * signal.m_samplesInDataRecord;
+  std::streamoff headerSize = general.m_headerSize;
+  SignalSampleStore::size_type sampleSize = GetSampleBytes(general.m_version);
+  SignalSampleStore::size_type signalSize = signal.m_samplesInDataRecord;
+  std::streamoff signalOff = signal.m_detail.m_signalOffset;
+  return SignalSampleStore{stream,     sampleSize, storeSize, headerSize,
+                           recordSize, signalSize, signalOff};
+}
+
+template <class Stream>
+inline TimeStampStore CreateTimeStampStore(Stream &stream,
+                                           const HeaderGeneral &general,
+                                           const HeaderSignal &signal) {
+  TimeStampStore::size_type recordSize = general.m_detail.m_recordSize;
+  TimeStampStore::size_type storeSize = general.m_datarecordsFile;
+  std::streamoff headerSize = general.m_headerSize;
+  TimeStampStore::size_type signalSize =
+      signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
+  std::streamoff signalOff = signal.m_detail.m_signalOffset;
+  return TimeStampStore{stream,     signalSize, storeSize,
+                        headerSize, recordSize, signalOff};
+}
+
+} // namespace detail
+
+} // namespace edfio

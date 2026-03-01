@@ -85,9 +85,9 @@ TEST_CASE("ParseDouble parses floating-point numbers") {
 }
 
 TEST_CASE("GetError returns non-null for all error codes") {
-    CHECK(edfio::detail::GetError(edfio::FileErrc::FileDoesNotOpen) != nullptr);
-    CHECK(edfio::detail::GetError(edfio::FileErrc::FileNotOpened) != nullptr);
-    CHECK(edfio::detail::GetError(edfio::FileErrc::FileReadError) != nullptr);
-    CHECK(edfio::detail::GetError(edfio::FileErrc::FileContainsFormatErrors) != nullptr);
-    CHECK(edfio::detail::GetError(edfio::FileErrc::FileWriteError) != nullptr);
+    CHECK(edfio::GetError(edfio::FileErrc::FileDoesNotOpen) != nullptr);
+    CHECK(edfio::GetError(edfio::FileErrc::FileNotOpened) != nullptr);
+    CHECK(edfio::GetError(edfio::FileErrc::FileReadError) != nullptr);
+    CHECK(edfio::GetError(edfio::FileErrc::FileContainsFormatErrors) != nullptr);
+    CHECK(edfio::GetError(edfio::FileErrc::FileWriteError) != nullptr);
 }

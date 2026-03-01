@@ -13,45 +13,31 @@
 #include "../header/HeaderGeneral.hpp"
 #include "../header/HeaderSignal.hpp"
 
-namespace edfio
-{
+namespace edfio {
 
-	enum class SampleType
-	{
-		Physical,
-		Digital
-	};
+enum class SampleType { Physical, Digital };
 
-	namespace impl
-	{
+template <SampleType SampleT> struct Sample {};
 
-		template <SampleType SampleT>
-		struct Sample
-		{
-		};
+template <> struct Sample<SampleType::Physical> {
+  using type = double;
+};
 
-		template <>
-		struct Sample<SampleType::Physical>
-		{
-			using type = double;
-		};
+template <> struct Sample<SampleType::Digital> {
+  using type = int;
+};
 
-		template <>
-		struct Sample<SampleType::Digital>
-		{
-			using type = int;
-		};
-
-		inline Sample<SampleType::Digital>::type ConvertSample(double offset, double scaling, Sample<SampleType::Physical>::type sample)
-		{
-			return static_cast<Sample<SampleType::Digital>::type>((sample - offset) / scaling);
-		}
-
-		inline Sample<SampleType::Physical>::type ConvertSample(double offset, double scaling, Sample<SampleType::Digital>::type sample)
-		{
-			return scaling * static_cast<Sample<SampleType::Physical>::type>(sample) + offset;
-		}
-
-	}
-
+inline Sample<SampleType::Digital>::type
+ConvertSample(double offset, double scaling,
+              Sample<SampleType::Physical>::type sample) {
+  return static_cast<Sample<SampleType::Digital>::type>((sample - offset) /
+                                                        scaling);
 }
+
+inline Sample<SampleType::Physical>::type
+ConvertSample(double offset, double scaling,
+              Sample<SampleType::Digital>::type sample) {
+  return scaling * static_cast<Sample<SampleType::Physical>::type>(sample) +
+         offset;
+}
+} // namespace edfio

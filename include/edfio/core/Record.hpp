@@ -12,70 +12,55 @@
 #include <iostream>
 #include <vector>
 
-namespace edfio
-{
+namespace edfio {
 
-	// Records have fixed sizes that can vary according to the signal
-	// They can be used for either single signal record or data record IO
-	// It is important that data records always have one size in the same file
-	template <typename ValT = char>
-	struct Record
-	{
-		using ValueType = ValT;
-		using VectorType = std::vector<ValueType>;
+// Records have fixed sizes that can vary according to the signal
+// They can be used for either single signal record or data record IO
+// It is important that data records always have one size in the same file
+template <typename ValT = char> struct Record {
+  using ValueType = ValT;
+  using VectorType = std::vector<ValueType>;
 
-		Record() = delete;
+  Record() = delete;
 
-		Record(size_t recordSize)
-			: m_value(recordSize, 0) {}
+  Record(size_t recordSize) : m_value(recordSize, 0) {}
 
-		Record(typename VectorType::const_iterator first, typename VectorType::const_iterator last)
-			: m_value(first, last) {}
+  Record(typename VectorType::const_iterator first,
+         typename VectorType::const_iterator last)
+      : m_value(first, last) {}
 
-		Record(const Record&) = default;
-		Record(Record&&) = default;
-		Record& operator=(const Record&) = default;
-		Record& operator=(Record&&) = default;
+  Record(const Record &) = default;
+  Record(Record &&) = default;
+  Record &operator=(const Record &) = default;
+  Record &operator=(Record &&) = default;
 
-		size_t Size() const
-		{
-			return m_value.size();
-		}
-		const VectorType& operator()() const
-		{
-			return m_value;
-		}
-		VectorType& operator()()
-		{
-			return m_value;
-		}
-		Record<ValueType> operator+(const Record<ValueType>& record) const
-		{
-			Record<ValueType> tmp(Size() + record.Size());
-			std::copy(m_value.begin(), m_value.end(), tmp().begin());
-			std::copy(record().begin(), record().end(), tmp().begin() + Size());
-			return tmp;
-		}
+  size_t Size() const { return m_value.size(); }
+  const VectorType &operator()() const { return m_value; }
+  VectorType &operator()() { return m_value; }
+  Record<ValueType> operator+(const Record<ValueType> &record) const {
+    Record<ValueType> tmp(Size() + record.Size());
+    std::copy(m_value.begin(), m_value.end(), tmp().begin());
+    std::copy(record().begin(), record().end(), tmp().begin() + Size());
+    return tmp;
+  }
 
-		VectorType m_value;
-	};
+  VectorType m_value;
+};
 
-	template <typename ValT = char>
-	std::ostream& operator << (std::ostream &os, Record<ValT> &r)
-	{
-		auto &record = r();
-		record.resize(r.Size(), 0);
-		os.write(record.data(), r.Size() * sizeof(ValT));
-		return os;
-	}
-
-	template <typename ValT = char>
-	std::istream& operator >> (std::istream &is, Record<ValT> &r)
-	{
-		auto &record = r();
-		record.resize(r.Size(), 0);
-		is.read(&record[0], r.Size()  * sizeof(ValT));
-		return is;
-	}
-
+template <typename ValT = char>
+std::ostream &operator<<(std::ostream &os, Record<ValT> &r) {
+  auto &record = r();
+  record.resize(r.Size(), 0);
+  os.write(record.data(), r.Size() * sizeof(ValT));
+  return os;
 }
+
+template <typename ValT = char>
+std::istream &operator>>(std::istream &is, Record<ValT> &r) {
+  auto &record = r();
+  record.resize(r.Size(), 0);
+  is.read(&record[0], r.Size() * sizeof(ValT));
+  return is;
+}
+
+} // namespace edfio

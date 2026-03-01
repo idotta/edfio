@@ -11,27 +11,23 @@
 
 #include <string>
 
-namespace edfio
-{
+namespace edfio {
 
-	namespace detail
-	{
-		//    Each TAL starts with a time stamp Onset21Duration20
-		static const char DURATION_DIV = 21;
-		static const char ANNOTATION_DIV = 20;
-		static const char ANNOTATION_END = 0;
-	}
+namespace detail {
+//    Each TAL starts with a time stamp Onset21Duration20
+static const char DURATION_DIV = 21;
+static const char ANNOTATION_DIV = 20;
+static const char ANNOTATION_END = 0;
+} // namespace detail
 
-	struct TimeStamp
-	{
-		long long m_datarecord = 0;
-		double m_start = 0;
-	};
+struct TimeStamp {
+  long long m_datarecord = 0;
+  double m_start = 0;
+};
 
-	struct Annotation : TimeStamp
-	{
-		double m_duration = 0;
-		std::string m_annotation;
-	};
+struct Annotation : TimeStamp {
+  double m_duration = 0;
+  std::string m_annotation;
+};
 
-}
+} // namespace edfio

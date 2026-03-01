@@ -9,37 +9,39 @@
 
 #pragma once
 
-#include "../DataRecordSink.hpp"
-#include "../SignalRecordSink.hpp"
 #include "../../header/HeaderGeneral.hpp"
 #include "../../header/HeaderSignal.hpp"
+#include "../DataRecordSink.hpp"
+#include "../SignalRecordSink.hpp"
 
-namespace edfio
-{
 
-	namespace detail
-	{
+namespace edfio {
 
-		template <class Stream>
-		inline DataRecordSink CreateDataRecordSink(Stream &stream, const HeaderGeneral &general)
-		{
-			DataRecordSink::size_type recordSize = general.m_detail.m_recordSize;
-			DataRecordSink::size_type sinkSize = general.m_datarecordsFile;
-			std::streamoff headerSize = general.m_headerSize;
-			return DataRecordSink{ stream, recordSize, sinkSize, headerSize };
-		}
+namespace detail {
 
-		template <class Stream>
-		inline SignalRecordSink CreateSignalRecordSink(Stream &stream, const HeaderGeneral &general, const HeaderSignal &signal)
-		{
-			SignalRecordSink::size_type recordSize = general.m_detail.m_recordSize;
-			SignalRecordSink::size_type sinkSize = general.m_datarecordsFile;
-			std::streamoff headerSize = general.m_headerSize;
-			SignalRecordSink::size_type signalSize = signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
-			std::streamoff signalOff = signal.m_detail.m_signalOffset;
-			return SignalRecordSink{ stream, signalSize, sinkSize, headerSize, recordSize, signalOff };
-		}
-
-	}
-
+template <class Stream>
+inline DataRecordSink CreateDataRecordSink(Stream &stream,
+                                           const HeaderGeneral &general) {
+  DataRecordSink::size_type recordSize = general.m_detail.m_recordSize;
+  DataRecordSink::size_type sinkSize = general.m_datarecordsFile;
+  std::streamoff headerSize = general.m_headerSize;
+  return DataRecordSink{stream, recordSize, sinkSize, headerSize};
 }
+
+template <class Stream>
+inline SignalRecordSink CreateSignalRecordSink(Stream &stream,
+                                               const HeaderGeneral &general,
+                                               const HeaderSignal &signal) {
+  SignalRecordSink::size_type recordSize = general.m_detail.m_recordSize;
+  SignalRecordSink::size_type sinkSize = general.m_datarecordsFile;
+  std::streamoff headerSize = general.m_headerSize;
+  SignalRecordSink::size_type signalSize =
+      signal.m_samplesInDataRecord * GetSampleBytes(general.m_version);
+  std::streamoff signalOff = signal.m_detail.m_signalOffset;
+  return SignalRecordSink{stream,     signalSize, sinkSize,
+                          headerSize, recordSize, signalOff};
+}
+
+} // namespace detail
+
+} // namespace edfio

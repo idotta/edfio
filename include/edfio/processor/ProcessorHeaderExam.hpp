@@ -9,46 +9,34 @@
 
 #pragma once
 
-#include "../Utils.hpp"
+#include "../Errors.hpp"
 #include "../core/DataFormat.hpp"
 #include "../header/HeaderExam.hpp"
 
-namespace edfio
-{
+namespace edfio {
 
-	struct ProcessorHeaderExam
-	{
-		HeaderExam operator ()(HeaderGeneral header, std::vector<HeaderSignal> signals);
-	};
+inline HeaderExam ProcessHeaderExam(HeaderGeneral header,
+                                    std::vector<HeaderSignal> signals) {
+  // Record size
+  size_t recordsize = 0;
+  for (auto &signal : signals) {
+    recordsize += signal.m_samplesInDataRecord;
+  }
 
-	inline HeaderExam edfio::ProcessorHeaderExam::operator()(HeaderGeneral header, std::vector<HeaderSignal> signals)
-	{
-		// Record size
-		size_t recordsize = 0;
-		for (auto &signal : signals)
-		{
-			recordsize += signal.m_samplesInDataRecord;
-		}
+  if (IsBdf(header.m_version)) {
+    recordsize *= 3;
+    if (recordsize > 0xF00000) {
+      throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+    }
+  } else {
+    recordsize *= 2;
+    if (recordsize > 0xA00000) {
+      throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+    }
+  }
+  header.m_detail.m_recordSize = recordsize;
 
-		if (IsBdf(header.m_version))
-		{
-			recordsize *= 3;
-			if (recordsize > 0xF00000)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
-		}
-		else
-		{
-			recordsize *= 2;
-			if (recordsize > 0xA00000)
-			{
-				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
-			}
-		}
-		header.m_detail.m_recordSize = recordsize;
-
-		return HeaderExam{ std::move(header), std::move(signals) };
-	}
-
+  return HeaderExam{std::move(header), std::move(signals)};
 }
+
+} // namespace edfio

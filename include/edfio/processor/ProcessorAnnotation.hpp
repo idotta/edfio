@@ -9,66 +9,58 @@
 
 #pragma once
 
-#include "../Utils.hpp"
+#include "../Errors.hpp"
 #include "../core/Annotation.hpp"
 #include "../core/Record.hpp"
-#include "detail/ProcessorUtils.hpp"
+#include "ProcessorUtils.hpp"
 
-namespace edfio
-{
+namespace edfio {
 
-	struct ProcessorAnnotation
-	{
-		Record<char> operator ()(Annotation annotation);
-	};
+inline Record<char> ProcessAnnotation(Annotation annotation) {
+  if (annotation.m_annotation.empty()) {
+    throw std::invalid_argument(
+        GetError(FileErrc::FileWriteInvalidAnnotations));
+  }
 
-	inline Record<char> ProcessorAnnotation::operator()(Annotation annotation)
-	{
-		if (annotation.m_annotation.empty())
-		{
-			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteInvalidAnnotations));
-		}
+  std::string timestamp = (annotation.m_start >= 0 ? "+" : "") +
+                          detail::to_string_decimal(annotation.m_start);
+  std::string duration;
+  if (annotation.m_duration > 0)
+    duration = detail::to_string_decimal(annotation.m_duration);
 
-		std::string timestamp = (annotation.m_start >= 0 ? "+" : "") + detail::to_string_decimal(annotation.m_start);
-		std::string duration;
-		if (annotation.m_duration > 0)
-			duration = detail::to_string_decimal(annotation.m_duration);
+  size_t size = timestamp.size(); // timestamp
+  if (!duration.empty()) {
+    size++;                  // 21 div
+    size += duration.size(); // duration
+  }
 
-		size_t size = timestamp.size(); // timestamp
-		if (!duration.empty())
-		{
-			size++; // 21 div
-			size += duration.size(); // duration
-		}
+  size++;                                 // 20 div
+  size += annotation.m_annotation.size(); // annotation
+  size += 2;                              // 20 div and 0
 
-		size++; // 20 div
-		size += annotation.m_annotation.size(); // annotation
-		size += 2; // 20 div and 0
+  Record<char> record(size);
+  auto it = record().begin();
 
-		Record<char> record(size);
-		auto it = record().begin();
+  // timestamp
+  std::move(timestamp.begin(), timestamp.end(), it);
+  it += timestamp.size();
 
-		// timestamp
-		std::move(timestamp.begin(), timestamp.end(), it);
-		it += timestamp.size();
+  if (!duration.empty()) {
+    *it++ = 21; // 21 div
+    // duration
+    std::move(duration.begin(), duration.end(), it);
+    it += duration.size();
+  }
 
-		if (!duration.empty())
-		{
-			*it++ = 21; // 21 div
-			// duration
-			std::move(duration.begin(), duration.end(), it);
-			it += duration.size();
-		}
+  *it++ = 20; // 20 div
+  // annotation
+  std::move(annotation.m_annotation.begin(), annotation.m_annotation.end(), it);
+  it += annotation.m_annotation.size();
 
-		*it++ = 20; // 20 div
-		// annotation
-		std::move(annotation.m_annotation.begin(), annotation.m_annotation.end(), it);
-		it += annotation.m_annotation.size();
+  *it++ = 20; // 20 div
+  *it++ = 0;  // 0 end
 
-		*it++ = 20; // 20 div
-		*it++ = 0; // 0 end
-
-		return record;
-	}
-
+  return record;
 }
+
+} // namespace edfio

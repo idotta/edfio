@@ -9,22 +9,18 @@
 
 #pragma once
 
-#include "../Utils.hpp"
+#include "../Errors.hpp"
 #include "../core/DataFormat.hpp"
 #include "../header/HeaderSignal.hpp"
-#include "detail/ProcessorUtils.hpp"
+#include "ProcessorUtils.hpp"
 
 #include <string>
 #include <vector>
 
 namespace edfio {
 
-struct ProcessorHeaderSignal {
-  std::vector<HeaderSignalFields> operator()(std::vector<HeaderSignal> in);
-};
-
 inline std::vector<HeaderSignalFields>
-ProcessorHeaderSignal::operator()(std::vector<HeaderSignal> in) {
+ProcessHeaderSignal(std::vector<HeaderSignal> in) {
   std::vector<HeaderSignalFields> out(in.size());
   auto &signals = in;
 
