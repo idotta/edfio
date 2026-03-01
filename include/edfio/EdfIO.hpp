@@ -19,12 +19,13 @@
 #include "writer/WriterHeaderExam.hpp"
 
 // Store
-#include "store/DatarecordStore.hpp"
-#include "store/SignalrecordStore.hpp"
+#include "store/DataRecordStore.hpp"
+#include "store/SignalRecordStore.hpp"
 #include "store/SignalSampleStore.hpp"
+#include "store/StoreUtils.hpp"
 #include "store/TalStore.hpp"
 #include "store/TimeStampStore.hpp"
-#include "store/StoreUtils.hpp"
+
 
 // Sink
 #include "sink/DataRecordSink.hpp"

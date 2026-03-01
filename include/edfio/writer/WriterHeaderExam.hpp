@@ -21,7 +21,7 @@
 
 namespace edfio {
 
-inline void WriteHeaderExam(Writer<char>::Stream &stream, HeaderExam &input) {
+inline void WriteHeaderExam(Writer<char>::Stream &stream, const HeaderExam &input) {
   // Process header general
   auto general = ProcessHeaderGeneral(input.m_general);
 

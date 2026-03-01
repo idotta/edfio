@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "..\Config.hpp"
+#include "../Config.hpp"
 
 #include <algorithm>
 #include <array>
@@ -22,7 +22,8 @@
 
 namespace edfio {
 template <ProcessorErrorCheck Check, typename CharT>
-[[nodiscard]] inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
+[[nodiscard]] inline bool
+CheckFormatErrors(const std::basic_string<CharT> &str) {
   if constexpr (Check == ProcessorErrorCheck::Permissive) {
     return false;
   } else {
@@ -55,7 +56,8 @@ inline constexpr std::array<std::string_view, 12> MONTHS = {
     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
 
 template <typename CharT>
-[[nodiscard]] inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
+[[nodiscard]] inline bool
+CheckFormatErrors(const std::basic_string<CharT> &str) {
   return edfio::CheckFormatErrors<PROCESSOR_ERROR_CHECKING, CharT>(str);
 }
 

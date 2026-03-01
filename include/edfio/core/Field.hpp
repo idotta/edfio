@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include <iostream>
+#include <istream>
+#include <ostream>
 #include <string>
 
 namespace edfio {
@@ -20,7 +21,9 @@ template <size_t Sz, typename CharT = char> struct Field {
   using ValueType = CharT;
 
   [[nodiscard]] constexpr size_t Size() const { return Sz; }
-  [[nodiscard]] const std::basic_string<ValueType> &operator()() const { return m_value; }
+  [[nodiscard]] const std::basic_string<ValueType> &operator()() const {
+    return m_value;
+  }
   std::basic_string<ValueType> &operator()() { return m_value; }
   void operator()(const std::basic_string<ValueType> &value) {
     m_value = value;
@@ -31,9 +34,8 @@ template <size_t Sz, typename CharT = char> struct Field {
 };
 
 template <size_t Sz, typename CharT>
-std::ostream &operator<<(std::ostream &os, Field<Sz, CharT> &f) {
-  auto &value = f();
-  value.resize(Sz, ' ');
+std::ostream &operator<<(std::ostream &os, const Field<Sz, CharT> &f) {
+  const auto &value = f();
   os.write(value.data(), Sz);
   return os;
 }

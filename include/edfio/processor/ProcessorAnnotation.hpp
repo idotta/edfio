@@ -14,7 +14,6 @@
 #include "../core/Record.hpp"
 #include "ProcessorUtils.hpp"
 
-#include <algorithm>
 #include <ranges>
 
 namespace edfio {

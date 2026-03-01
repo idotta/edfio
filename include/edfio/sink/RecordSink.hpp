@@ -33,6 +33,8 @@ public:
   using typename base_sink::stream_type;
   using typename base_sink::value_type;
 
+  virtual ~RecordSink() = default;
+
   class iterator : public base_sink::iterator {
     std::optional<size_type> m_offset; // nullopt = end
     RecordSink *m_context = nullptr;

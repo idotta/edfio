@@ -61,15 +61,6 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
     if (IsPlus(version) && totalAnnotationChannels == 0) {
       throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
     }
-    // TODO: check if this is true
-    /*if (datarecordDuration < 1)
-    {
-            if (signals.size() != totalAnnotationChannels || !IsPlus(version))
-            {
-                    throw
-    std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
-            }
-    }*/
   }
   // Transducers Types
   {

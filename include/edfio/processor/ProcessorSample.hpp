@@ -43,7 +43,7 @@ inline Record<char> ProcessorSample<SampleT>::operator()(ProcType sample) {
   Record<char> record(m_sampleSize);
   auto it = record().begin();
 
-  for (int32_t count = m_sampleSize; count > 0; count--) {
+  for (uint32_t count = m_sampleSize; count > 0; count--) {
     uint8_t tmp = (value >> (count - 1) * 8);
     *it++ = tmp;
   }

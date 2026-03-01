@@ -34,6 +34,8 @@ public:
   using typename base_store::stream_type;
   using typename base_store::value_type;
 
+  virtual ~RecordStore() = default;
+
   class iterator : public base_store::iterator {
     size_type m_offset = 0; // Relative to total of Stores
     const RecordStore *m_context = nullptr;

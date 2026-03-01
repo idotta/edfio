@@ -18,8 +18,7 @@
 
 namespace edfio {
 
-inline void WriteHeaderGeneral(Writer<char>::Stream &stream,
-                               HeaderGeneralFields &input) {
+inline void WriteHeaderGeneral(Writer<char>::Stream &stream, const HeaderGeneralFields &input) {
   auto &hdr = input;
   if (!stream || !stream.is_open())
     throw std::invalid_argument(GetError(FileErrc::FileNotOpened));

@@ -9,8 +9,9 @@
 
 #pragma once
 
-#include <algorithm>
-#include <iostream>
+#include <istream>
+#include <ostream>
+#include <ranges>
 #include <vector>
 
 namespace edfio {
@@ -24,7 +25,8 @@ template <typename ValT = char> struct Record {
 
   Record() = delete;
 
-  Record(typename VectorType::size_type recordSize) : m_value(recordSize, 0) {}
+  explicit Record(typename VectorType::size_type recordSize)
+      : m_value(recordSize, 0) {}
 
   Record(typename VectorType::const_iterator first,
          typename VectorType::const_iterator last)
@@ -35,7 +37,9 @@ template <typename ValT = char> struct Record {
   Record &operator=(const Record &) = default;
   Record &operator=(Record &&) = default;
 
-  [[nodiscard]] typename VectorType::size_type Size() const { return m_value.size(); }
+  [[nodiscard]] typename VectorType::size_type Size() const {
+    return m_value.size();
+  }
   [[nodiscard]] const VectorType &operator()() const { return m_value; }
   VectorType &operator()() { return m_value; }
   Record<ValueType> operator+(const Record<ValueType> &record) const {
@@ -49,9 +53,8 @@ template <typename ValT = char> struct Record {
 };
 
 template <typename ValT = char>
-std::ostream &operator<<(std::ostream &os, Record<ValT> &r) {
-  auto &record = r();
-  record.resize(r.Size(), 0);
+std::ostream &operator<<(std::ostream &os, const Record<ValT> &r) {
+  const auto &record = r();
   os.write(record.data(), r.Size() * sizeof(ValT));
   return os;
 }
