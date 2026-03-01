@@ -18,9 +18,9 @@ namespace edfio
 		Permissive
 	};
 
-	namespace config
+	namespace detail
 	{
-		static constexpr ProcessorErrorCheck PROCESSOR_ERROR_CHECKING = ProcessorErrorCheck::Strict;
+		inline constexpr ProcessorErrorCheck PROCESSOR_ERROR_CHECKING = ProcessorErrorCheck::Strict;
 	}
 
 }

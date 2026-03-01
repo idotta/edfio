@@ -9,16 +9,36 @@
 
 #pragma once
 
+#include "../Errors.hpp"
+#include "../core/DataFormat.hpp"
 #include "../header/HeaderExam.hpp"
 
-namespace edfio
-{
+#include <cstdint>
 
-	struct ProcessorHeaderExam
-	{
-		HeaderExam operator ()(HeaderGeneral header, std::vector<HeaderSignal> signals);
-	};
+namespace edfio {
 
+inline HeaderExam ProcessHeaderExam(HeaderGeneral header,
+                                    std::vector<HeaderSignal> signals) {
+  // Record size
+  uint32_t recordsize = 0;
+  for (auto &signal : signals) {
+    recordsize += signal.m_samplesInDataRecord;
+  }
+
+  if (IsBdf(header.m_version)) {
+    recordsize *= 3;
+    if (recordsize > 0xF00000) {
+      throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+    }
+  } else {
+    recordsize *= 2;
+    if (recordsize > 0xA00000) {
+      throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+    }
+  }
+  header.m_detail.m_recordSize = recordsize;
+
+  return HeaderExam{std::move(header), std::move(signals)};
 }
 
-#include "impl/ProcessorHeaderExam.ipp"
+} // namespace edfio

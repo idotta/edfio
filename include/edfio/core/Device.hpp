@@ -9,47 +9,43 @@
 
 #pragma once
 
+#include <cstdint>
 #include <iterator>
 
-namespace edfio
-{
+namespace edfio {
 
-	// A class created in order to have an easier way to access streams
-	// of specific data through their respective iterators.
-	template <class Value, class Pointer, class Reference, class Stream, typename IterCategory>
-	class Device
-	{
-	public:
-		typedef Stream stream_type;
-		typedef Device<Value, Pointer, Reference, Stream, IterCategory> device_type;
+// A class created in order to have an easier way to access streams
+// of specific data through their respective iterators.
+template <class Value, class Pointer, class Reference, class Stream,
+          typename IterCategory>
+class Device {
+public:
+  using stream_type = Stream;
+  using device_type = Device<Value, Pointer, Reference, Stream, IterCategory>;
 
-		typedef Value value_type;
-		typedef Pointer pointer;
-		typedef Reference reference;
-		typedef long long difference_type;
-		typedef unsigned long long size_type;
+  using value_type = Value;
+  using pointer = Pointer;
+  using reference = Reference;
+  using difference_type = int64_t;
+  using size_type = uint64_t;
 
-		class iterator
-		{
-		public:
-			typedef typename Device::difference_type difference_type;
-			typedef typename Device::value_type value_type;
-			typedef typename Device::reference reference;
-			typedef typename Device::pointer pointer;
-			typedef IterCategory iterator_category;
-			typedef typename Device::stream_type stream_type;
-		};
+  class iterator {
+  public:
+    using difference_type = typename Device::difference_type;
+    using value_type = typename Device::value_type;
+    using reference = typename Device::reference;
+    using pointer = typename Device::pointer;
+    using iterator_category = IterCategory;
+    using iterator_concept = IterCategory;
+    using stream_type = typename Device::stream_type;
+  };
 
-		Device() = delete;
+  Device() = delete;
 
-		Device(stream_type &stream)
-			: m_stream(stream)
-		{
-		}
+  Device(stream_type &stream) : m_stream(stream) {}
 
-	protected:
+protected:
+  stream_type &m_stream;
+};
 
-		stream_type &m_stream;
-	};
-
-}
+} // namespace edfio

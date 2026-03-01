@@ -9,19 +9,30 @@
 
 #pragma once
 
-#include "../header/HeaderExam.hpp"
+#include "../Errors.hpp"
 #include "../core/StreamIO.hpp"
+#include "../header/HeaderExam.hpp"
+#include "../processor/ProcessorHeaderGeneral.hpp"
+#include "../processor/ProcessorHeaderSignal.hpp"
+#include "WriterHeaderGeneral.hpp"
+#include "WriterHeaderSignals.hpp"
 
 #include <vector>
 
-namespace edfio
-{
+namespace edfio {
 
-	struct WriterHeaderExam : Writer<char>
-	{
-		void operator ()(Stream &stream, HeaderExam &input);
-	};
+inline void WriteHeaderExam(Writer<char>::Stream &stream, const HeaderExam &input) {
+  // Process header general
+  auto general = ProcessHeaderGeneral(input.m_general);
 
+  // Process signal fields
+  auto signals = ProcessHeaderSignal(input.m_signals);
+
+  // Write general
+  WriteHeaderGeneral(stream, general);
+
+  // Write signals
+  WriteHeaderSignals(stream, signals);
 }
 
-#include "impl/WriterHeaderExam.ipp"
+} // namespace edfio

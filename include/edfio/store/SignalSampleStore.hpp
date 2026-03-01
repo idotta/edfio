@@ -11,74 +11,69 @@
 
 #include "RecordStore.hpp"
 
-namespace edfio
-{
+#include <algorithm>
+#include <cstdint>
 
-	class SignalSampleStore : public RecordStore
-	{
-	public:
+namespace edfio {
 
-		typedef RecordStore::iterator iterator;
-		typedef iterator const const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator; //optional
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
+class SignalSampleStore : public RecordStore {
+public:
+  using iterator = RecordStore::iterator;
+  using const_iterator = iterator;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-		SignalSampleStore() = delete;
+  SignalSampleStore() = delete;
 
-		SignalSampleStore(stream_type &stream, size_type recordSize, size_type storeSize,
-			std::streamoff headerOffset, size_type datarecordSize,
-			size_type signalrecordSize, std::streamoff signalOffset)
-			: RecordStore(stream, recordSize, storeSize, headerOffset)
-			, m_datarecordSize(datarecordSize)
-			, m_signalrecordSize(signalrecordSize)
-			, m_signalOffset(signalOffset)
-			, m_buffer(recordSize * signalrecordSize)
-			, m_bufferPos(-1)
-		{
-		}
+  SignalSampleStore(stream_type &stream, size_type recordSize,
+                    size_type storeSize, std::streamoff headerOffset,
+                    size_type datarecordSize, size_type signalrecordSize,
+                    std::streamoff signalOffset)
+      : RecordStore(stream, recordSize, storeSize, headerOffset),
+        m_datarecordSize(datarecordSize), m_signalrecordSize(signalrecordSize),
+        m_signalOffset(signalOffset), m_buffer(recordSize * signalrecordSize),
+        m_bufferPos(-1) {}
 
-	protected:
+protected:
+  void load(size_type off) const override {
+    if (off >= size()) {
+      throw std::out_of_range("Iterator not dereferenceable");
+    }
 
-		void load(size_type off) override
-		{
-			if (off < 0 || off >= size())
-			{
-				throw std::out_of_range("Iterator not dereferenceable");
-			}
+    std::streamoff dataRecordOffset = off / m_signalrecordSize;
+    std::streamoff sampleOffset = off % m_signalrecordSize;
+    std::streamoff destPos = m_headerOffset +
+                             dataRecordOffset * m_datarecordSize +
+                             m_signalOffset + sampleOffset * m_recordSize;
 
-			std::streamoff dataRecordOffset = off / m_signalrecordSize;
-			std::streamoff sampleOffset = off % m_signalrecordSize;
-			std::streamoff destPos = m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset + sampleOffset * m_recordSize;
+    if (m_bufferPos < 0 ||
+        (destPos < m_bufferPos || destPos >= m_bufferPos + static_cast<std::streamoff>(m_buffer.Size()))) {
+      readStream(destPos);
+      m_bufferPos =
+          m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset;
+    }
 
-			if (m_bufferPos < 0 || (destPos < m_bufferPos || destPos >= m_bufferPos + m_buffer.Size()))
-			{
-				readStream(destPos);
-				m_bufferPos = m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset;
-			}
+    auto first = m_buffer().begin() + sampleOffset * m_recordSize;
+    std::ranges::copy_n(first, m_value.Size(), m_value().begin());
+  }
 
-			auto first = m_buffer().begin() + sampleOffset * m_recordSize;
-			std::copy(first, first + m_value.Size(), m_value().begin());
-		}
+  void readStream(int64_t newPos) const {
+    if (!m_stream.good())
+      m_stream.clear();
 
-		void readStream(long long newPos)
-		{
-			if (!m_stream.good())
-				m_stream.clear();
+    auto oldPos = m_stream.tellg();
+    if (newPos != oldPos) {
+      m_stream.seekg(newPos, std::ios::beg);
+    }
+    m_stream >> m_buffer;
+  }
 
-			auto oldPos = m_stream.tellg();
-			if (newPos != oldPos)
-			{
-				m_stream.seekg(newPos, std::ios::beg);
-			}
-			m_stream >> m_buffer;
-		}
+  size_type m_datarecordSize;
+  size_type m_signalrecordSize;
+  std::streamoff m_signalOffset;
+  // Samples buffer to decrease read requests
+  mutable value_type m_buffer;
+  mutable std::streamoff m_bufferPos;
+};
 
-		size_type m_datarecordSize;
-		size_type m_signalrecordSize;
-		std::streamoff m_signalOffset;
-		// Samples buffer to decrease read requests
-		value_type m_buffer;
-		std::streamoff m_bufferPos;
-	};
-
-}
+} // namespace edfio

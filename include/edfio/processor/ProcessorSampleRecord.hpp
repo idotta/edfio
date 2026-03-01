@@ -9,32 +9,51 @@
 
 #pragma once
 
-#include "../core/SampleType.hpp"
 #include "../core/Record.hpp"
+#include "../core/SampleType.hpp"
 
-namespace edfio
-{
+#include <cstdint>
 
-	template <SampleType SampleT>
-	struct ProcessorSampleRecord
-	{
-		using ProcType = typename impl::Sample<SampleT>::type;
-		using DigiType = impl::Sample<SampleType::Digital>::type;
-		using PhysType = impl::Sample<SampleType::Physical>::type;
+namespace edfio {
 
-		ProcessorSampleRecord(double offset, double scaling)
-			: m_offset(offset)
-			, m_scaling(scaling)
-		{
-		}
+template <SampleType SampleT> struct ProcessorSampleRecord {
+  using ProcType = typename Sample<SampleT>::type;
+  using DigiType = Sample<SampleType::Digital>::type;
+  using PhysType = Sample<SampleType::Physical>::type;
 
-		ProcType operator ()(Record<char> record);
+  ProcessorSampleRecord(double offset, double scaling)
+      : m_offset(offset), m_scaling(scaling) {}
 
-	private:
-		const double m_offset;
-		const double m_scaling;
-	};
+  ProcType operator()(Record<char> record);
 
+private:
+  const double m_offset;
+  const double m_scaling;
+};
+
+template <SampleType SampleT>
+inline typename ProcessorSampleRecord<SampleT>::ProcType
+ProcessorSampleRecord<SampleT>::operator()(Record<char> record) {
+  DigiType sample = 0;
+  auto const &bytes = record();
+  size_t const nbytes = bytes.size();
+
+  // Assemble bytes (big-endian order as written by ProcessorSample)
+  for (uint32_t i = 0; i < nbytes; ++i) {
+    sample <<= 8;
+    sample |= static_cast<unsigned char>(bytes[i]);
+  }
+
+  // Sign-extend: if high bit of the MSB is set, the value is negative
+  if (nbytes > 0 && nbytes < sizeof(DigiType)) {
+    uint32_t sign_bit = 1u << (nbytes * 8 - 1);
+    if (sample & sign_bit)
+      sample |= ~((int32_t{1} << (nbytes * 8)) - 1);
+  }
+
+  if constexpr (std::is_same_v<DigiType, ProcType>)
+    return sample;
+  return ConvertSample(m_offset, m_scaling, sample);
 }
 
-#include "impl/ProcessorSampleRecord.ipp"
+} // namespace edfio

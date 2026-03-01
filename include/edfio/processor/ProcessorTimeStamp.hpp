@@ -9,17 +9,40 @@
 
 #pragma once
 
-#include "../core/Record.hpp"
+#include "../Errors.hpp"
 #include "../core/Annotation.hpp"
+#include "../core/Record.hpp"
+#include "ProcessorUtils.hpp"
 
-namespace edfio
-{
+#include <cstdint>
 
-	struct ProcessorTimeStamp
-	{
-		Record<char> operator ()(TimeStamp timestamp);
-	};
+namespace edfio {
 
+inline Record<char> ProcessTimeStamp(TimeStamp timestamp) {
+  std::string ts = detail::to_string_decimal(timestamp.m_start);
+
+  if (ts.empty()) {
+    throw std::invalid_argument(
+        GetError(FileErrc::FileWriteInvalidAnnotations));
+  }
+
+  uint32_t plusSignal = 0;
+  if (timestamp.m_start >= 0)
+    plusSignal = 1;
+
+  Record<char> record(plusSignal + ts.size() + 3); // 20 20 0
+  auto it = record().begin();
+
+  // timestamp
+  if (plusSignal)
+    *it++ = '+';
+  std::move(ts.begin(), ts.end(), it);
+  it += ts.size();
+  *it++ = 20; // 20 div
+  *it++ = 20; // 20 div
+  *it++ = 0;  // 0 end
+
+  return record;
 }
 
-#include "impl/ProcessorTimeStamp.ipp"
+} // namespace edfio

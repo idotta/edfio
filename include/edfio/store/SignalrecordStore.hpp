@@ -11,52 +11,42 @@
 
 #include "RecordStore.hpp"
 
-namespace edfio
-{
+namespace edfio {
 
-	class SignalRecordStore : public RecordStore
-	{
-	public:
+class SignalRecordStore : public RecordStore {
+public:
+  using iterator = RecordStore::iterator;
+  using const_iterator = iterator;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-		typedef RecordStore::iterator iterator;
-		typedef iterator const const_iterator;
-		typedef std::reverse_iterator<iterator> reverse_iterator; //optional
-		typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
+  SignalRecordStore() = delete;
 
-		SignalRecordStore() = delete;
+  SignalRecordStore(stream_type &stream, size_type recordSize,
+                    size_type storeSize, std::streamoff headerOffset,
+                    size_type datarecordSize, std::streamoff signalOffset)
+      : RecordStore(stream, recordSize, storeSize, headerOffset),
+        m_datarecordSize(datarecordSize), m_signalOffset(signalOffset) {}
 
-		SignalRecordStore(stream_type &stream, size_type recordSize, size_type storeSize,
-			std::streamoff headerOffset, size_type datarecordSize, std::streamoff signalOffset)
-			: RecordStore(stream, recordSize, storeSize, headerOffset)
-			, m_datarecordSize(datarecordSize)
-			, m_signalOffset(signalOffset)
-		{
-		}
+protected:
+  void load(size_type off) const override {
+    if (off >= size()) {
+      throw std::out_of_range("Iterator not dereferenceable");
+    }
 
-	protected:
+    if (!m_stream.good())
+      m_stream.clear();
 
-		void load(size_type off) override
-		{
-			if (off < 0 || off >= size())
-			{
-				throw std::out_of_range("Iterator not dereferenceable");
-			}
+    auto currentPos = m_stream.tellg();
+    auto destPos = m_headerOffset + m_datarecordSize * off + m_signalOffset;
+    if (destPos != currentPos) {
+      m_stream.seekg(destPos, std::ios::beg);
+    }
+    m_stream >> m_value;
+  }
 
-			if (!m_stream.good())
-				m_stream.clear();
+  size_type m_datarecordSize;
+  std::streamoff m_signalOffset;
+};
 
-			auto currentPos = m_stream.tellg();
-			auto destPos = m_headerOffset + m_datarecordSize * off + m_signalOffset;
-			if (destPos != currentPos)
-			{
-				m_stream.seekg(destPos, std::ios::beg);
-			}
-			m_stream >> m_value;
-
-		}
-
-		size_type m_datarecordSize;
-		std::streamoff m_signalOffset;
-	};
-
-}
+} // namespace edfio

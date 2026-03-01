@@ -14,13 +14,11 @@
 
 #include <vector>
 
-namespace edfio
-{
+namespace edfio {
 
-	struct HeaderExam
-	{
-		HeaderGeneral m_general;
-		std::vector<HeaderSignal> m_signals;
-	};
+struct HeaderExam {
+  HeaderGeneral m_general;
+  std::vector<HeaderSignal> m_signals;
+};
 
-}
+} // namespace edfio

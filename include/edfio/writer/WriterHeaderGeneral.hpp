@@ -9,19 +9,37 @@
 
 #pragma once
 
-#include "../header/HeaderGeneral.hpp"
+#include "../Errors.hpp"
 #include "../core/StreamIO.hpp"
+#include "../header/HeaderGeneral.hpp"
 
+#include <stdexcept>
 #include <vector>
 
-namespace edfio
-{
+namespace edfio {
 
-	struct WriterHeaderGeneral : Writer<char>
-	{
-		void operator ()(Stream &stream, HeaderGeneralFields &input);
-	};
+inline void WriteHeaderGeneral(Writer<char>::Stream &stream, const HeaderGeneralFields &input) {
+  auto &hdr = input;
+  if (!stream || !stream.is_open())
+    throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
 
+  stream.clear();
+  stream.seekp(0, std::ios::beg);
+
+  try {
+    stream << hdr.m_version;
+    stream << hdr.m_patient;
+    stream << hdr.m_recording;
+    stream << hdr.m_startDate;
+    stream << hdr.m_startTime;
+    stream << hdr.m_headerSize;
+    stream << hdr.m_reserved;
+    stream << hdr.m_datarecordsFile;
+    stream << hdr.m_datarecordDuration;
+    stream << hdr.m_totalSignals;
+  } catch (const std::exception &) {
+    throw std::invalid_argument(GetError(FileErrc::FileWriteError));
+  }
 }
 
-#include "impl/WriterHeaderGeneral.ipp"
+} // namespace edfio

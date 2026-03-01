@@ -11,28 +11,38 @@
 
 // Header
 #include "header/HeaderExam.hpp"
+
 // Reader
 #include "reader/ReaderHeaderExam.hpp"
+
 // Writer
 #include "writer/WriterHeaderExam.hpp"
+
 // Store
 #include "store/DataRecordStore.hpp"
 #include "store/SignalRecordStore.hpp"
 #include "store/SignalSampleStore.hpp"
-#include "store/detail/StoreUtils.hpp"
+#include "store/StoreUtils.hpp"
 #include "store/TalStore.hpp"
 #include "store/TimeStampStore.hpp"
+
+
 // Sink
 #include "sink/DataRecordSink.hpp"
 #include "sink/SignalRecordSink.hpp"
-#include "sink/detail/SinkUtils.hpp"
+#include "sink/SinkUtils.hpp"
+
 // Processor
-#include "processor/ProcessorSampleRecord.hpp"
-#include "processor/ProcessorSample.hpp"
-#include "processor/ProcessorTimeStampRecord.hpp"
-#include "processor/ProcessorTimeStamp.hpp"
-#include "processor/ProcessorTalRecord.hpp"
 #include "processor/ProcessorAnnotation.hpp"
+#include "processor/ProcessorSample.hpp"
+#include "processor/ProcessorSampleRecord.hpp"
+#include "processor/ProcessorTalRecord.hpp"
+#include "processor/ProcessorTimeStamp.hpp"
+#include "processor/ProcessorTimeStampRecord.hpp"
+
+// High-level facade
+#include "EdfFile.hpp"
+#include "EdfWriter.hpp"
 
 // STL
 #include <fstream>

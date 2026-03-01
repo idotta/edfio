@@ -9,24 +9,236 @@
 
 #pragma once
 
+#include "../Errors.hpp"
 #include "../core/DataFormat.hpp"
 #include "../header/HeaderSignal.hpp"
+#include "ProcessorUtils.hpp"
 
-namespace edfio
-{
+#include <cstdint>
+#include <ranges>
+#include <vector>
 
-	struct ProcessorHeaderSignalFields
-	{
-		ProcessorHeaderSignalFields(DataFormat version, double datarecordDuration)
-			: m_version(version)
-			, m_datarecordDuration(datarecordDuration)
-		{}
-		std::vector<HeaderSignal> operator ()(std::vector<HeaderSignalFields> in);
-	private:
-		DataFormat m_version;
-		double m_datarecordDuration;
-	};
+namespace edfio {
 
+inline std::vector<HeaderSignal>
+ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
+                          DataFormat version,
+                          [[maybe_unused]] double datarecordDuration) {
+  std::vector<HeaderSignal> signals(in.size());
+
+  for (auto &sigFields : in) {
+    if (detail::CheckFormatErrors(sigFields.m_label()) ||
+        detail::CheckFormatErrors(sigFields.m_transducer()) ||
+        detail::CheckFormatErrors(sigFields.m_physDimension()) ||
+        detail::CheckFormatErrors(sigFields.m_physicalMin()) ||
+        detail::CheckFormatErrors(sigFields.m_physicalMax()) ||
+        detail::CheckFormatErrors(sigFields.m_digitalMin()) ||
+        detail::CheckFormatErrors(sigFields.m_digitalMax()) ||
+        detail::CheckFormatErrors(sigFields.m_prefilter()) ||
+        detail::CheckFormatErrors(sigFields.m_samplesInDataRecord()) ||
+        detail::CheckFormatErrors(sigFields.m_reserved())) {
+      throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+    }
+  }
+
+  // Labels
+  {
+    uint32_t totalAnnotationChannels = 0;
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &label = inSig.m_label();
+      if (IsPlus(version)) {
+        if (label.find("Annotation") != std::string::npos) {
+          totalAnnotationChannels++;
+          signal.m_detail.m_isAnnotation = true;
+        } else {
+          signal.m_detail.m_isAnnotation = false;
+        }
+      } else {
+        signal.m_detail.m_isAnnotation = false;
+      }
+      signal.m_label = label;
+    }
+    if (IsPlus(version) && totalAnnotationChannels == 0) {
+      throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
+    }
+  }
+  // Transducers Types
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &transducer = inSig.m_transducer();
+
+      signal.m_transducer = transducer;
+
+      if (signal.m_detail.m_isAnnotation) {
+        if (transducer.find_first_not_of(' ') != std::string::npos) {
+          throw std::invalid_argument(
+              GetError(FileErrc::FileContainsFormatErrors));
+        }
+      }
+    }
+  }
+  // Physical Dimensions
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &physDimension = inSig.m_physDimension();
+
+      signal.m_physDimension = physDimension;
+    }
+  }
+  // Physical Minima
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &physMin = inSig.m_physicalMin();
+      signal.m_physicalMin = detail::ParseDouble(
+          physMin, GetError(FileErrc::FileContainsFormatErrors));
+    }
+  }
+  // Physical Maxima
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &physMax = inSig.m_physicalMax();
+      signal.m_physicalMax = detail::ParseDouble(
+          physMax, GetError(FileErrc::FileContainsFormatErrors));
+    }
+  }
+  // Digital Minima
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &digMin = inSig.m_digitalMin();
+      int32_t n = detail::ParseInt(
+          digMin, GetError(FileErrc::FileContainsFormatErrors));
+
+      if (signal.m_detail.m_isAnnotation) {
+        if (IsEdf(version) && IsPlus(version)) {
+          if (n != -32768) {
+            throw std::invalid_argument(
+                GetError(FileErrc::FileContainsFormatErrors));
+          }
+        } else if (IsBdf(version) && IsPlus(version)) {
+          if (n != -8388608) {
+            throw std::invalid_argument(
+                GetError(FileErrc::FileContainsFormatErrors));
+          }
+        }
+      } else if (IsEdf(version)) {
+        if ((n > 32767) || (n < -32768)) {
+          throw std::invalid_argument(
+              GetError(FileErrc::FileContainsFormatErrors));
+        }
+      } else if (IsBdf(version)) {
+        if ((n > 8388607) || (n < -8388608)) {
+          throw std::invalid_argument(
+              GetError(FileErrc::FileContainsFormatErrors));
+        }
+      }
+      signal.m_digitalMin = n;
+    }
+  }
+  // Digital Maxima
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &digMax = inSig.m_digitalMax();
+      int32_t n = detail::ParseInt(
+          digMax, GetError(FileErrc::FileContainsFormatErrors));
+
+      if (signal.m_detail.m_isAnnotation) {
+        if (IsEdf(version) && IsPlus(version)) {
+          if (n != 32767) {
+            throw std::invalid_argument(
+                GetError(FileErrc::FileContainsFormatErrors));
+          }
+        } else if (IsBdf(version) && IsPlus(version)) {
+          if (n != 8388607) {
+            throw std::invalid_argument(
+                GetError(FileErrc::FileContainsFormatErrors));
+          }
+        }
+      } else if (IsEdf(version)) {
+        if ((n > 32767) || (n < -32768)) {
+          throw std::invalid_argument(
+              GetError(FileErrc::FileContainsFormatErrors));
+        }
+      } else if (IsBdf(version)) {
+        if ((n > 8388607) || (n < -8388608)) {
+          throw std::invalid_argument(
+              GetError(FileErrc::FileContainsFormatErrors));
+        }
+      }
+      signal.m_digitalMax = n;
+      if (signal.m_digitalMax < (signal.m_digitalMin + 1)) {
+        throw std::invalid_argument(
+            GetError(FileErrc::FileContainsFormatErrors));
+      }
+    }
+  }
+  // Prefilter
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &prefilter = inSig.m_prefilter();
+
+      signal.m_prefilter = prefilter;
+
+      if (signal.m_detail.m_isAnnotation) {
+        if (prefilter.find_first_not_of(' ') != std::string::npos) {
+          throw std::invalid_argument(
+              GetError(FileErrc::FileContainsFormatErrors));
+        }
+      }
+    }
+  }
+  // Samples in each datarecord
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &nrSamples = inSig.m_samplesInDataRecord();
+      int32_t n = detail::ParseInt(
+          nrSamples, GetError(FileErrc::FileContainsFormatErrors));
+
+      if (n < 1) {
+        throw std::invalid_argument(
+            GetError(FileErrc::FileContainsFormatErrors));
+      }
+      signal.m_samplesInDataRecord = n;
+    }
+  }
+  // Reserved
+  {
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &reserved = inSig.m_reserved();
+      signal.m_reserved = reserved;
+    }
+  }
+  // Details
+  {
+    uint64_t n = 0;
+    for (auto &signal : signals) {
+      signal.m_detail.m_signalOffset = n;
+      if (IsBdf(version))
+        n += signal.m_samplesInDataRecord * 3;
+      else if (IsEdf(version))
+        n += signal.m_samplesInDataRecord * 2;
+
+      auto digitalRange = signal.m_digitalMax - signal.m_digitalMin;
+      if (digitalRange == 0) {
+        throw std::invalid_argument(
+            GetError(FileErrc::FileContainsFormatErrors));
+      }
+      signal.m_detail.m_scaling =
+          (signal.m_physicalMax - signal.m_physicalMin) / digitalRange;
+      signal.m_detail.m_offset =
+          signal.m_physicalMin -
+          signal.m_detail.m_scaling * signal.m_digitalMin;
+    }
+  }
+
+  for (auto &signal : signals) {
+    signal.m_label = detail::ReduceString(signal.m_label);
+    signal.m_transducer = detail::ReduceString(signal.m_transducer);
+    signal.m_physDimension = detail::ReduceString(signal.m_physDimension);
+    signal.m_prefilter = detail::ReduceString(signal.m_prefilter);
+    signal.m_reserved = detail::ReduceString(signal.m_reserved);
+  }
+
+  return signals;
 }
 
-#include "impl/ProcessorHeaderSignalFields.ipp"
+} // namespace edfio
