@@ -14,8 +14,6 @@
 #include "../../core/Annotation.hpp"
 #include "../detail/ProcessorUtils.hpp"
 
-#include <vector>
-
 namespace edfio
 {
 

@@ -16,8 +16,6 @@
 #include "../../processor/ProcessorHeaderGeneral.hpp"
 #include "../../processor/ProcessorHeaderSignal.hpp"
 
-#include <stdexcept>
-#include <fstream>
 
 namespace edfio
 {

@@ -12,9 +12,7 @@
 #include "../../Utils.hpp"
 #include "../../header/HeaderGeneral.hpp"
 
-#include <vector>
 #include <stdexcept>
-#include <fstream>
 
 namespace edfio
 {

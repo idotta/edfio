@@ -14,7 +14,6 @@
 
 #include <vector>
 #include <stdexcept>
-#include <fstream>
 
 namespace edfio
 {

@@ -12,7 +12,6 @@
 #include "Sink.hpp"
 #include "../core/Record.hpp"
 
-#include <iostream>
 #include <fstream>
 #include <compare>
 #include <optional>

@@ -13,7 +13,6 @@
 #include "../../header/HeaderGeneral.hpp"
 
 #include <stdexcept>
-#include <fstream>
 
 namespace edfio
 {

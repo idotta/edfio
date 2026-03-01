@@ -18,7 +18,6 @@
 #include "../../processor/ProcessorHeaderExam.hpp"
 
 #include <stdexcept>
-#include <fstream>
 
 namespace edfio
 {

@@ -12,7 +12,6 @@
 #include "Store.hpp"
 #include "../core/Record.hpp"
 
-#include <iostream>
 #include <fstream>
 #include <iterator>
 #include <compare>
