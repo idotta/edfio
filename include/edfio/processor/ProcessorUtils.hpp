@@ -16,13 +16,13 @@
 #include <cctype>
 #include <charconv>
 #include <cstdint>
+#include <span>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace edfio {
 template <ProcessorErrorCheck Check, typename CharT>
-inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
+[[nodiscard]] inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
   if constexpr (Check == ProcessorErrorCheck::Permissive) {
     return false;
   } else {
@@ -35,7 +35,7 @@ inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
 }
 
 template <ProcessorErrorCheck Check, typename CharT>
-inline bool CheckFormatErrors(const std::vector<CharT> &str) {
+[[nodiscard]] inline bool CheckFormatErrors(std::span<const CharT> str) {
   if constexpr (Check == ProcessorErrorCheck::Permissive) {
     return false;
   } else {
@@ -55,12 +55,12 @@ inline constexpr std::array<std::string_view, 12> MONTHS = {
     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
 
 template <typename CharT>
-inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
+[[nodiscard]] inline bool CheckFormatErrors(const std::basic_string<CharT> &str) {
   return edfio::CheckFormatErrors<PROCESSOR_ERROR_CHECKING, CharT>(str);
 }
 
 template <typename CharT>
-inline bool CheckFormatErrors(const std::vector<CharT> &str) {
+[[nodiscard]] inline bool CheckFormatErrors(std::span<const CharT> str) {
   return edfio::CheckFormatErrors<PROCESSOR_ERROR_CHECKING, CharT>(str);
 }
 
@@ -161,7 +161,7 @@ inline double ParseDouble(std::string_view sv, const char *error_msg) {
 
 template <typename T> inline std::string to_string_decimal(const T &t) {
   std::string str{std::to_string(t)};
-  std::replace(str.begin(), str.end(), ',', '.');
+  std::ranges::replace(str, ',', '.');
   int32_t offset{1};
   if (str.find_last_not_of('0') == str.find('.')) {
     offset = 0;

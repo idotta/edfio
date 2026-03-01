@@ -11,6 +11,7 @@
 
 #include "RecordStore.hpp"
 
+#include <algorithm>
 #include <cstdint>
 
 namespace edfio {
@@ -53,7 +54,7 @@ protected:
     }
 
     auto first = m_buffer().begin() + sampleOffset * m_recordSize;
-    std::copy(first, first + m_value.Size(), m_value().begin());
+    std::ranges::copy_n(first, m_value.Size(), m_value().begin());
   }
 
   void readStream(int64_t newPos) const {

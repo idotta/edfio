@@ -15,6 +15,8 @@
 #include "ProcessorUtils.hpp"
 
 #include <cstdint>
+#include <ranges>
+#include <vector>
 
 namespace edfio {
 
@@ -42,9 +44,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   // Labels
   {
     uint32_t totalAnnotationChannels = 0;
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &label = in[idx].m_label();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &label = inSig.m_label();
       if (IsPlus(version)) {
         if (label.find("Annotation") != std::string::npos) {
           totalAnnotationChannels++;
@@ -72,9 +73,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   }
   // Transducers Types
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &transducer = in[idx].m_transducer();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &transducer = inSig.m_transducer();
 
       signal.m_transducer = transducer;
 
@@ -88,36 +88,32 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   }
   // Physical Dimensions
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &physDimension = in[idx].m_physDimension();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &physDimension = inSig.m_physDimension();
 
       signal.m_physDimension = physDimension;
     }
   }
   // Physical Minima
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &physMin = in[idx].m_physicalMin();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &physMin = inSig.m_physicalMin();
       signal.m_physicalMin = detail::ParseDouble(
           physMin, GetError(FileErrc::FileContainsFormatErrors));
     }
   }
   // Physical Maxima
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &physMax = in[idx].m_physicalMax();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &physMax = inSig.m_physicalMax();
       signal.m_physicalMax = detail::ParseDouble(
           physMax, GetError(FileErrc::FileContainsFormatErrors));
     }
   }
   // Digital Minima
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &digMin = in[idx].m_digitalMin();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &digMin = inSig.m_digitalMin();
       int32_t n = detail::ParseInt(
           digMin, GetError(FileErrc::FileContainsFormatErrors));
 
@@ -149,9 +145,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   }
   // Digital Maxima
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &digMax = in[idx].m_digitalMax();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &digMax = inSig.m_digitalMax();
       int32_t n = detail::ParseInt(
           digMax, GetError(FileErrc::FileContainsFormatErrors));
 
@@ -187,9 +182,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   }
   // Prefilter
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &prefilter = in[idx].m_prefilter();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &prefilter = inSig.m_prefilter();
 
       signal.m_prefilter = prefilter;
 
@@ -203,9 +197,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   }
   // Samples in each datarecord
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &nrSamples = in[idx].m_samplesInDataRecord();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &nrSamples = inSig.m_samplesInDataRecord();
       int32_t n = detail::ParseInt(
           nrSamples, GetError(FileErrc::FileContainsFormatErrors));
 
@@ -218,18 +211,15 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   }
   // Reserved
   {
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-      auto &reserved = in[idx].m_reserved();
+    for (auto &&[signal, inSig] : std::views::zip(signals, in)) {
+      auto &reserved = inSig.m_reserved();
       signal.m_reserved = reserved;
     }
   }
   // Details
   {
     uint64_t n = 0;
-    for (size_t idx = 0; idx < signals.size(); idx++) {
-      auto &signal = signals[idx];
-
+    for (auto &signal : signals) {
       signal.m_detail.m_signalOffset = n;
       if (IsBdf(version))
         n += signal.m_samplesInDataRecord * 3;

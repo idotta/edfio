@@ -210,7 +210,7 @@ public:
     return const_reverse_iterator(cbegin());
   }
 
-  size_type size() const { return m_sinkSize; }
+  [[nodiscard]] size_type size() const { return m_sinkSize; }
 
 protected:
   virtual void measure() = 0;

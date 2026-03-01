@@ -19,8 +19,8 @@ namespace edfio {
 template <size_t Sz, typename CharT = char> struct Field {
   using ValueType = CharT;
 
-  constexpr size_t Size() const { return Sz; }
-  const std::basic_string<ValueType> &operator()() const { return m_value; }
+  [[nodiscard]] constexpr size_t Size() const { return Sz; }
+  [[nodiscard]] const std::basic_string<ValueType> &operator()() const { return m_value; }
   std::basic_string<ValueType> &operator()() { return m_value; }
   void operator()(const std::basic_string<ValueType> &value) {
     m_value = value;

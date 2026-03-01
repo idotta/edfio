@@ -194,7 +194,7 @@ public:
   }
 
   // Overrides
-  virtual size_type size() const { return m_storeSize; }
+  [[nodiscard]] virtual size_type size() const { return m_storeSize; }
 
 protected:
   virtual reference getR(size_type off) const {

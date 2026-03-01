@@ -25,14 +25,14 @@ template <> struct Sample<SampleType::Digital> {
   using type = int32_t;
 };
 
-inline Sample<SampleType::Digital>::type
+[[nodiscard]] constexpr Sample<SampleType::Digital>::type
 ConvertSample(double offset, double scaling,
               Sample<SampleType::Physical>::type sample) {
   return static_cast<Sample<SampleType::Digital>::type>((sample - offset) /
                                                         scaling);
 }
 
-inline Sample<SampleType::Physical>::type
+[[nodiscard]] constexpr Sample<SampleType::Physical>::type
 ConvertSample(double offset, double scaling,
               Sample<SampleType::Digital>::type sample) {
   return scaling * static_cast<Sample<SampleType::Physical>::type>(sample) +

@@ -21,7 +21,7 @@ enum class FileErrc {
   FileWriteInvalidAnnotations
 };
 
-inline constexpr const char *GetError(FileErrc err) {
+[[nodiscard]] inline constexpr const char *GetError(FileErrc err) {
   switch (err) {
   case FileErrc::FileDoesNotOpen:
     return "Error: file does not open";

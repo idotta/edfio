@@ -14,6 +14,9 @@
 #include "../core/Record.hpp"
 #include "ProcessorUtils.hpp"
 
+#include <algorithm>
+#include <ranges>
+
 namespace edfio {
 
 inline Record<char> ProcessAnnotation(Annotation annotation) {
@@ -42,19 +45,19 @@ inline Record<char> ProcessAnnotation(Annotation annotation) {
   auto it = record().begin();
 
   // timestamp
-  std::move(timestamp.begin(), timestamp.end(), it);
+  std::ranges::copy(timestamp, it);
   it += timestamp.size();
 
   if (!duration.empty()) {
     *it++ = 21; // 21 div
     // duration
-    std::move(duration.begin(), duration.end(), it);
+    std::ranges::copy(duration, it);
     it += duration.size();
   }
 
   *it++ = 20; // 20 div
   // annotation
-  std::move(annotation.m_annotation.begin(), annotation.m_annotation.end(), it);
+  std::ranges::copy(annotation.m_annotation, it);
   it += annotation.m_annotation.size();
 
   *it++ = 20; // 20 div

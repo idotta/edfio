@@ -13,8 +13,8 @@
 #include "HeaderSignal.hpp"
 
 #include <cstdint>
+#include <span>
 #include <string>
-#include <vector>
 
 namespace edfio {
 
@@ -25,13 +25,13 @@ inline HeaderGeneral CreateHeaderGeneral(
     int32_t startDateD, int32_t startDateM, int32_t startDateY,
     int32_t startTimeH, int32_t startTimeM, int32_t startTimeS,
     int32_t headerSize, std::string reserved, int64_t datarecordsFile,
-    double datarecordDuration, const std::vector<HeaderSignal> &signals) {
+    double datarecordDuration, std::span<const HeaderSignal> signals) {
   HeaderGeneral header;
   header.m_version = version;
   header.m_patient = patient;
   header.m_recording = recording;
-  header.m_startDate = std::make_tuple(startDateD, startDateM, startDateY);
-  header.m_startTime = std::make_tuple(startTimeH, startTimeM, startTimeS);
+  header.m_startDate = Date{startDateD, startDateM, startDateY};
+  header.m_startTime = Time{startTimeH, startTimeM, startTimeS};
   header.m_headerSize = headerSize;
   header.m_reserved = reserved;
   header.m_datarecordsFile = datarecordsFile;
@@ -57,7 +57,7 @@ inline HeaderGeneral CreateHeaderGeneralPlus(
     int32_t startDateY, int32_t startTimeH, int32_t startTimeM,
     int32_t startTimeS, int32_t headerSize, std::string reserved,
     int64_t datarecordsFile, double datarecordDuration,
-    const std::vector<HeaderSignal> &signals) {
+    std::span<const HeaderSignal> signals) {
   auto header = CreateHeaderGeneral(
       version, "", "", startDateD, startDateM, startDateY, startTimeH,
       startTimeM, startTimeS, headerSize, reserved, datarecordsFile,

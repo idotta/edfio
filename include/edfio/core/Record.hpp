@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -34,13 +35,13 @@ template <typename ValT = char> struct Record {
   Record &operator=(const Record &) = default;
   Record &operator=(Record &&) = default;
 
-  typename VectorType::size_type Size() const { return m_value.size(); }
-  const VectorType &operator()() const { return m_value; }
+  [[nodiscard]] typename VectorType::size_type Size() const { return m_value.size(); }
+  [[nodiscard]] const VectorType &operator()() const { return m_value; }
   VectorType &operator()() { return m_value; }
   Record<ValueType> operator+(const Record<ValueType> &record) const {
     Record<ValueType> tmp(Size() + record.Size());
-    std::copy(m_value.begin(), m_value.end(), tmp().begin());
-    std::copy(record().begin(), record().end(), tmp().begin() + Size());
+    std::ranges::copy(m_value, tmp().begin());
+    std::ranges::copy(record(), tmp().begin() + Size());
     return tmp;
   }
 

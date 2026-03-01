@@ -15,9 +15,20 @@
 #include "../core/Field.hpp"
 
 #include <string>
-#include <tuple>
 
 namespace edfio {
+
+struct Date {
+  int32_t day = 0;
+  int32_t month = 0;
+  int32_t year = 0;
+};
+
+struct Time {
+  int32_t hour = 0;
+  int32_t minute = 0;
+  int32_t second = 0;
+};
 
 struct HeaderGeneralFields {
   Field<8> m_version;
@@ -54,8 +65,8 @@ struct HeaderGeneral {
   DataFormat m_version = DataFormat::Invalid;
   std::string m_patient;
   std::string m_recording;
-  std::tuple<int32_t, int32_t, int32_t> m_startDate;
-  std::tuple<int32_t, int32_t, int32_t> m_startTime;
+  Date m_startDate;
+  Time m_startTime;
   int32_t m_headerSize = 0;
   std::string m_reserved;
   int64_t m_datarecordsFile = 0;

@@ -14,6 +14,7 @@
 #include "../core/Record.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cstdint>
 
 namespace edfio {
@@ -31,10 +32,9 @@ inline TimeStamp ProcessTimeStampRecord(Record<char> record,
   }
 
   // Make sure it's a valid timestamp
-  static const std::vector<char> comp = {detail::ANNOTATION_END,
-                                         detail::ANNOTATION_DIV};
-  auto result =
-      std::find_first_of(value.begin(), value.end(), comp.begin(), comp.end());
+  static constexpr std::array<char, 2> comp = {detail::ANNOTATION_END,
+                                                detail::ANNOTATION_DIV};
+  auto result = std::ranges::find_first_of(value, comp);
 
   if (result == value.end()) {
     throw std::invalid_argument(

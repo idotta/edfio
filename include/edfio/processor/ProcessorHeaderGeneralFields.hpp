@@ -14,6 +14,7 @@
 #include "../header/HeaderGeneral.hpp"
 #include "ProcessorUtils.hpp"
 
+#include <algorithm>
 #include <cstdint>
 #include <sstream>
 
@@ -86,7 +87,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
             GetError(FileErrc::FileContainsFormatErrors));
       }
       year += year > 84 ? 1900 : 2000;
-      out.m_startDate = std::make_tuple(day, month, year);
+      out.m_startDate = Date{day, month, year};
     }
   }
   // Start Time
@@ -111,7 +112,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
         throw std::invalid_argument(
             GetError(FileErrc::FileContainsFormatErrors));
       }
-      out.m_startTime = std::make_tuple(hour, minute, second);
+      out.m_startTime = Time{hour, minute, second};
     }
   }
   // Header Size
@@ -185,8 +186,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
 
       for (size_t i = 0; i < fields.size(); i++) {
         auto &str = fields[i];
-        std::replace(str.begin(), str.end(), '_',
-                     ' '); // replace all '_' to ' '
+        std::ranges::replace(str, '_', ' '); // replace all '_' to ' '
         switch (i) {
         case 0: // The code by which the patient is known in the hospital
                 // administration.
@@ -236,8 +236,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
 
       for (size_t i = 0; i < fields.size(); i++) {
         auto &str = fields[i];
-        std::replace(str.begin(), str.end(), '_',
-                     ' '); // replace all '_' to ' '
+        std::ranges::replace(str, '_', ' '); // replace all '_' to ' '
         if (str != "X") {
           switch (i) {
           case 0: // The text 'Startdate'.
@@ -262,7 +261,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
                   throw std::invalid_argument(
                       GetError(FileErrc::FileContainsFormatErrors));
                 }
-                out.m_startDate = std::make_tuple(day, month, year);
+                out.m_startDate = Date{day, month, year};
               }
             } else {
               throw std::invalid_argument(

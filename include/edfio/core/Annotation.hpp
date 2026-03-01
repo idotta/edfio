@@ -16,9 +16,9 @@ namespace edfio {
 
 namespace detail {
 //    Each TAL starts with a time stamp Onset21Duration20
-static const char DURATION_DIV = 21;
-static const char ANNOTATION_DIV = 20;
-static const char ANNOTATION_END = 0;
+static constexpr char DURATION_DIV = 21;
+static constexpr char ANNOTATION_DIV = 20;
+static constexpr char ANNOTATION_END = 0;
 } // namespace detail
 
 struct TimeStamp {

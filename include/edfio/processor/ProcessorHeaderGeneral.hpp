@@ -13,6 +13,7 @@
 #include "../header/HeaderGeneral.hpp"
 #include "ProcessorUtils.hpp"
 
+#include <algorithm>
 #include <cstdint>
 #include <format>
 #include <sstream>
@@ -42,17 +43,13 @@ inline HeaderGeneralFields ProcessHeaderGeneral(HeaderGeneral in) {
   }
   // Start Date
   {
-    int32_t day = std::get<0>(in.m_startDate);
-    int32_t month = std::get<1>(in.m_startDate);
-    int32_t year = std::get<2>(in.m_startDate);
+    auto [day, month, year] = in.m_startDate;
     year -= year > 1999 ? 2000 : 1900;
     out.m_startDate(std::format("{:02d}.{:02d}.{:02d}", day, month, year));
   }
   // Start Time
   {
-    int32_t hour = std::get<0>(in.m_startTime);
-    int32_t minute = std::get<1>(in.m_startTime);
-    int32_t second = std::get<2>(in.m_startTime);
+    auto [hour, minute, second] = in.m_startTime;
     out.m_startTime(std::format("{:02d}.{:02d}.{:02d}", hour, minute, second));
   }
   // Header Size
@@ -107,8 +104,7 @@ inline HeaderGeneralFields ProcessHeaderGeneral(HeaderGeneral in) {
       }
       std::string patient = "";
       for (auto &field : fields) {
-        std::replace(field.begin(), field.end(), ' ',
-                     '_'); // replace all ' ' to '_'
+        std::ranges::replace(field, ' ', '_'); // replace all ' ' to '_'
         patient += field + " ";
       }
       patient.pop_back(); // remove last " "
@@ -122,9 +118,7 @@ inline HeaderGeneralFields ProcessHeaderGeneral(HeaderGeneral in) {
       // The startdate itself in dd-MMM-yyyy format using the English
       // 3-character abbreviations of the month in capitals: dd-MMM-yyyy (MMM =
       // 'JAN' | 'FEV' | ...)
-      int32_t day = std::get<0>(in.m_startDate);
-      int32_t month = std::get<1>(in.m_startDate);
-      int32_t year = std::get<2>(in.m_startDate);
+      auto [day, month, year] = in.m_startDate;
       fields.push_back(std::format("{:02d}-{}-{}", day ? day : 1,
                                    detail::GetStringFromMonth(month),
                                    year ? year : 1984));
@@ -146,8 +140,7 @@ inline HeaderGeneralFields ProcessHeaderGeneral(HeaderGeneral in) {
       }
       std::string recording = "";
       for (auto &field : fields) {
-        std::replace(field.begin(), field.end(), ' ',
-                     '_'); // replace all '_' to ' '
+        std::ranges::replace(field, ' ', '_'); // replace all '_' to ' '
         recording += field + " ";
       }
       recording.pop_back(); // remove last " "

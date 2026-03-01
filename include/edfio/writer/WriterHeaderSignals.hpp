@@ -13,13 +13,13 @@
 #include "../core/StreamIO.hpp"
 #include "../header/HeaderSignal.hpp"
 
+#include <span>
 #include <stdexcept>
-#include <vector>
 
 namespace edfio {
 
 inline void WriteHeaderSignals(Writer<char>::Stream &stream,
-                               std::vector<HeaderSignalFields> &signals) {
+                               std::span<HeaderSignalFields> signals) {
   if (!stream || !stream.is_open())
     throw std::invalid_argument(GetError(FileErrc::FileNotOpened));
   try {
