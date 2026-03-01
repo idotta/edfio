@@ -6,9 +6,13 @@ target_include_directories(doctest INTERFACE ${CMAKE_SOURCE_DIR}/third_party)
 function(edfio_add_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries(${name} PRIVATE edfio doctest)
-    target_compile_options(${name} PRIVATE
-        -Wall -Wextra -Wpedantic -Wno-c++98-compat
-    )
+    if(MSVC)
+        target_compile_options(${name} PRIVATE /W4 /permissive-)
+    else()
+        target_compile_options(${name} PRIVATE
+            -Wall -Wextra -Wpedantic -Wno-c++98-compat
+        )
+    endif()
     add_test(NAME ${name} COMMAND ${name})
 endfunction()
 
@@ -44,3 +48,4 @@ edfio_add_test(test_processor_utils)
 edfio_add_test(test_bdf_reader)
 edfio_add_test(test_processors)
 edfio_add_test(test_edfplus)
+edfio_add_test(test_edffile)

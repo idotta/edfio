@@ -162,13 +162,25 @@ inline double ParseDouble(std::string_view sv, const char *error_msg) {
 }
 
 template <typename T> inline std::string to_string_decimal(const T &t) {
-  std::string str{std::to_string(t)};
-  std::ranges::replace(str, ',', '.');
-  int32_t offset{1};
-  if (str.find_last_not_of('0') == str.find('.')) {
-    offset = 0;
+  // Use std::to_chars for locale-independent conversion (always uses '.')
+  std::array<char, 64> buf;
+  auto [ptr, ec] = std::to_chars(buf.data(), buf.data() + buf.size(), t);
+  if (ec != std::errc{})
+    return "0";
+  std::string str(buf.data(), ptr);
+
+  // Trim trailing zeros after the decimal point
+  auto dot = str.find('.');
+  if (dot != std::string::npos) {
+    auto last_nonzero = str.find_last_not_of('0');
+    if (last_nonzero == dot) {
+      // All fractional digits are zero; remove the dot entirely
+      str.erase(dot);
+    } else {
+      // Remove trailing zeros only
+      str.erase(last_nonzero + 1);
+    }
   }
-  str.erase(str.find_last_not_of('0') + offset, std::string::npos);
   return str;
 }
 } // namespace detail

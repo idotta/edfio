@@ -40,5 +40,8 @@
 #include "processor/ProcessorTimeStamp.hpp"
 #include "processor/ProcessorTimeStampRecord.hpp"
 
+// High-level facade
+#include "EdfFile.hpp"
+
 // STL
 #include <fstream>
