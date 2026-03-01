@@ -42,6 +42,7 @@
 
 // High-level facade
 #include "EdfFile.hpp"
+#include "EdfWriter.hpp"
 
 // STL
 #include <fstream>
