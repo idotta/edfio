@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <array>
+#include <charconv>
 #include <cstdint>
 
 namespace edfio {
@@ -41,15 +42,14 @@ inline TimeStamp ProcessTimeStampRecord(Record<char> record,
         GetError(FileErrc::FileContainsInvalidAnnotations));
   } else {
     *result = 0;
-    char *end;
-    double start = std::strtod(value.data(), &end);
-    // On error
-    if (end == value.data()) {
+    double start{};
+    auto [ptr, ec] =
+        std::from_chars(value.data(), value.data() + value.size(), start);
+    if (ec != std::errc{} || ptr == value.data()) {
       throw std::invalid_argument(
           GetError(FileErrc::FileContainsInvalidAnnotations));
-    } else {
-      timestamp.m_start = start;
     }
+    timestamp.m_start = start;
   }
   return timestamp;
 }

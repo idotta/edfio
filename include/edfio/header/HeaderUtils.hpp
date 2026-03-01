@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "../Errors.hpp"
 #include "HeaderGeneral.hpp"
 #include "HeaderSignal.hpp"
 
@@ -97,8 +98,13 @@ CreateHeaderSignal(std::string label, int32_t samplesInDataRecord,
   signal.m_reserved = reserved;
 
   signal.m_detail.m_signalOffset = signalOffset;
-  signal.m_detail.m_scaling = (signal.m_physicalMax - signal.m_physicalMin) /
-                              (signal.m_digitalMax - signal.m_digitalMin);
+  auto digitalRange = signal.m_digitalMax - signal.m_digitalMin;
+  if (digitalRange == 0) {
+    throw std::invalid_argument(
+        GetError(FileErrc::FileContainsFormatErrors));
+  }
+  signal.m_detail.m_scaling =
+      (signal.m_physicalMax - signal.m_physicalMin) / digitalRange;
   signal.m_detail.m_offset =
       signal.m_physicalMin - signal.m_detail.m_scaling * signal.m_digitalMin;
   signal.m_detail.m_isAnnotation = annotation;

@@ -217,9 +217,13 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
       else if (IsEdf(version))
         n += signal.m_samplesInDataRecord * 2;
 
+      auto digitalRange = signal.m_digitalMax - signal.m_digitalMin;
+      if (digitalRange == 0) {
+        throw std::invalid_argument(
+            GetError(FileErrc::FileContainsFormatErrors));
+      }
       signal.m_detail.m_scaling =
-          (signal.m_physicalMax - signal.m_physicalMin) /
-          (signal.m_digitalMax - signal.m_digitalMin);
+          (signal.m_physicalMax - signal.m_physicalMin) / digitalRange;
       signal.m_detail.m_offset =
           signal.m_physicalMin -
           signal.m_detail.m_scaling * signal.m_digitalMin;

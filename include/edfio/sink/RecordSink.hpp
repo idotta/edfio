@@ -12,11 +12,9 @@
 #include "../core/Record.hpp"
 #include "Sink.hpp"
 
-
 #include <compare>
 #include <fstream>
 #include <optional>
-
 
 namespace edfio {
 
@@ -172,9 +170,7 @@ public:
     iterator &operator[](size_type) { return *this; }
   };
 
-  using const_iterator = iterator;
   using reverse_iterator = std::reverse_iterator<iterator>;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
   RecordSink() = delete;
 
@@ -184,33 +180,9 @@ public:
         m_headerOffset(headerOffset), m_value(recordSize) {}
 
   iterator begin() { return iterator(this, 0); }
-  const_iterator begin() const {
-    return const_iterator(const_cast<RecordSink *>(this), 0);
-  }
-  const_iterator cbegin() const {
-    return const_iterator(const_cast<RecordSink *>(this), 0);
-  }
   iterator end() { return iterator(this); }
-  const_iterator end() const {
-    return const_iterator(const_cast<RecordSink *>(this));
-  }
-  const_iterator cend() const {
-    return const_iterator(const_cast<RecordSink *>(this));
-  }
   reverse_iterator rbegin() { return reverse_iterator(end()); }
-  const_reverse_iterator rbegin() const {
-    return const_reverse_iterator(end());
-  }
-  const_reverse_iterator crbegin() const {
-    return const_reverse_iterator(cend());
-  }
   reverse_iterator rend() { return reverse_iterator(begin()); }
-  const_reverse_iterator rend() const {
-    return const_reverse_iterator(begin());
-  }
-  const_reverse_iterator crend() const {
-    return const_reverse_iterator(cbegin());
-  }
 
   [[nodiscard]] size_type size() const { return m_sinkSize; }
 

@@ -12,15 +12,25 @@ function(edfio_add_test name)
     add_test(NAME ${name} COMMAND ${name})
 endfunction()
 
-# Copy test fixtures
+# Copy test fixtures from files/ directory
 configure_file(
-    ${CMAKE_SOURCE_DIR}/Calib5.edf
+    ${CMAKE_SOURCE_DIR}/files/Calib5.edf
     ${CMAKE_CURRENT_BINARY_DIR}/Calib5.edf
     COPYONLY
 )
 configure_file(
-    ${CMAKE_SOURCE_DIR}/test_generator_2.edf
+    ${CMAKE_SOURCE_DIR}/files/test_generator_2.edf
     ${CMAKE_CURRENT_BINARY_DIR}/test_generator_2.edf
+    COPYONLY
+)
+configure_file(
+    ${CMAKE_SOURCE_DIR}/files/test_generator_2.bdf
+    ${CMAKE_CURRENT_BINARY_DIR}/test_generator_2.bdf
+    COPYONLY
+)
+configure_file(
+    ${CMAKE_SOURCE_DIR}/files/SC4001EC-Hypnogram.edf
+    ${CMAKE_CURRENT_BINARY_DIR}/SC4001EC-Hypnogram.edf
     COPYONLY
 )
 
@@ -31,3 +41,6 @@ edfio_add_test(test_processor_sample)
 edfio_add_test(test_iterators)
 edfio_add_test(test_writer)
 edfio_add_test(test_processor_utils)
+edfio_add_test(test_bdf_reader)
+edfio_add_test(test_processors)
+edfio_add_test(test_edfplus)
