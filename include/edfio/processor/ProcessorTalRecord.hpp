@@ -9,7 +9,9 @@
 
 #pragma once
 
+#include "../Utils.hpp"
 #include "../core/Annotation.hpp"
+#include "../core/Record.hpp"
 
 #include <vector>
 
@@ -21,6 +23,68 @@ namespace edfio
 		std::vector<Annotation> operator ()(std::vector<char> record, long long datarecord);
 	};
 
-}
+	inline std::vector<Annotation> ProcessorTalRecord::operator()(std::vector<char> record, long long datarecord)
+	{
+		std::vector<Annotation> out;
 
-#include "impl/ProcessorTalRecord.ipp"
+		// Boundaries
+		auto first = record.begin();
+		auto last = record.end();
+
+		// TAL MUST start with '+' or '-'
+		if (*first != '+' && *first != '-')
+		{
+			throw std::invalid_argument(detail::GetError(FileErrc::FileContainsInvalidAnnotations));
+		}
+
+		double start = 0;
+		double duration = 0;
+		bool onset = true;
+		for (auto it = first; it != last; it++)
+		{
+			if (std::distance(first, it) > 0)
+			{
+				// First field is for TAL onset
+				if (onset)
+				{
+					if (*it == detail::DURATION_DIV || *it == detail::ANNOTATION_DIV)
+					{
+						std::string tmp(first, it);
+						start = detail::ParseDouble(tmp, detail::GetError(FileErrc::FileContainsInvalidAnnotations));
+						onset = false;
+
+						first = it;
+					}
+				}
+				else if (*it == detail::ANNOTATION_DIV)
+				{
+					if (*first == detail::DURATION_DIV)
+					{
+						std::string tmp(first + 1, it);
+						duration = detail::ParseDouble(tmp, detail::GetError(FileErrc::FileContainsInvalidAnnotations));
+						first = it;
+					}
+					else if (*first == detail::ANNOTATION_DIV)
+					{
+						std::string tmp(first + 1, it);
+
+						// Check if this TAL is in fact just a timestamp, we don't want this
+						if (!tmp.empty())
+						{
+							Annotation annot;
+							annot.m_start = start;
+							annot.m_duration = duration;
+							annot.m_annotation = tmp;
+							annot.m_datarecord = datarecord;
+							out.emplace_back(std::move(annot));
+						}
+						first = it;
+					}
+				}
+			}
+
+		}
+		return out;
+	}
+
+}

@@ -9,10 +9,12 @@
 
 #pragma once
 
+#include "../Utils.hpp"
+#include "../core/StreamIO.hpp"
 #include "../header/HeaderGeneral.hpp"
 #include "../header/HeaderSignal.hpp"
-#include "../core/StreamIO.hpp"
 
+#include <stdexcept>
 #include <vector>
 
 namespace edfio
@@ -27,6 +29,43 @@ namespace edfio
 		size_t m_totalSignals = 0;
 	};
 
-}
+	inline std::vector<HeaderSignalFields> ReaderHeaderSignal::operator ()(Stream &stream)
+	{
+		std::vector<HeaderSignalFields> signals(m_totalSignals);
+		if (!stream || !stream.is_open())
+			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 
-#include "impl/ReaderHeaderSignal.ipp"
+		stream.clear();
+		stream.seekg(256, std::ios::beg);
+
+		try
+		{
+			for (auto &s : signals)
+				stream >> s.m_label;
+			for (auto &s : signals)
+				stream >> s.m_transducer;
+			for (auto &s : signals)
+				stream >> s.m_physDimension;
+			for (auto &s : signals)
+				stream >> s.m_physicalMin;
+			for (auto &s : signals)
+				stream >> s.m_physicalMax;
+			for (auto &s : signals)
+				stream >> s.m_digitalMin;
+			for (auto &s : signals)
+				stream >> s.m_digitalMax;
+			for (auto &s : signals)
+				stream >> s.m_prefilter;
+			for (auto &s : signals)
+				stream >> s.m_samplesInDataRecord;
+			for (auto &s : signals)
+				stream >> s.m_reserved;
+		}
+		catch (const std::exception&)
+		{
+			throw std::invalid_argument(detail::GetError(FileErrc::FileReadError));
+		}
+		return signals;
+	}
+
+}

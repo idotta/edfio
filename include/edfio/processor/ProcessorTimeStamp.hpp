@@ -9,8 +9,10 @@
 
 #pragma once
 
-#include "../core/Record.hpp"
+#include "../Utils.hpp"
 #include "../core/Annotation.hpp"
+#include "../core/Record.hpp"
+#include "detail/ProcessorUtils.hpp"
 
 namespace edfio
 {
@@ -20,6 +22,32 @@ namespace edfio
 		Record<char> operator ()(TimeStamp timestamp);
 	};
 
-}
+	inline Record<char> ProcessorTimeStamp::operator()(TimeStamp timestamp)
+	{
+		std::string ts = detail::to_string_decimal(timestamp.m_start);
 
-#include "impl/ProcessorTimeStamp.ipp"
+		if (ts.empty())
+		{
+			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteInvalidAnnotations));
+		}
+
+		size_t plusSignal = 0;
+		if (timestamp.m_start >= 0)
+			plusSignal = 1;
+
+		Record<char> record(plusSignal + ts.size() + 3); // 20 20 0
+		auto it = record().begin();
+
+		// timestamp
+		if (plusSignal)
+			*it++ = '+';
+		std::move(ts.begin(), ts.end(), it);
+		it += ts.size();
+		*it++ = 20; // 20 div
+		*it++ = 20; // 20 div
+		*it++ = 0; // 0 end
+
+		return record;
+	}
+
+}

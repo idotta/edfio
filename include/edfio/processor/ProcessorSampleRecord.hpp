@@ -35,6 +35,32 @@ namespace edfio
 		const double m_scaling;
 	};
 
-}
+	template<SampleType SampleT>
+	inline typename ProcessorSampleRecord<SampleT>::ProcType
+	ProcessorSampleRecord<SampleT>::operator()(Record<char> record)
+	{
+		DigiType sample = 0;
+		auto const& bytes = record();
+		std::size_t const nbytes = bytes.size();
 
-#include "impl/ProcessorSampleRecord.ipp"
+		// Assemble bytes (big-endian order as written by ProcessorSample)
+		for (std::size_t i = 0; i < nbytes; ++i)
+		{
+			sample <<= 8;
+			sample |= static_cast<unsigned char>(bytes[i]);
+		}
+
+		// Sign-extend: if high bit of the MSB is set, the value is negative
+		if (nbytes > 0 && nbytes < sizeof(DigiType))
+		{
+			unsigned int sign_bit = 1u << (nbytes * 8 - 1);
+			if (sample & sign_bit)
+				sample |= ~((1 << (nbytes * 8)) - 1);
+		}
+
+		if constexpr (std::is_same_v<DigiType, ProcType>)
+			return sample;
+		return impl::ConvertSample(m_offset, m_scaling, sample);
+	}
+
+}

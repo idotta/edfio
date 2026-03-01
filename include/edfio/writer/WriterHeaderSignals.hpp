@@ -11,7 +11,9 @@
 
 #include "../core/StreamIO.hpp"
 #include "../header/HeaderSignal.hpp"
+#include "../Utils.hpp"
 
+#include <stdexcept>
 #include <vector>
 
 namespace edfio
@@ -22,6 +24,40 @@ namespace edfio
 		void operator ()(Stream &stream, std::vector<HeaderSignalFields> &signals);
 	};
 
-}
+	inline void WriterHeaderSignals::operator()(Stream &stream, std::vector<HeaderSignalFields> &signals)
+	{
+		if (!stream || !stream.is_open())
+			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
+		try
+		{
+			stream.clear();
+			stream.seekp(256, std::ios::beg);
 
-#include "impl/WriterHeaderSignals.ipp"
+			for (auto &s : signals)
+				stream << s.m_label;
+			for (auto &s : signals)
+				stream << s.m_transducer;
+			for (auto &s : signals)
+				stream << s.m_physDimension;
+			for (auto &s : signals)
+				stream << s.m_physicalMin;
+			for (auto &s : signals)
+				stream << s.m_physicalMax;
+			for (auto &s : signals)
+				stream << s.m_digitalMin;
+			for (auto &s : signals)
+				stream << s.m_digitalMax;
+			for (auto &s : signals)
+				stream << s.m_prefilter;
+			for (auto &s : signals)
+				stream << s.m_samplesInDataRecord;
+			for (auto &s : signals)
+				stream << s.m_reserved;
+		}
+		catch (const std::exception&)
+		{
+			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteError));
+		}
+	}
+
+}

@@ -9,8 +9,16 @@
 
 #pragma once
 
+#include "../Utils.hpp"
 #include "../core/StreamIO.hpp"
 #include "../header/HeaderExam.hpp"
+#include "../processor/ProcessorHeaderExam.hpp"
+#include "../processor/ProcessorHeaderGeneralFields.hpp"
+#include "../processor/ProcessorHeaderSignalFields.hpp"
+#include "ReaderHeaderGeneral.hpp"
+#include "ReaderHeaderSignal.hpp"
+
+#include <stdexcept>
 
 namespace edfio
 {
@@ -20,6 +28,43 @@ namespace edfio
 		HeaderExam operator ()(Stream &stream);
 	};
 
-}
+	inline HeaderExam ReaderHeaderExam::operator ()(Stream &stream)
+	{
+		// Read general fields
+		ReaderHeaderGeneral readerGeneral;
+		auto generalFields = readerGeneral(stream);
+		// Process general fields
+		ProcessorHeaderGeneralFields procGeneralFields;
+		auto general = procGeneralFields(std::move(generalFields));
 
-#include "impl/ReaderHeaderExam.ipp"
+		// Read signal fields
+		ReaderHeaderSignal readerSignals(general.m_totalSignals);
+		auto signalFields = readerSignals(stream);
+		// Process signal fields
+		ProcessorHeaderSignalFields procSignalFields(general.m_version, general.m_datarecordDuration);
+		auto signals = procSignalFields(std::move(signalFields));
+
+		// Process header exam
+		ProcessorHeaderExam procHeader;
+		auto header = procHeader(std::move(general), std::move(signals));
+
+		// File size
+		{
+			// get current position
+			auto position = stream.tellg();
+			// get length of file
+			stream.seekg(0, stream.end);
+			long long length = stream.tellg();
+			// send back to previous position
+			stream.seekg(position, stream.beg);
+
+			if (length != (header.m_general.m_detail.m_recordSize * header.m_general.m_datarecordsFile + header.m_general.m_headerSize))
+			{
+				throw std::invalid_argument(detail::GetError(FileErrc::FileContainsFormatErrors));
+			}
+		}
+
+		return header;
+	}
+
+}

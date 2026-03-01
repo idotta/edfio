@@ -9,8 +9,11 @@
 
 #pragma once
 
-#include "../core/StreamIO.hpp"
 #include "../core/Record.hpp"
+#include "../core/StreamIO.hpp"
+#include "../Utils.hpp"
+
+#include <stdexcept>
 
 namespace edfio
 {
@@ -20,6 +23,19 @@ namespace edfio
 		void operator ()(Stream &stream, Record<char> &record);
 	};
 
-}
+	inline void WriterRecord::operator()(Stream &stream, Record<char> &record)
+	{
+		if (!stream || !stream.is_open())
+			throw std::invalid_argument(detail::GetError(FileErrc::FileNotOpened));
 
-#include "impl/WriterRecord.ipp"
+		try
+		{
+			stream << record;
+		}
+		catch (const std::exception&)
+		{
+			throw std::invalid_argument(detail::GetError(FileErrc::FileWriteError));
+		}
+	}
+
+}
