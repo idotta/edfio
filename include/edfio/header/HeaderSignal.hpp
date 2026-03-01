@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include "../core/Field.hpp"
 
 #include <string>
@@ -30,7 +32,7 @@ struct HeaderSignalFields {
 
 namespace detail {
 struct HeaderSignalDetail {
-  long m_signalOffset = 0;
+  int64_t m_signalOffset = 0;
   double m_scaling = 0;
   double m_offset = 0;
   bool m_isAnnotation = false;
@@ -44,10 +46,10 @@ struct HeaderSignal {
   std::string m_physDimension;
   double m_physicalMin = 0;
   double m_physicalMax = 0;
-  int m_digitalMin = 0;
-  int m_digitalMax = 0;
+  int32_t m_digitalMin = 0;
+  int32_t m_digitalMax = 0;
   std::string m_prefilter;
-  int m_samplesInDataRecord = 0;
+  int32_t m_samplesInDataRecord = 0;
   std::string m_reserved;
   // Extra values
   detail::HeaderSignalDetail m_detail;

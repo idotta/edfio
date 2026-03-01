@@ -12,6 +12,7 @@
 #include "../core/Record.hpp"
 #include "../core/SampleType.hpp"
 
+#include <cstdint>
 
 namespace edfio {
 
@@ -20,7 +21,7 @@ template <SampleType SampleT> struct ProcessorSample {
   using DigiType = Sample<SampleType::Digital>::type;
   using PhysType = Sample<SampleType::Physical>::type;
 
-  ProcessorSample(double offset, double scaling, size_t sampleSize)
+  ProcessorSample(double offset, double scaling, uint32_t sampleSize)
       : m_offset(offset), m_scaling(scaling), m_sampleSize(sampleSize) {}
 
   Record<char> operator()(ProcType sample);
@@ -28,7 +29,7 @@ template <SampleType SampleT> struct ProcessorSample {
 private:
   const double m_offset;
   const double m_scaling;
-  size_t m_sampleSize;
+  uint32_t m_sampleSize;
 };
 
 template <SampleType SampleT>
@@ -42,8 +43,8 @@ inline Record<char> ProcessorSample<SampleT>::operator()(ProcType sample) {
   Record<char> record(m_sampleSize);
   auto it = record().begin();
 
-  for (int count = m_sampleSize; count > 0; count--) {
-    unsigned char tmp = (value >> (count - 1) * 8);
+  for (int32_t count = m_sampleSize; count > 0; count--) {
+    uint8_t tmp = (value >> (count - 1) * 8);
     *it++ = tmp;
   }
 

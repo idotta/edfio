@@ -14,6 +14,7 @@
 #include "../header/HeaderGeneral.hpp"
 #include "ProcessorUtils.hpp"
 
+#include <cstdint>
 #include <sstream>
 
 namespace edfio {
@@ -72,7 +73,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
       throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
     }
     {
-      int day{}, month{}, year{};
+      int32_t day{}, month{}, year{};
       auto [p1, e1] =
           std::from_chars(startdate.data(), startdate.data() + 2, day);
       auto [p2, e2] =
@@ -98,7 +99,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
       throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
     }
     {
-      int hour{}, minute{}, second{};
+      int32_t hour{}, minute{}, second{};
       auto [p1, e1] =
           std::from_chars(starttime.data(), starttime.data() + 2, hour);
       auto [p2, e2] =
@@ -157,7 +158,7 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
   }
   // Number of signals
   {
-    int signals = detail::ParseInt(
+    int32_t signals = detail::ParseInt(
         in.m_totalSignals(), GetError(FileErrc::FileContainsFormatErrors));
     if (signals <= 0 || (signals * 256 + 256) != out.m_headerSize) {
       throw std::invalid_argument(GetError(FileErrc::FileContainsFormatErrors));
@@ -250,12 +251,12 @@ inline HeaderGeneral ProcessHeaderGeneralFields(HeaderGeneralFields in) {
                   // dd-MMM-yyyy (MMM = 'JAN' | 'FEV' | ...)
             if (str.size() == 11 && str[2] == '-' && str[6] == '-') {
               {
-                int day{}, year{};
+                int32_t day{}, year{};
                 auto [p1, e1] =
                     std::from_chars(str.data(), str.data() + 2, day);
                 auto [p2, e2] =
                     std::from_chars(str.data() + 7, str.data() + 11, year);
-                int month = detail::GetMonthFromString(
+                int32_t month = detail::GetMonthFromString(
                     std::string_view{str}.substr(3, 3));
                 if (e1 != std::errc{} || e2 != std::errc{} || month == 0) {
                   throw std::invalid_argument(

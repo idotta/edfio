@@ -15,6 +15,7 @@
 #include <array>
 #include <cctype>
 #include <charconv>
+#include <cstdint>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -63,7 +64,7 @@ inline bool CheckFormatErrors(const std::vector<CharT> &str) {
   return edfio::CheckFormatErrors<PROCESSOR_ERROR_CHECKING, CharT>(str);
 }
 
-inline int GetMonthFromString(std::string_view str) {
+inline int32_t GetMonthFromString(std::string_view str) {
   for (size_t idx = 0; idx < MONTHS.size(); idx++) {
     if (str == MONTHS[idx]) {
       return idx + 1;
@@ -119,24 +120,24 @@ inline std::string_view GetFormatName(DataFormat format) {
   return "";
 }
 
-inline int ParseInt(std::string_view sv, const char *error_msg) {
+inline int32_t ParseInt(std::string_view sv, const char *error_msg) {
   while (!sv.empty() && sv.front() == ' ')
     sv.remove_prefix(1);
   while (!sv.empty() && sv.back() == ' ')
     sv.remove_suffix(1);
-  int value{};
+  int32_t value{};
   auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), value);
   if (ec != std::errc{})
     throw std::invalid_argument(error_msg);
   return value;
 }
 
-inline long long ParseLongLong(std::string_view sv, const char *error_msg) {
+inline int64_t ParseLongLong(std::string_view sv, const char *error_msg) {
   while (!sv.empty() && sv.front() == ' ')
     sv.remove_prefix(1);
   while (!sv.empty() && sv.back() == ' ')
     sv.remove_suffix(1);
-  long long value{};
+  int64_t value{};
   auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), value);
   if (ec != std::errc{})
     throw std::invalid_argument(error_msg);
@@ -161,7 +162,7 @@ inline double ParseDouble(std::string_view sv, const char *error_msg) {
 template <typename T> inline std::string to_string_decimal(const T &t) {
   std::string str{std::to_string(t)};
   std::replace(str.begin(), str.end(), ',', '.');
-  int offset{1};
+  int32_t offset{1};
   if (str.find_last_not_of('0') == str.find('.')) {
     offset = 0;
   }

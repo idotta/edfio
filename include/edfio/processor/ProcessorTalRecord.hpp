@@ -9,16 +9,15 @@
 
 #pragma once
 
-#include "../Errors.hpp"
 #include "../core/Annotation.hpp"
-#include "../core/Record.hpp"
 
+#include <cstdint>
 #include <vector>
 
 namespace edfio {
 
 inline std::vector<Annotation> ProcessTalRecord(std::vector<char> record,
-                                                long long datarecord) {
+                                                int64_t datarecord) {
   std::vector<Annotation> out;
 
   // Boundaries

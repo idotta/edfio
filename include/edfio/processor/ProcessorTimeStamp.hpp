@@ -14,6 +14,8 @@
 #include "../core/Record.hpp"
 #include "ProcessorUtils.hpp"
 
+#include <cstdint>
+
 namespace edfio {
 
 inline Record<char> ProcessTimeStamp(TimeStamp timestamp) {
@@ -24,7 +26,7 @@ inline Record<char> ProcessTimeStamp(TimeStamp timestamp) {
         GetError(FileErrc::FileWriteInvalidAnnotations));
   }
 
-  size_t plusSignal = 0;
+  uint32_t plusSignal = 0;
   if (timestamp.m_start >= 0)
     plusSignal = 1;
 

@@ -178,7 +178,7 @@ public:
 
   RecordSink(stream_type &stream, size_type recordSize, size_type sinkSize,
              std::streamoff headerOffset)
-      : sink_type(stream), m_recordSize(recordSize),
+      : sink_type(stream), m_recordSize(recordSize), m_sinkSize(sinkSize),
         m_headerOffset(headerOffset), m_value(recordSize) {}
 
   iterator begin() { return iterator(this, 0); }

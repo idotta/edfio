@@ -23,7 +23,7 @@ template <typename ValT = char> struct Record {
 
   Record() = delete;
 
-  Record(size_t recordSize) : m_value(recordSize, 0) {}
+  Record(typename VectorType::size_type recordSize) : m_value(recordSize, 0) {}
 
   Record(typename VectorType::const_iterator first,
          typename VectorType::const_iterator last)
@@ -34,7 +34,7 @@ template <typename ValT = char> struct Record {
   Record &operator=(const Record &) = default;
   Record &operator=(Record &&) = default;
 
-  size_t Size() const { return m_value.size(); }
+  typename VectorType::size_type Size() const { return m_value.size(); }
   const VectorType &operator()() const { return m_value; }
   VectorType &operator()() { return m_value; }
   Record<ValueType> operator+(const Record<ValueType> &record) const {

@@ -18,6 +18,7 @@
 #include "ReaderHeaderGeneral.hpp"
 #include "ReaderHeaderSignal.hpp"
 
+#include <cstdint>
 #include <stdexcept>
 
 namespace edfio {
@@ -43,7 +44,7 @@ inline HeaderExam ReadHeaderExam(Reader<char>::Stream &stream) {
     auto position = stream.tellg();
     // get length of file
     stream.seekg(0, stream.end);
-    long long length = stream.tellg();
+    int64_t length = stream.tellg();
     // send back to previous position
     stream.seekg(position, stream.beg);
 

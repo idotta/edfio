@@ -13,12 +13,14 @@
 #include "../core/DataFormat.hpp"
 #include "../header/HeaderExam.hpp"
 
+#include <cstdint>
+
 namespace edfio {
 
 inline HeaderExam ProcessHeaderExam(HeaderGeneral header,
                                     std::vector<HeaderSignal> signals) {
   // Record size
-  size_t recordsize = 0;
+  uint32_t recordsize = 0;
   for (auto &signal : signals) {
     recordsize += signal.m_samplesInDataRecord;
   }

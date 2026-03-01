@@ -36,24 +36,28 @@ protected:
     m_stream.seekp(0, std::ios::end);
     size_type sz = m_stream.tellp();
     m_stream.seekp(pos);
-    if (sz < m_headerOffset)
+    if (sz < static_cast<size_type>(m_headerOffset))
       throw std::invalid_argument("Invalid header");
 
-    size_type datarecords = (sz - m_headerOffset) / m_datarecordSize;
-    size_type offset = (sz - m_headerOffset) % m_datarecordSize;
+    size_type hdrOff = static_cast<size_type>(m_headerOffset);
+    size_type sigOff = static_cast<size_type>(m_signalOffset);
+    size_type datarecords = (sz - hdrOff) / m_datarecordSize;
+    size_type offset = (sz - hdrOff) % m_datarecordSize;
 
     m_sinkSize = datarecords;
-    if (offset >= m_signalOffset)
+    if (offset >= sigOff)
       m_sinkSize++;
   }
 
   void save(size_type off, value_type value) override {
     measure();
-    if (off >= m_sinkSize || off == -1) {
+    if (off >= m_sinkSize) {
       m_stream.seekp(0, std::ios::end);
       size_type sz = m_stream.tellp();
-      size_type offset = (sz - m_headerOffset) % m_datarecordSize;
-      if (offset < m_signalOffset)
+      size_type hdrOff = static_cast<size_type>(m_headerOffset);
+      size_type sigOff = static_cast<size_type>(m_signalOffset);
+      size_type offset = (sz - hdrOff) % m_datarecordSize;
+      if (offset < sigOff)
         throw std::invalid_argument("Invalid signal order");
       m_sinkSize++;
     } else {

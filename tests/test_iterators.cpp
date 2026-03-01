@@ -1,5 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
+#include <cstdint>
 #include <edfio/EdfIO.hpp>
 #include <fstream>
 #include <ranges>
@@ -60,11 +61,11 @@ TEST_CASE("DataRecordStore iteration works") {
     auto header = ReadHeaderExam(stream);
     auto store = detail::CreateDataRecordStore(stream, header.m_general);
 
-    CHECK(store.size() == static_cast<unsigned long long>(header.m_general.m_datarecordsFile));
+    CHECK(store.size() == static_cast<uint64_t>(header.m_general.m_datarecordsFile));
     CHECK(store.size() == 600);
 
     // Iterate through first 10 records
-    size_t count = 0;
+    uint32_t count = 0;
     for (auto it = store.begin(); it != store.begin() + 10; ++it) {
         auto& rec = *it;
         CHECK(rec.Size() > 0);
@@ -115,10 +116,10 @@ TEST_CASE("SignalRecordStore iteration works") {
     REQUIRE(header.m_signals.size() > 0);
 
     auto store = detail::CreateSignalRecordStore(stream, header.m_general, header.m_signals[0]);
-    CHECK(store.size() == static_cast<unsigned long long>(header.m_general.m_datarecordsFile));
+    CHECK(store.size() == static_cast<uint64_t>(header.m_general.m_datarecordsFile));
 
     // Iterate first 5 records
-    size_t count = 0;
+    uint32_t count = 0;
     for (auto it = store.begin(); it != store.begin() + 5; ++it) {
         auto& rec = *it;
         CHECK(rec.Size() > 0);
@@ -137,7 +138,7 @@ TEST_CASE("DataRecordStore satisfies ranges::random_access_range") {
     CHECK(std::ranges::distance(store.begin(), store.end()) == 600);
 
     // Range-based for loop (proves range concept works)
-    size_t count = 0;
+    uint32_t count = 0;
     for ([[maybe_unused]] auto& rec : store) {
         ++count;
         if (count >= 3) break;

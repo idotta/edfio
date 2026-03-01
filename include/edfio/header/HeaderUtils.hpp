@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "../Errors.hpp"
 #include "HeaderGeneral.hpp"
 #include "HeaderSignal.hpp"
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -20,13 +20,12 @@ namespace edfio {
 
 namespace detail {
 
-inline HeaderGeneral
-CreateHeaderGeneral(DataFormat version, std::string patient,
-                    std::string recording, int startDateD, int startDateM,
-                    int startDateY, int startTimeH, int startTimeM,
-                    int startTimeS, int headerSize, std::string reserved,
-                    long long datarecordsFile, double datarecordDuration,
-                    const std::vector<HeaderSignal> &signals) {
+inline HeaderGeneral CreateHeaderGeneral(
+    DataFormat version, std::string patient, std::string recording,
+    int32_t startDateD, int32_t startDateM, int32_t startDateY,
+    int32_t startTimeH, int32_t startTimeM, int32_t startTimeS,
+    int32_t headerSize, std::string reserved, int64_t datarecordsFile,
+    double datarecordDuration, const std::vector<HeaderSignal> &signals) {
   HeaderGeneral header;
   header.m_version = version;
   header.m_patient = patient;
@@ -37,7 +36,7 @@ CreateHeaderGeneral(DataFormat version, std::string patient,
   header.m_reserved = reserved;
   header.m_datarecordsFile = datarecordsFile;
   header.m_datarecordDuration = datarecordDuration;
-  header.m_totalSignals = signals.size();
+  header.m_totalSignals = static_cast<int32_t>(signals.size());
 
   // Record size
   header.m_detail.m_recordSize = 0;
@@ -54,10 +53,11 @@ inline HeaderGeneral CreateHeaderGeneralPlus(
     std::string birthdate, std::string patientName,
     std::string patientAdditional, std::string admincode,
     std::string technician, std::string equipment,
-    std::string recordingAdditional, int startDateD, int startDateM,
-    int startDateY, int startTimeH, int startTimeM, int startTimeS,
-    int headerSize, std::string reserved, long long datarecordsFile,
-    double datarecordDuration, const std::vector<HeaderSignal> &signals) {
+    std::string recordingAdditional, int32_t startDateD, int32_t startDateM,
+    int32_t startDateY, int32_t startTimeH, int32_t startTimeM,
+    int32_t startTimeS, int32_t headerSize, std::string reserved,
+    int64_t datarecordsFile, double datarecordDuration,
+    const std::vector<HeaderSignal> &signals) {
   auto header = CreateHeaderGeneral(
       version, "", "", startDateD, startDateM, startDateY, startTimeH,
       startTimeM, startTimeS, headerSize, reserved, datarecordsFile,
@@ -77,9 +77,9 @@ inline HeaderGeneral CreateHeaderGeneralPlus(
 }
 
 inline HeaderSignal
-CreateHeaderSignal(std::string label, int samplesInDataRecord,
-                   double physicalMin, double physicalMax, int digitalMin,
-                   int digitalMax, long signalOffset = 0,
+CreateHeaderSignal(std::string label, int32_t samplesInDataRecord,
+                   double physicalMin, double physicalMax, int32_t digitalMin,
+                   int32_t digitalMax, int64_t signalOffset = 0,
                    bool annotation = false, std::string transducer = "",
                    std::string physDimension = "", std::string prefilter = "",
                    std::string reserved = "") {

@@ -34,14 +34,14 @@ protected:
     m_stream.seekp(0, std::ios::end);
     size_type sz = m_stream.tellp();
     m_stream.seekp(pos);
-    if (sz < m_headerOffset)
+    if (sz < static_cast<size_type>(m_headerOffset))
       throw std::invalid_argument("Invalid header");
-    m_sinkSize = (sz - m_headerOffset) / m_recordSize;
+    m_sinkSize = (sz - static_cast<size_type>(m_headerOffset)) / m_recordSize;
   }
 
   void save(size_type off, value_type value) override {
     measure();
-    if (off >= m_sinkSize || off == -1) {
+    if (off >= m_sinkSize) {
       m_stream.seekp(0, std::ios::end);
       m_sinkSize++;
     } else {

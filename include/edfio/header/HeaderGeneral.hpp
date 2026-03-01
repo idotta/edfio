@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include "../core/DataFormat.hpp"
 #include "../core/Field.hpp"
 
@@ -32,7 +34,7 @@ struct HeaderGeneralFields {
 
 namespace detail {
 struct HeaderGeneralDetail {
-  unsigned int m_recordSize = 0;
+  uint32_t m_recordSize = 0;
   double m_fileDuration = 0;
 
   std::string m_patientCode;
@@ -52,13 +54,13 @@ struct HeaderGeneral {
   DataFormat m_version = DataFormat::Invalid;
   std::string m_patient;
   std::string m_recording;
-  std::tuple<int, int, int> m_startDate;
-  std::tuple<int, int, int> m_startTime;
-  int m_headerSize = 0;
+  std::tuple<int32_t, int32_t, int32_t> m_startDate;
+  std::tuple<int32_t, int32_t, int32_t> m_startTime;
+  int32_t m_headerSize = 0;
   std::string m_reserved;
-  long long m_datarecordsFile = 0;
+  int64_t m_datarecordsFile = 0;
   double m_datarecordDuration = 0;
-  int m_totalSignals = 0;
+  int32_t m_totalSignals = 0;
   // Extra values
   detail::HeaderGeneralDetail m_detail;
 };

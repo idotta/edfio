@@ -14,11 +14,14 @@
 #include "../header/HeaderSignal.hpp"
 #include "ProcessorUtils.hpp"
 
+#include <cstdint>
+
 namespace edfio {
 
 inline std::vector<HeaderSignal>
 ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
-                          DataFormat version, double datarecordDuration) {
+                          DataFormat version,
+                          [[maybe_unused]] double datarecordDuration) {
   std::vector<HeaderSignal> signals(in.size());
 
   for (auto &sigFields : in) {
@@ -38,7 +41,7 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
 
   // Labels
   {
-    size_t totalAnnotationChannels = 0;
+    uint32_t totalAnnotationChannels = 0;
     for (size_t idx = 0; idx < signals.size(); idx++) {
       auto &signal = signals[idx];
       auto &label = in[idx].m_label();
@@ -115,8 +118,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
     for (size_t idx = 0; idx < signals.size(); idx++) {
       auto &signal = signals[idx];
       auto &digMin = in[idx].m_digitalMin();
-      int n = detail::ParseInt(digMin,
-                               GetError(FileErrc::FileContainsFormatErrors));
+      int32_t n = detail::ParseInt(
+          digMin, GetError(FileErrc::FileContainsFormatErrors));
 
       if (signal.m_detail.m_isAnnotation) {
         if (IsEdf(version) && IsPlus(version)) {
@@ -149,8 +152,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
     for (size_t idx = 0; idx < signals.size(); idx++) {
       auto &signal = signals[idx];
       auto &digMax = in[idx].m_digitalMax();
-      int n = detail::ParseInt(digMax,
-                               GetError(FileErrc::FileContainsFormatErrors));
+      int32_t n = detail::ParseInt(
+          digMax, GetError(FileErrc::FileContainsFormatErrors));
 
       if (signal.m_detail.m_isAnnotation) {
         if (IsEdf(version) && IsPlus(version)) {
@@ -203,8 +206,8 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
     for (size_t idx = 0; idx < signals.size(); idx++) {
       auto &signal = signals[idx];
       auto &nrSamples = in[idx].m_samplesInDataRecord();
-      int n = detail::ParseInt(nrSamples,
-                               GetError(FileErrc::FileContainsFormatErrors));
+      int32_t n = detail::ParseInt(
+          nrSamples, GetError(FileErrc::FileContainsFormatErrors));
 
       if (n < 1) {
         throw std::invalid_argument(
@@ -223,7 +226,7 @@ ProcessHeaderSignalFields(std::vector<HeaderSignalFields> in,
   }
   // Details
   {
-    size_t n = 0;
+    uint64_t n = 0;
     for (size_t idx = 0; idx < signals.size(); idx++) {
       auto &signal = signals[idx];
 

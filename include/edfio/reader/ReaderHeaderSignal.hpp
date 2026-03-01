@@ -14,13 +14,14 @@
 #include "../header/HeaderGeneral.hpp"
 #include "../header/HeaderSignal.hpp"
 
+#include <cstdint>
 #include <stdexcept>
 #include <vector>
 
 namespace edfio {
 
 inline std::vector<HeaderSignalFields>
-ReadHeaderSignal(Reader<char>::Stream &stream, size_t totalSignals) {
+ReadHeaderSignal(Reader<char>::Stream &stream, uint32_t totalSignals) {
   std::vector<HeaderSignalFields> signals(totalSignals);
   if (!stream || !stream.is_open())
     throw std::invalid_argument(GetError(FileErrc::FileNotOpened));

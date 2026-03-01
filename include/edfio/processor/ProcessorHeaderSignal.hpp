@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "../Errors.hpp"
-#include "../core/DataFormat.hpp"
 #include "../header/HeaderSignal.hpp"
 #include "ProcessorUtils.hpp"
 

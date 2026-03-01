@@ -14,11 +14,12 @@
 #include "../core/Record.hpp"
 
 #include <algorithm>
+#include <cstdint>
 
 namespace edfio {
 
 inline TimeStamp ProcessTimeStampRecord(Record<char> record,
-                                        long long datarecord) {
+                                        int64_t datarecord) {
   TimeStamp timestamp;
   timestamp.m_datarecord = datarecord;
   auto &value = record();

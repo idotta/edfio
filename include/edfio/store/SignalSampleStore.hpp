@@ -11,6 +11,8 @@
 
 #include "RecordStore.hpp"
 
+#include <cstdint>
+
 namespace edfio {
 
 class SignalSampleStore : public RecordStore {
@@ -44,7 +46,7 @@ protected:
                              m_signalOffset + sampleOffset * m_recordSize;
 
     if (m_bufferPos < 0 ||
-        (destPos < m_bufferPos || destPos >= m_bufferPos + m_buffer.Size())) {
+        (destPos < m_bufferPos || destPos >= m_bufferPos + static_cast<std::streamoff>(m_buffer.Size()))) {
       readStream(destPos);
       m_bufferPos =
           m_headerOffset + dataRecordOffset * m_datarecordSize + m_signalOffset;
@@ -54,7 +56,7 @@ protected:
     std::copy(first, first + m_value.Size(), m_value().begin());
   }
 
-  void readStream(long long newPos) const {
+  void readStream(int64_t newPos) const {
     if (!m_stream.good())
       m_stream.clear();
 

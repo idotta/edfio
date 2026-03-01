@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <iterator>
 
 namespace edfio {
@@ -19,14 +20,14 @@ template <class Value, class Pointer, class Reference, class Stream,
           typename IterCategory>
 class Device {
 public:
-  typedef Stream stream_type;
-  typedef Device<Value, Pointer, Reference, Stream, IterCategory> device_type;
+  using stream_type = Stream;
+  using device_type = Device<Value, Pointer, Reference, Stream, IterCategory>;
 
-  typedef Value value_type;
-  typedef Pointer pointer;
-  typedef Reference reference;
-  typedef long long difference_type;
-  typedef unsigned long long size_type;
+  using value_type = Value;
+  using pointer = Pointer;
+  using reference = Reference;
+  using difference_type = int64_t;
+  using size_type = uint64_t;
 
   class iterator {
   public:

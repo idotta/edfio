@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include "../core/Record.hpp"
-#include "../header/HeaderGeneral.hpp"
-#include "../header/HeaderSignal.hpp"
+#include <cstdint>
 
 namespace edfio {
 
@@ -24,7 +22,7 @@ template <> struct Sample<SampleType::Physical> {
 };
 
 template <> struct Sample<SampleType::Digital> {
-  using type = int;
+  using type = int32_t;
 };
 
 inline Sample<SampleType::Digital>::type

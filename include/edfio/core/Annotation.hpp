@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 namespace edfio {
@@ -21,7 +22,7 @@ static const char ANNOTATION_END = 0;
 } // namespace detail
 
 struct TimeStamp {
-  long long m_datarecord = 0;
+  int64_t m_datarecord = 0;
   double m_start = 0;
 };
 
